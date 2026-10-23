@@ -118,8 +118,23 @@ ol.events{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:2px}
 .events li.next{background:var(--accent-soft)}
 .events li.next i{color:var(--accent);font-weight:600}
 .events li.warn span{color:var(--star)}
-.proj td.bar-cell{width:38%}
-.proj .pb{height:8px;border-radius:4px;background:var(--accent);opacity:.75}
+.events li.past-toggle{display:none;padding:0 8px}
+.past-toggle button,.sug-more button{padding:9px 0}
+.events.show-past .past-toggle .o,.events:not(.show-past) .past-toggle .c{display:none}
+ol.pj{list-style:none;margin:6px 0 0;padding:0}
+.pj li{padding:9px 0;border-bottom:1px solid var(--line)}
+.pj li.best .pj-l::after{content:" ⭐"}
+.pj-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pj-l{font-weight:600}
+.pj-s{white-space:nowrap;font-variant-numeric:tabular-nums}
+.pj-s b{font-size:17px}
+.pj-m{font-size:12px;color:var(--muted);margin-top:1px}
+.pb{position:relative;height:6px;border-radius:3px;background:var(--soft);margin-top:7px}
+.pb>i{display:block;height:100%;border-radius:3px;background:var(--accent);opacity:.8}
+.pb>.cut{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--bad);border-radius:1px}
+.sug li.sug-more{display:none;border:0;padding:4px 0}
+.sug.open .sug-more .o,.sug:not(.open) .sug-more .c{display:none}
+.ielts .sm{display:none}
 .up{color:var(--good)}.down{color:var(--bad)}
 .ielts td.me{background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:4px}
 .ielts th{font-size:12px;color:var(--muted)}
@@ -130,7 +145,7 @@ ul.tips li{margin:3px 0}
 .src li{margin:3px 0;break-inside:avoid}
 .minibar{display:none;position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:8px 16px;font-size:14px;gap:14px;align-items:center;box-shadow:var(--shadow)}
 .minibar b{font-size:18px;font-variant-numeric:tabular-nums}
-.minibar a{margin-left:auto;font-size:13px}
+.minibar a{margin-left:auto;font-size:13px;padding:8px 0 8px 14px}
 [hidden]{display:none!important}
 footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 @media (max-width:980px){
@@ -139,15 +154,39 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .tabs{top:44px}
   .minibar{display:flex}
   .src{columns:1}
+  input,select{font-size:16px} /* 小于 16px 时 iPhone 点输入框会自动放大页面 */
 }
 @media (max-width:520px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .card{padding:14px}
+  header.top{padding:14px 0 2px}
+  h1{font-size:20px}
+  .sub{font-size:12px}
+  .sub .sm-hide{display:none}
+  .actions{width:100%;gap:6px}
+  .actions button,.actions .btn{flex:1;justify-content:center;min-height:38px}
+  .actions .save{order:3;width:100%}
+  .card{padding:14px;margin:10px 0}
+  /* 两列表单：每个字段占 3 行（标题 / 输入框 / 说明）并共用行高，同一行的输入框对齐 */
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:0}
+  .grid>.f{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:4px;margin-bottom:12px}
   .big{font-size:40px}
-  .events li{grid-template-columns:82px 1fr;}
-  .events li i{grid-column:2}
+  .panel{padding:12px 12px 16px}
+  .tabs{padding:6px 6px 0}
+  .tabs button{flex:1;padding:9px 4px}
+  .events li{grid-template-columns:1fr auto;grid-template-areas:"d c" "t t";gap:1px 8px}
+  .events time{grid-area:d;font-size:12px}
+  .events i{grid-area:c}
+  .events span{grid-area:t}
+  .events:not(.show-past) li.past{display:none}
+  .events li.past-toggle{display:block}
   .lang4{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tabs button{padding:8px 9px}
+  .legend .badge:not(.star){display:none}
+  .sug li{padding:7px 9px}
+  .sug:not(.open) li.more{display:none}
+  .sug li.sug-more{display:block}
+  .ielts td,.ielts th{padding:5px 4px}
+  .ielts .lg{display:none}
+  .ielts .sm{display:inline}
+  .src li{margin:7px 0}
 }
 </style>
 </head>
@@ -165,7 +204,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <button type="button" class="ghost" id="btnReset">清空</button>
       </div>
     </div>
-    <p class="sub">Express Entry 综合排名分 CRS（含 <b>2026-11-03 新规</b>）＋ 安省 OINP <b>Ontario Workforce Priority</b> EOI 分 · 规则核对于 <span id="checkedOn"></span> · 填的内容只存在这台电脑的浏览器里，自动保存</p>
+    <p class="sub">Express Entry 综合排名分 CRS（含 <b>2026-11-03 新规</b>）＋ 安省 OINP <b>Ontario Workforce Priority</b> EOI 分 · 规则核对于 <span id="checkedOn"></span><span class="sm-hide"> · 填的内容只存在这台电脑的浏览器里，自动保存</span></p>
   </div>
 </header>
 
@@ -232,7 +271,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       <section class="card" aria-labelledby="h-lang">
         <div class="card-h"><h2 id="h-lang">③ 语言</h2><span class="badge" data-badge="lang"></span><span class="hint">CRS 和 OINP 都看单项，不看总分</span></div>
         <div class="grid">
-          <label class="f"><span>英语考试</span>
+          <label class="f wide"><span>英语考试</span>
             <select data-k="enTest">
               <option value="ielts">雅思 IELTS 普通类（G 类）</option>
               <option value="celpip">CELPIP-G（级别 = CLB）</option>
@@ -247,7 +286,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
           <label>说 S <input type="number" data-k="enS" inputmode="decimal"><span class="clb" id="clbS"></span></label>
         </div>
         <div class="grid" style="margin-top:14px">
-          <label class="f"><span>法语（可选）<span class="badge" data-badge="fr"></span></span>
+          <label class="f wide"><span>法语（可选）<span class="badge" data-badge="fr"></span></span>
             <select data-k="frTest">
               <option value="none">没考</option>
               <option value="tef">TEF Canada（2023-12-10 以后考的）</option>
@@ -418,7 +457,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 
       <div class="panel" data-panel="proj" hidden>
         <p class="meta" style="margin-top:0">假设语言、学历这些都不变，只让时间往前走：年龄、加拿大经验、新规生效。工签到期后经验不再累计。</p>
-        <table class="proj" id="projTable"></table>
+        <ol class="pj" id="projList"></ol>
         <div class="note" id="projNote"></div>
       </div>
     </aside>
@@ -1133,9 +1172,11 @@ async function loadDraws(force){
 const FEAS = {easy:['easy','✅ 可控'], time:['time','⏳ 等时间'], mid:['mid','🟡 看机会'], hard:['hard','🔺 难']};
 function sugHTML(list){
   if(!list.length) return '<li class="empty">这一项已经拿满，或者还缺信息。</li>';
-  return list.map(x => `<li class="${x.star ? 'star' : ''}"><span class="gain">${signed(x.gain)}</span><span class="t">${esc(x.title)}</span>`
+  const fold = list.some(x => x.star) ? list.filter(x => !x.star).length : 0; // 手机上先只显示 ⭐ 那几条
+  return list.map(x => `<li class="${x.star ? 'star' : fold ? 'more' : ''}"><span class="gain">${signed(x.gain)}</span><span class="t">${esc(x.title)}</span>`
     + (x.detail ? `<span class="d">${esc(x.detail)}</span>` : '')
-    + `<span class="tags">${x.star ? '<span class="badge star">⭐ 优先</span>' : ''}<span class="badge ${FEAS[x.feas][0]}">${FEAS[x.feas][1]}</span>${x.special ? '<span class="badge">🎯 关键路径</span>' : ''}</span></li>`).join('');
+    + `<span class="tags">${x.star ? '<span class="badge star">⭐ 优先</span>' : ''}<span class="badge ${FEAS[x.feas][0]}">${FEAS[x.feas][1]}</span>${x.special ? '<span class="badge">🎯 关键路径</span>' : ''}</span></li>`).join('')
+    + (fold ? `<li class="sug-more"><button type="button" class="link" data-more><span class="o">再看 ${fold} 条（难度高或看机会）</span><span class="c">收起</span></button></li>` : '');
 }
 function row(name, pts, max, note, cls=''){
   return `<tr class="${cls}"><th>${esc(name)}${note ? ` <span class="dim">${esc(note)}</span>` : ''}</th><td class="n">${pts}</td><td class="mx">${max!=null ? '/ '+max : ''}</td></tr>`;
@@ -1203,12 +1244,12 @@ function renderDraws(p, r){
     : `数据：内置快照（截至 ${SNAPSHOT_DATE}）${drawErr ? ' —— 这次没连上官网' : ''}`;
   $('#drawStatus').textContent = `${src} · 你的 CRS：${r.total}（${r.rule==='new' ? '新规' : '旧规'}）`;
   if(!groups.length){ $('#drawTable').innerHTML = '<tr><td class="empty">没有最近 12 个月的抽签数据。</td></tr>'; return; }
-  $('#drawTable').innerHTML = `<tr><th>类别</th><th class="n">最近</th><th class="n">分数线</th><th class="n">差</th></tr>`
+  $('#drawTable').innerHTML = `<tr><th>类别</th><th class="n">分数线</th><th class="n">差</th></tr>`
     + groups.map(g => {
       const last = g.list[0], six = g.list.slice(0,6).map(x => x[2]);
       const diff = r.total - last[2], known = g.key in elig;
-      return `<tr><th>${esc(g.label)}<div class="dim">近 ${six.length} 次 ${Math.min(...six)}–${Math.max(...six)} · 最近一次 ${money(last[3])} 人 · ${esc(elig[g.key] || '看职业')}</div></th>`
-        + `<td class="n">${esc(last[0].slice(2))}</td><td class="n"><b>${last[2]}</b></td><td class="n ${known ? (diff>=0 ? 'up' : 'down') : 'dim'}">${signed(diff)}</td></tr>`;
+      return `<tr><th>${esc(g.label)}<div class="dim">${esc(last[0])} · ${money(last[3])} 人 · 近 ${six.length} 次 ${Math.min(...six)}–${Math.max(...six)} · ${esc(elig[g.key] || '看职业')}</div></th>`
+        + `<td class="n"><b>${last[2]}</b></td><td class="n ${known ? (diff>=0 ? 'up' : 'down') : 'dim'}">${signed(diff)}</td></tr>`;
     }).join('');
 }
 
@@ -1237,16 +1278,20 @@ function projection(s){
 function renderProj(s){
   const rows = projection(s);
   const cec = recentLine('cec');
-  const max = Math.max(...rows.map(r => r.total), cec ? cec[2] : 0, 1);
-  let prev = null;
-  $('#projTable').innerHTML = `<tr><th>日期</th><th>发生什么</th><th class="n">CRS</th><th></th></tr>` + rows.map(r => {
-    const delta = prev==null ? '' : r.total-prev; prev = r.total;
-    return `<tr><td class="n">${iso(r.d)}</td><td>${esc(r.label)}<div class="dim">${r.age!=null ? r.age+' 岁 · ' : ''}经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'}</div></td>`
-      + `<td class="n"><b>${r.total}</b>${delta!=='' && delta!==0 ? ` <span class="${delta>0 ? 'up' : 'down'}">${signed(delta)}</span>` : ''}</td>`
-      + `<td class="bar-cell"><div class="pb" style="width:${Math.round(r.total/max*100)}%"></div></td></tr>`;
-  }).join('');
+  // 条形图不从 0 画起，差几十分也看得出来
+  const all = rows.map(r => r.total).concat(cec ? [cec[2]] : []);
+  const lo = Math.max(0, Math.min(...all) - 60), hi = Math.max(...all) + 15;
+  const pct = v => ((v-lo)/(hi-lo)*100).toFixed(1);
   const best = rows.reduce((a,b) => b.total>a.total ? b : a, rows[0]);
-  $('#projNote').innerHTML = `<p>这段时间里最高：<b>${best.total}</b>（${iso(best.d)}，${esc(best.label)}）。${cec ? `参考：CEC 最近一次线 ${cec[2]}（新规后大概率上涨）。` : ''}</p>`
+  let prev = null;
+  $('#projList').innerHTML = rows.map(r => {
+    const delta = prev==null ? 0 : r.total-prev; prev = r.total;
+    return `<li class="${r===best ? 'best' : ''}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
+      + `<span class="pj-s"><b>${r.total}</b>${delta ? ` <span class="${delta>0 ? 'up' : 'down'}">${signed(delta)}</span>` : ''}</span></div>`
+      + `<div class="pj-m">${iso(r.d)}${r.age!=null ? ' · '+r.age+' 岁' : ''} · 经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'}</div>`
+      + `<div class="pb"><i style="width:${pct(r.total)}%"></i>${cec ? `<span class="cut" style="left:${pct(cec[2])}%"></span>` : ''}</div></li>`;
+  }).join('');
+  $('#projNote').innerHTML = `<p>这段时间里最高：<b>${best.total}</b>（${iso(best.d)}，${esc(best.label)}）。${cec ? `红线是 CEC 最近一次分数线 ${cec[2]}，新规后大概率上涨。` : ''}</p>`
     + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」这些节点。</p>');
 }
 
@@ -1284,9 +1329,10 @@ function renderTimeline(s){
     push(p.pEnd, '工签到期' + (p.pEndAuto ? '（按年限推算，以工签上的日期为准）' : ''), 'warn');
   }
   ev.sort((a,b) => a.d-b.d);
-  const nextI = ev.findIndex(e => e.d>=t0);
+  const nextI = ev.findIndex(e => e.d>=t0), past = ev.filter(e => e.d<t0).length;
   $('#events').innerHTML = ev.length
-    ? ev.map((e,i) => `<li class="${e.d<t0 ? 'past' : i===nextI ? 'next' : ''} ${e.cls}"><time>${iso(e.d)}</time><span>${esc(e.text)}</span><i>${countdown(e.d,t0)}</i></li>`).join('')
+    ? (past ? `<li class="past-toggle"><button type="button" class="link" data-past><span class="o">显示已经过去的 ${past} 项</span><span class="c">收起已经过去的</span></button></li>` : '')
+      + ev.map((e,i) => `<li class="${e.d<t0 ? 'past' : i===nextI ? 'next' : ''} ${e.cls}"><time>${iso(e.d)}</time><span>${esc(e.text)}</span><i>${countdown(e.d,t0)}</i></li>`).join('')
     : '<li class="empty">填上面的日期，这里会排出你的关键时间点。</li>';
   const box = $('#permit');
   if(p.pStart && p.pEnd && p.pEnd>p.pStart){
@@ -1301,7 +1347,7 @@ function renderTimeline(s){
 
 function renderIelts(p){
   const isI = p.s.enTest==='ielts', T = TESTS.ielts;
-  let h = `<tr><th>CLB</th><th>听 L</th><th>读 R</th><th>写 W</th><th>说 S</th><th class="n">CRS 每项<br>单身 / 配偶随行</th><th class="n">OINP<br>（看最低项）</th></tr>`;
+  let h = `<tr><th>CLB</th><th>听 L</th><th>读 R</th><th>写 W</th><th>说 S</th><th class="n">CRS 每项<br><span class="lg">单身 / 配偶随行</span><span class="sm">单/配</span></th><th class="n">OINP<br><span class="lg">（看最低项）</span><span class="sm">最低项</span></th></tr>`;
   for(let c=10; c>=4; c--){
     h += `<tr><th>${c}</th>` + SK.map((k,j) => `<td class="${p.en[j]===c || (c===10 && p.en[j]>10) ? 'me' : ''}">${T[k][10-c]}</td>`).join('')
       + `<td class="n">${LANG1[c][0]} / ${LANG1[c][1]}</td><td class="n">${OINP.lang(c)}</td></tr>`;
@@ -1422,6 +1468,8 @@ function init(){
     const b = e.target.closest('button');
     if(!b) return;
     if(b.dataset.tab){ showTab(b.dataset.tab); store.set(TAB_KEY, tab); }
+    if(b.hasAttribute('data-more')) b.closest('ol').classList.toggle('open');
+    if(b.hasAttribute('data-past')) $('#events').classList.toggle('show-past');
     if(b.id==='btnToday'){ $('[data-k="evalDate"]').value = ''; onChange(); }
     if(b.id==='btnDraws'){ $('#drawStatus').textContent = '正在从 IRCC 官网读取…'; loadDraws(true); }
   });
