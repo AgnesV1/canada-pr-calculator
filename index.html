@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>加拿大 PR 分数计算器</title>
+<meta name="description" content="Express Entry CRS（含 2026-11-03 新规）与安省 OINP Workforce Priority EOI 分数计算：时间线、提分建议、雅思 CLB 对照表。填写内容只保存在本机浏览器。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%81%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f5f6f8;--card:#fff;--ink:#1d2433;--muted:#667085;--line:#e3e6eb;--soft:#f2f4f7;
+  --accent:#2563eb;--accent-soft:#e8efff;
+  --good:#067647;--good-soft:#dcfae6;--bad:#b42318;--bad-soft:#fee4e2;
+  --star:#b54708;--star-soft:#fef0c7;--time:#175cd3;--time-soft:#dbeafe;
+  --mid:#6941c6;--mid-soft:#ede9fe;--hard:#be185d;--hard-soft:#fce7f3;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.07);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0e1116;--card:#161a22;--ink:#e5e7eb;--muted:#9aa4b2;--line:#2a303b;--soft:#1d222c;
+  --accent:#7aa7ff;--accent-soft:#1a2740;--good:#4ade80;--good-soft:#0f2a1c;--bad:#f87171;--bad-soft:#351717;
+  --star:#fbbf24;--star-soft:#33270b;--time:#93c5fd;--time-soft:#132440;--mid:#c4b5fd;--mid-soft:#261f40;
+  --hard:#f9a8d4;--hard-soft:#3a1530;--shadow:none;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+header.top{padding:22px 0 6px}
+.title-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+h1{font-size:22px;margin:0;letter-spacing:.01em}
+h1 .leaf{color:#d92d20}
+.sub{margin:6px 0 0;color:var(--muted);font-size:13px}
+.sub b{color:var(--ink);font-weight:600}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.save{font-size:12px;color:var(--muted)}
+.save.warn{color:var(--bad)}
+button,.btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+button:hover,.btn:hover{border-color:var(--accent)}
+button.ghost{background:transparent}
+button.link{border:0;background:none;padding:0;color:var(--accent);font-size:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.card-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;margin-bottom:12px}
+h2{font-size:16px;margin:0}
+h2 small,h3 small{font-weight:400;color:var(--muted);font-size:12px}
+h3{font-size:14px;margin:18px 0 8px}
+.hint{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 14px}
+.f{display:flex;flex-direction:column;gap:4px;font-size:13px;min-width:0}
+.f>span{color:var(--muted)}
+.f em{font-style:normal;font-size:11px;opacity:.85}
+.f.wide{grid-column:1/-1}
+input,select{font:inherit;font-size:15px;padding:7px 10px;min-height:38px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%;min-width:0}
+input:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:var(--accent);flex:none}
+.chk{display:flex;align-items:flex-start;gap:8px;font-size:14px;cursor:pointer;line-height:1.4}
+.chk small{display:block;color:var(--muted);font-size:12px}
+.info{font-size:12px;color:var(--muted);margin-top:2px;min-height:1em}
+.info b{color:var(--ink)}
+.lang4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lang4 label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.clb{font-size:12px;font-weight:600;color:var(--accent)}
+.badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.badge:empty{display:none}
+.badge.star{background:var(--star-soft);color:var(--star)}
+.badge.time{background:var(--time-soft);color:var(--time)}
+.badge.hard{background:var(--hard-soft);color:var(--hard)}
+.badge.mid{background:var(--mid-soft);color:var(--mid)}
+.badge.easy{background:var(--good-soft);color:var(--good)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:0 16px;align-items:start}
+.results{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;margin:12px 0;padding:0;scrollbar-width:thin;scroll-margin-top:56px}
+.tabs{display:flex;gap:4px;padding:10px 10px 0;position:sticky;top:0;background:var(--card);z-index:2;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:8px 12px;font-weight:600;border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{padding:14px 16px 18px}
+.score{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 14px}
+.big{font-size:46px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big small{font-size:14px;color:var(--muted);font-weight:500;margin-left:4px}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--soft);font-variant-numeric:tabular-nums}
+.chip.good{background:var(--good-soft);color:var(--good)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.legend{font-size:12px;color:var(--muted);margin:4px 0 8px;display:flex;flex-wrap:wrap;gap:6px}
+ol.sug{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sug li{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:baseline}
+.sug li.star{border-color:var(--star);background:linear-gradient(0deg,var(--star-soft),var(--star-soft)) padding-box;background:color-mix(in srgb,var(--star-soft) 55%,transparent)}
+.sug .gain{font-weight:700;font-variant-numeric:tabular-nums;font-size:16px;min-width:3.2em;text-align:right;color:var(--good)}
+.sug .t{font-weight:600}
+.sug .d{grid-column:2;font-size:12px;color:var(--muted)}
+.sug .tags{grid-column:2;display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap}
+td.mx{color:var(--muted);text-align:right;white-space:nowrap;font-size:12px}
+tr.sec th{background:var(--soft);font-size:12px;color:var(--muted);font-weight:600;border-bottom:0;padding-top:7px}
+tr.sum td,tr.sum th{font-weight:700}
+tr.tot td,tr.tot th{font-weight:700;font-size:15px;border-top:2px solid var(--ink);border-bottom:0}
+.dim{color:var(--muted);font-size:12px}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.note p{margin:4px 0}
+ul.elig{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:5px;font-size:13px}
+ul.elig li{display:grid;grid-template-columns:20px 1fr;gap:6px}
+.ok{color:var(--good)}.no{color:var(--bad)}
+.permit{margin:14px 0 4px}
+.bar{height:10px;border-radius:999px;background:var(--soft);overflow:hidden;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.permit .txt{font-size:13px;margin-top:6px}
+ol.events{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:2px}
+.events li{display:grid;grid-template-columns:96px 1fr auto;gap:10px;padding:6px 8px;border-radius:8px;font-size:13px;align-items:baseline}
+.events time{font-variant-numeric:tabular-nums;color:var(--muted)}
+.events i{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap}
+.events li.past{opacity:.55}
+.events li.next{background:var(--accent-soft)}
+.events li.next i{color:var(--accent);font-weight:600}
+.events li.warn span{color:var(--star)}
+.proj td.bar-cell{width:38%}
+.proj .pb{height:8px;border-radius:4px;background:var(--accent);opacity:.75}
+.up{color:var(--good)}.down{color:var(--bad)}
+.ielts td.me{background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:4px}
+.ielts th{font-size:12px;color:var(--muted)}
+.ielts td,.ielts th{white-space:nowrap}
+ul.tips{margin:10px 0 0;padding-left:18px;font-size:13px}
+ul.tips li{margin:3px 0}
+.src{font-size:13px;columns:2;column-gap:28px}
+.src li{margin:3px 0;break-inside:avoid}
+.minibar{display:none;position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:8px 16px;font-size:14px;gap:14px;align-items:center;box-shadow:var(--shadow)}
+.minibar b{font-size:18px;font-variant-numeric:tabular-nums}
+.minibar a{margin-left:auto;font-size:13px}
+[hidden]{display:none!important}
+footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
+@media (max-width:980px){
+  .cols{grid-template-columns:1fr}
+  .results{position:static;max-height:none;overflow:visible}
+  .tabs{top:44px}
+  .minibar{display:flex}
+  .src{columns:1}
+}
+@media (max-width:520px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card{padding:14px}
+  .big{font-size:40px}
+  .events li{grid-template-columns:82px 1fr;}
+  .events li i{grid-column:2}
+  .lang4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tabs button{padding:8px 9px}
+}
+</style>
+</head>
+<body>
+<div class="minibar" id="minibar"><span>CRS <b id="mbCrs">—</b></span><span>OINP <b id="mbOinp">—</b></span><a href="#results">看分析 ↓</a></div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="title-row">
+      <h1><span class="leaf">🍁</span> 加拿大 PR 分数计算器</h1>
+      <div class="actions">
+        <span class="save" id="saveState"></span>
+        <button type="button" id="btnExport" title="下载一个 JSON 备份文件">导出备份</button>
+        <label class="btn" title="从备份文件恢复">导入<input type="file" id="fileImport" accept=".json,application/json" hidden></label>
+        <button type="button" class="ghost" id="btnReset">清空</button>
+      </div>
+    </div>
+    <p class="sub">Express Entry 综合排名分 CRS（含 <b>2026-11-03 新规</b>）＋ 安省 OINP <b>Ontario Workforce Priority</b> EOI 分 · 规则核对于 <span id="checkedOn"></span> · 填的内容只存在这台电脑的浏览器里，自动保存</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ① 时间线 -->
+  <section class="card" aria-labelledby="h-tl">
+    <div class="card-h"><h2 id="h-tl">① 时间线</h2><span class="hint">决定加拿大经验哪天满 1 年、工签还剩多久、OINP 应届身份到哪天</span></div>
+    <div class="grid">
+      <label class="f"><span>毕业日期 <em>完成课程那天</em></span><input type="date" data-k="grad"></label>
+      <label class="f"><span>工签生效日 <em>PGWP 开始</em></span><input type="date" data-k="pgwpStart"></label>
+      <label class="f"><span>工签年限</span>
+        <select data-k="pgwpYears"><option value="">—</option><option value="1">1 年</option><option value="2">2 年</option><option value="3">3 年</option></select></label>
+      <label class="f"><span>工签到期日 <em>可不填；填了以它为准</em></span><input type="date" data-k="pgwpEnd"></label>
+      <label class="f"><span>全职技术工作开始日 <em>TEER 0–3 的工作</em></span><input type="date" data-k="workStart"></label>
+      <label class="f"><span>每周工时 <em>≥30 小时按全职算</em></span><input type="number" data-k="hours" value="40" min="1" max="80" step="0.5" inputmode="decimal"></label>
+      <label class="f"><span>语言考试日期 <em>成绩有效 2 年</em></span><input type="date" data-k="testDate"></label>
+      <label class="f"><span>按哪天算分 <em>不填 = 今天</em></span><input type="date" data-k="evalDate"></label>
+    </div>
+    <div class="permit" id="permit" hidden><div class="bar"><i id="permitFill"></i></div><div class="txt" id="permitTxt"></div></div>
+    <ol class="events" id="events"></ol>
+  </section>
+
+  <div class="cols">
+    <form id="form" autocomplete="off" onsubmit="return false">
+      <!-- ② 基本情况 -->
+      <section class="card" aria-labelledby="h-basic">
+        <div class="card-h"><h2 id="h-basic">② 基本情况</h2><span class="badge" data-badge="edu"></span></div>
+        <div class="grid">
+          <label class="f"><span>出生日期</span><input type="date" data-k="dob"><div class="info" id="ageInfo"></div></label>
+          <label class="f"><span>婚姻状况</span>
+            <select data-k="marital">
+              <option value="single">单身</option>
+              <option value="spouse_na">有配偶，但对方是加拿大公民/PR 或不随行（按单身算）</option>
+              <option value="spouse">配偶随行</option>
+            </select></label>
+          <label class="f"><span>最高学历 <em>海外学历要做 ECA</em></span>
+            <select data-k="edu">
+              <option value="">请选择</option>
+              <option value="none">高中以下</option>
+              <option value="hs">高中</option>
+              <option value="y1">1 年制文凭/证书</option>
+              <option value="y2">2 年制文凭</option>
+              <option value="ba">本科，或 3 年以上的课程</option>
+              <option value="two">两个及以上学历，其中一个 ≥3 年（如国内本科＋加拿大文凭）</option>
+              <option value="ma">硕士，或执业类专业学位</option>
+              <option value="phd">博士</option>
+            </select></label>
+          <label class="f"><span>在加拿大读的学历 <em>≥8 个月全日制</em></span>
+            <select data-k="caEdu">
+              <option value="none">没有</option>
+              <option value="short">1–2 年制文凭/证书（+15）</option>
+              <option value="long">3 年以上学位，或硕士/博士（+30）</option>
+            </select></label>
+          <label class="f"><span>CRS 规则</span>
+            <select data-k="rules">
+              <option value="auto">自动：按算分日期（11/3 起用新规）</option>
+              <option value="new">一律按 11/3 新规</option>
+              <option value="old">一律按旧规</option>
+            </select></label>
+        </div>
+      </section>
+
+      <!-- ③ 语言 -->
+      <section class="card" aria-labelledby="h-lang">
+        <div class="card-h"><h2 id="h-lang">③ 语言</h2><span class="badge" data-badge="lang"></span><span class="hint">CRS 和 OINP 都看单项，不看总分</span></div>
+        <div class="grid">
+          <label class="f"><span>英语考试</span>
+            <select data-k="enTest">
+              <option value="ielts">雅思 IELTS 普通类（G 类）</option>
+              <option value="celpip">CELPIP-G（级别 = CLB）</option>
+              <option value="pte">PTE Core</option>
+              <option value="clb">直接填 CLB</option>
+            </select></label>
+        </div>
+        <div class="lang4" style="margin-top:10px">
+          <label>听 L <input type="number" data-k="enL" inputmode="decimal"><span class="clb" id="clbL"></span></label>
+          <label>读 R <input type="number" data-k="enR" inputmode="decimal"><span class="clb" id="clbR"></span></label>
+          <label>写 W <input type="number" data-k="enW" inputmode="decimal"><span class="clb" id="clbW"></span></label>
+          <label>说 S <input type="number" data-k="enS" inputmode="decimal"><span class="clb" id="clbS"></span></label>
+        </div>
+        <div class="grid" style="margin-top:14px">
+          <label class="f"><span>法语（可选）<span class="badge" data-badge="fr"></span></span>
+            <select data-k="frTest">
+              <option value="none">没考</option>
+              <option value="tef">TEF Canada（2023-12-10 以后考的）</option>
+              <option value="nclc">直接填 NCLC</option>
+            </select></label>
+        </div>
+        <div class="lang4" id="frBox" style="margin-top:10px">
+          <label>听 L <input type="number" data-k="frL" inputmode="numeric"><span class="clb" id="nclcL"></span></label>
+          <label>读 R <input type="number" data-k="frR" inputmode="numeric"><span class="clb" id="nclcR"></span></label>
+          <label>写 W <input type="number" data-k="frW" inputmode="numeric"><span class="clb" id="nclcW"></span></label>
+          <label>说 S <input type="number" data-k="frS" inputmode="numeric"><span class="clb" id="nclcS"></span></label>
+        </div>
+      </section>
+
+      <!-- ④ 工作 -->
+      <section class="card" aria-labelledby="h-work">
+        <div class="card-h"><h2 id="h-work">④ 工作与职业</h2><span class="badge" data-badge="work"></span></div>
+        <div class="grid">
+          <label class="f wide"><span>职业 NOC 代码（5 位）<em> · 不知道代码可以去 <a href="https://noc.esdc.gc.ca/" target="_blank" rel="noopener">NOC 官网</a>搜职位名；列表里是 186 个「高薪职业」</em></span>
+            <input type="text" data-k="noc" list="nocList" placeholder="例如 21232" maxlength="80"><div class="info" id="nocInfo"></div></label>
+          <label class="f"><span>加拿大工作经验</span>
+            <select data-k="cweManual">
+              <option value="auto">按时间线自动算</option>
+              <option value="0">不满 1 年</option><option value="1">1 年</option><option value="2">2 年</option>
+              <option value="3">3 年</option><option value="4">4 年</option><option value="5">5 年及以上</option>
+            </select><div class="info" id="cweInfo"></div></label>
+          <label class="f"><span>海外技术工作经验 <em>近 10 年，TEER 0–3</em></span>
+            <select data-k="foreign"><option value="0">没有 / 不满 1 年</option><option value="1">1 年</option><option value="2">2 年</option><option value="3">3 年及以上</option></select></label>
+          <div class="f wide">
+            <label class="chk"><input type="checkbox" data-k="cweInNoc" checked><span>上面的加拿大工作经验都在这个 NOC 职业里<small>11/3 新规：在高薪职业里满 12 个月，额外 +20 / +40 / +70</small></span></label>
+          </div>
+          <div class="f wide">
+            <label class="chk"><input type="checkbox" data-k="offer"><span>有这个职业的 job offer <span class="badge" data-badge="offer"></span><small>全职、非季节性、拿 PR 后至少 1 年。11/3 起不用 LMIA；职业在高薪名单里才有分（+50 / +70 / +100），而且和「加拿大经验」两条路只取高的</small></span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ⑤ 其他加分 -->
+      <section class="card" aria-labelledby="h-other">
+        <div class="card-h"><h2 id="h-other">⑤ 其他加分</h2><span class="badge" data-badge="pnp"></span></div>
+        <div class="grid">
+          <label class="chk"><input type="checkbox" data-k="pnp"><span>已拿到省提名（走 EE 的）<small>+600</small></span></label>
+          <label class="chk"><input type="checkbox" data-k="sibling"><span>兄弟姐妹在加拿大（公民/PR，18 岁以上）<small>+15</small></span></label>
+          <label class="chk"><input type="checkbox" data-k="cert"><span>有加拿大省级技工证书<small>Certificate of qualification，配合语言最多 +50</small></span></label>
+        </div>
+      </section>
+
+      <!-- ⑥ 配偶 -->
+      <section class="card" id="spouseCard" aria-labelledby="h-sp" hidden>
+        <div class="card-h"><h2 id="h-sp">⑥ 配偶</h2><span class="badge" data-badge="spouse"></span><span class="hint">配偶随行时，主申请人的分会按另一套表算，配偶最多再加 40</span></div>
+        <div class="grid">
+          <label class="f"><span>配偶最高学历</span>
+            <select data-k="spEdu">
+              <option value="none">高中以下</option><option value="hs">高中</option><option value="y1">1 年制</option><option value="y2">2 年制</option>
+              <option value="ba" selected>本科 / 3 年以上</option><option value="two">两个及以上（一个 ≥3 年）</option><option value="ma">硕士</option><option value="phd">博士</option>
+            </select></label>
+          <label class="f"><span>配偶加拿大工作经验</span>
+            <select data-k="spCwe"><option value="0">不满 1 年</option><option value="1">1 年</option><option value="2">2 年</option><option value="3">3 年</option><option value="4">4 年</option><option value="5">5 年及以上</option></select></label>
+        </div>
+        <div class="lang4" style="margin-top:10px">
+          <label>配偶 听 CLB<select data-k="spL"></select></label>
+          <label>读 CLB<select data-k="spR"></select></label>
+          <label>写 CLB<select data-k="spW"></select></label>
+          <label>说 CLB<select data-k="spS"></select></label>
+        </div>
+        <p class="hint" style="margin:8px 0 0">雅思换 CLB 看页面最下面的对照表。</p>
+      </section>
+
+      <!-- ⑦ OINP -->
+      <section class="card" aria-labelledby="h-oinp">
+        <div class="card-h"><h2 id="h-oinp">⑦ OINP 额外信息</h2><span class="badge" data-badge="oinp"></span><span class="hint">只影响 OINP 分；没有安省 offer 也可以先填着看</span></div>
+        <div class="grid">
+          <div class="f wide"><label class="chk"><input type="checkbox" data-k="oOffer"><span>有安省雇主的全职、长期 job offer<small>雇主要先在 OINP 系统提交 offer，你才能注册 EOI；雇主自己也有门槛（经营满 3 年、营收、本地员工数）</small></span></label></div>
+          <label class="f"><span>offer 时薪（加元/小时）</span><input type="number" data-k="oWage" min="0" step="0.01" inputmode="decimal" placeholder="例如 32.5"></label>
+          <label class="f"><span>offer 工作地点</span>
+            <select data-k="oRegion">
+              <option value="">请选择</option>
+              <option value="toronto">多伦多市（0）</option>
+              <option value="gta">GTA 其他：Durham / Halton / Peel / York（5）</option>
+              <option value="central">中安省（GTA 外）：Waterloo / Wellington / Simcoe 等（10）</option>
+              <option value="east">东安省：Ottawa / Kingston / Peterborough 等（10）</option>
+              <option value="sw">西南安省：Hamilton / London / Windsor / Niagara 等（10）</option>
+              <option value="north">北安省：Sudbury / Thunder Bay / North Bay 等（15）</option>
+            </select></label>
+          <label class="f"><span>报税单上单年最高收入 <em>近 5 年任一年，CRA NOA</em></span><input type="number" data-k="oEarn" min="0" step="1000" inputmode="numeric" placeholder="例如 52000"></label>
+          <label class="f"><span>合法身份</span>
+            <select data-k="oStatus">
+              <option value="auto">按工签日期自动</option>
+              <option value="wp">有效工签（10）</option><option value="sp">有效学签（5）</option><option value="none">都没有（0）</option>
+            </select></label>
+          <label class="f"><span>OINP 口径的最高学历 <em>加拿大学历或 ECA</em></span>
+            <select data-k="oEdu">
+              <option value="">请选择</option>
+              <option value="phd">博士，或医学/牙医/兽医/验光学位（10）</option>
+              <option value="ma">硕士（8）</option>
+              <option value="above">本科以上的大学证书/文凭（6）</option>
+              <option value="ba">本科（6）</option>
+              <option value="ocgc">安省研究生证书 OCGC（5）</option>
+              <option value="below">本科以下的大学证书/文凭（5）</option>
+              <option value="college">College 文凭/证书（不是 OCGC）（5）</option>
+              <option value="trade">学徒/技工证书（5）</option>
+              <option value="none">以上都没有（0）</option>
+            </select></label>
+          <label class="f"><span>加拿大学历数量 <em>≥1 年全日制</em></span>
+            <select data-k="oCreds"><option value="0">0 个</option><option value="1">1 个（5）</option><option value="2">2 个及以上（10）</option></select></label>
+          <div class="f wide"><label class="chk"><input type="checkbox" data-k="oPosAuto" checked><span>offer 就是现在这份工作<small>在岗月数按时间线自动算；不勾就自己填</small></span></label></div>
+          <label class="f" id="posManual"><span>在 offer 职位上已全职工作（月）</span><input type="number" data-k="oPosMonths" min="0" step="1" inputmode="numeric"></label>
+          <label class="f"><span>在安省全职工作总月数 <em>不填 = 同上</em></span><input type="number" data-k="oOntMonths" min="0" step="1" inputmode="numeric"><div class="info" id="posInfo"></div></label>
+          <div class="f wide"><label class="chk"><input type="checkbox" data-k="oRecentGrad"><span>安省合格院校毕业：2 年以上学位/文凭、OCGC、硕士或博士<small>毕业 3 年内算「安省应届生」：在岗 3 个月就够、免语言考试（不考就没有语言分）</small></span></label></div>
+        </div>
+      </section>
+    </form>
+
+    <!-- 结果 -->
+    <aside class="card results" id="results" aria-label="结果">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" data-tab="crs" aria-selected="true">CRS</button>
+        <button type="button" role="tab" data-tab="oinp" aria-selected="false">OINP</button>
+        <button type="button" role="tab" data-tab="draws" aria-selected="false">抽签线</button>
+        <button type="button" role="tab" data-tab="proj" aria-selected="false">推算</button>
+      </div>
+
+      <div class="panel" data-panel="crs">
+        <div class="score"><div class="big" id="crsTotal">—</div><div><div class="meta" id="crsMeta"></div></div></div>
+        <div class="chips" id="crsChips"></div>
+        <h3>提分建议</h3>
+        <div class="legend"><span class="badge star">⭐ 比较可能 + 分数比较大</span><span class="badge easy">✅ 可控</span><span class="badge time">⏳ 等时间</span><span class="badge mid">🟡 看机会</span><span class="badge hard">🔺 难</span></div>
+        <ol class="sug" id="crsSug"></ol>
+        <p class="note">提分建议一律按 11/3 新规算，每条只改那一项、其他不变。</p>
+        <h3>分项</h3>
+        <table id="crsTable"></table>
+        <div class="note" id="crsNotes"></div>
+      </div>
+
+      <div class="panel" data-panel="oinp" hidden>
+        <div class="score"><div class="big" id="oinpTotal">—</div><div><div class="meta" id="oinpMeta"></div></div></div>
+        <div class="chips" id="oinpChips"></div>
+        <h3>能不能申请 <small>Ontario Workforce Priority 基本条件</small></h3>
+        <ul class="elig" id="oinpElig"></ul>
+        <h3>提分建议</h3>
+        <ol class="sug" id="oinpSug"></ol>
+        <h3>分项 <small>满分 132</small></h3>
+        <table id="oinpTable"></table>
+        <div class="note">
+          <p>2026-06-25 起 OINP 原来的 8 个类别（含硕士/博士毕业生、国际学生、EE 人力资源优先等）全部关闭，只剩 Ontario Workforce Priority：要安省雇主的 offer（自雇医生除外）。</p>
+          <p>TEER 0–3 获批时可以选「走 EE 提名」→ CRS +600（同时要满足 EE 的某个项目，比如 CEC）。</p>
+          <p>截至核对日官网还没公布这个新类别的邀请分数。看到了可以填在这里对比：<input type="number" data-k="oCut" style="width:90px;display:inline-block;min-height:30px;padding:3px 8px" placeholder="分数线" inputmode="numeric"></p>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="draws" hidden>
+        <div class="meta" id="drawStatus"></div>
+        <table id="drawTable" style="margin-top:8px"></table>
+        <div class="note">
+          <p>「差」= 你现在的 CRS − 那一类最近一次的分数线。只有符合那个类别的人才会被抽到：CEC 要满 1 年加拿大经验，类别抽签要职业在名单里（2026 年要求该职业近 3 年内 ≥1 年经验）。</p>
+          <p>11/3 新规生效时 IRCC 会暂停抽签约两周、给所有人重算分；新规下不少人会多拿高薪职业分，之后的分数线大概率比现在高，旧线只能参考。</p>
+          <p><button type="button" class="link" id="btnDraws">重新从官网读取</button></p>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="proj" hidden>
+        <p class="meta" style="margin-top:0">假设语言、学历这些都不变，只让时间往前走：年龄、加拿大经验、新规生效。工签到期后经验不再累计。</p>
+        <table class="proj" id="projTable"></table>
+        <div class="note" id="projNote"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ⑧ 雅思对照表 -->
+  <section class="card" id="ielts" aria-labelledby="h-ielts">
+    <div class="card-h"><h2 id="h-ielts">⑧ 雅思（普通类）↔ CLB 对照表</h2><span class="hint">每格是「至少要考到」的分；高亮是你现在每一项所在的档</span></div>
+    <div style="overflow-x:auto"><table class="ielts" id="ieltsTable"></table></div>
+    <ul class="tips">
+      <li><b>CLB 9（听 8 / 读 7 / 写 7 / 说 7）是最值钱的门槛</b>：四项都到 9，「学历＋语言」「海外经验＋语言」两组转换分都从 13 翻倍到 25（学历高的从 25 到 50）。</li>
+      <li>CLB 10 要 听 8.5 / 读 8 / 写 7.5 / 说 7.5，比 9 每项多 3 分（配偶随行 3 分），转换分不再涨。</li>
+      <li>看单项不看总分：总分 8 但写作 6.5，写作就只是 CLB 8。OINP 只看四项里<b>最低</b>那项。</li>
+      <li>EE 和 OINP 只认 IELTS General Training，不认学术类，也不认 One Skill Retake；成绩 2 年有效。</li>
+    </ul>
+  </section>
+
+  <section class="card" aria-labelledby="h-src">
+    <div class="card-h"><h2 id="h-src">数据来源</h2><span class="hint">都是官网；规则变了改 index.html 最上面的「规则数据」那一段</span></div>
+    <ul class="src">
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html" target="_blank" rel="noopener">CRS 打分标准（IRCC）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/changes.html" target="_blank" rel="noopener">2026-11-03 CRS 改动：加拿大经验与 job offer（IRCC）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/high-wage.html" target="_blank" rel="noopener">高薪职业名单（IRCC，186 个 NOC）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/rounds-invitations.html" target="_blank" rel="noopener">EE 抽签记录（IRCC）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/after-graduation/eligibility/language-results.html" target="_blank" rel="noopener">语言考试 ↔ CLB 换算（IRCC）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html" target="_blank" rel="noopener">EE 语言要求（CEC：TEER 0/1 要 CLB 7，2/3 要 CLB 5）</a></li>
+      <li><a href="https://www.ontario.ca/page/ontario-workforce-priority-stream" target="_blank" rel="noopener">OINP Ontario Workforce Priority（打分表和条件）</a></li>
+      <li><a href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">OINP 2026 更新公告（邀请记录也在这里）</a></li>
+      <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html" target="_blank" rel="noopener">IRCC 审理时间</a></li>
+    </ul>
+    <p class="note">只用来估算和规划，不是法律意见；以 IRCC 和 OINP 官网、你自己的官方档案为准。</p>
+  </section>
+</main>
+<footer class="wrap">没有服务器：除了「抽签线」会直接从 IRCC 官网读公开数据，你填的任何内容都不会离开这台电脑。换浏览器或换电脑用「导出备份 / 导入」。</footer>
+<datalist id="nocList"></datalist>
+
+<script>
+'use strict';
+/* ================= 规则数据（官网改了就改这一段） ================= */
+const CHECKED_ON = '2026-10-23';      // 上次核对官网的日期
+const NEW_RULES_DATE = '2026-11-03';  // CRS 新规（劳动力市场融入 LMI 分项）生效日
+const STORE_KEY = 'pr-calc:v1';
+const DRAWS_KEY = 'pr-calc:draws';
+const TAB_KEY = 'pr-calc:tab';
+const DRAWS_URL = 'https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_en.json';
+
+// IRCC 高薪职业名单（2026-11-03 起生效）：[NOC, 职业, 等级]；等级 2 = 职业中位工资 ≥ 全国平均中位工资的 2 倍，1.5、1.3 同理
+const HIGH_WAGE = [
+  ["00011","Senior government managers and officials",2],
+  ["00012","Senior managers - financial, communications and other business services",2],
+  ["00013","Senior managers - health, education, social and community services and membership organizations",2],
+  ["10010","Financial managers",2],
+  ["10011","Human resources managers",2],
+  ["10012","Purchasing managers",2],
+  ["10020","Insurance, real estate and financial brokerage managers",2],
+  ["10021","Banking, credit and other investment managers",2],
+  ["20010","Engineering managers",2],
+  ["20011","Architecture and science managers",2],
+  ["20012","Computer and information systems managers",2],
+  ["21330","Mining engineers",2],
+  ["21332","Petroleum engineers",2],
+  ["31100","Specialists in clinical and laboratory medicine",2],
+  ["31101","Specialists in surgery",2],
+  ["31102","General practitioners and family physicians",2],
+  ["31103","Veterinarians",2],
+  ["31302","Nurse practitioners",2],
+  ["31303","Physician assistants, midwives and allied health professionals",2],
+  ["40010","Government managers - health and social policy development and program administration",2],
+  ["40011","Government managers - economic analysis, policy development and program administration",2],
+  ["40012","Government managers - education policy development and program administration",2],
+  ["40019","Other managers in public administration",2],
+  ["40040","Commissioned police officers and related occupations in public protection services",2],
+  ["40041","Fire chiefs and senior firefighting officers",2],
+  ["41100","Judges",2],
+  ["41101","Lawyers and Quebec notaries",2],
+  ["41200","University professors and lecturers",2],
+  ["60010","Corporate sales managers",2],
+  ["80010","Managers in natural resources production and fishing",2],
+  ["90011","Utilities managers",2],
+  ["00014","Senior managers - trade, broadcasting and other services",1.5],
+  ["00015","Senior managers - construction, transportation, production and utilities",1.5],
+  ["10019","Other administrative services managers",1.5],
+  ["10022","Advertising, marketing and public relations managers",1.5],
+  ["10029","Other business services managers",1.5],
+  ["10030","Telecommunication carriers managers",1.5],
+  ["11103","Securities agents, investment dealers and brokers",1.5],
+  ["11201","Professional occupations in business management consulting",1.5],
+  ["21100","Physicists and astronomers",1.5],
+  ["21102","Geoscientists and oceanographers",1.5],
+  ["21103","Meteorologists and climatologists",1.5],
+  ["21109","Other professional occupations in physical sciences",1.5],
+  ["21111","Forestry professionals",1.5],
+  ["21120","Public and environmental health and safety professionals",1.5],
+  ["21202","Urban and land use planners",1.5],
+  ["21210","Mathematicians, statisticians and actuaries",1.5],
+  ["21211","Data scientists",1.5],
+  ["21220","Cybersecurity specialists",1.5],
+  ["21221","Business systems specialists",1.5],
+  ["21222","Information systems specialists",1.5],
+  ["21223","Database analysts and data administrators",1.5],
+  ["21230","Computer systems developers and programmers",1.5],
+  ["21231","Software engineers and designers",1.5],
+  ["21232","Software developers and programmers",1.5],
+  ["21300","Civil engineers",1.5],
+  ["21301","Mechanical engineers",1.5],
+  ["21310","Electrical and electronics engineers",1.5],
+  ["21311","Computer engineers (except software engineers and designers)",1.5],
+  ["21320","Chemical engineers",1.5],
+  ["21321","Industrial and manufacturing engineers",1.5],
+  ["21322","Metallurgical and materials engineers",1.5],
+  ["21331","Geological engineers",1.5],
+  ["21390","Aerospace engineers",1.5],
+  ["21399","Other professional engineers",1.5],
+  ["22231","Engineering inspectors and regulatory officers",1.5],
+  ["22312","Industrial instrument technicians and mechanics",1.5],
+  ["30010","Managers in health care",1.5],
+  ["31110","Dentists",1.5],
+  ["31112","Audiologists and speech-language pathologists",1.5],
+  ["31120","Pharmacists",1.5],
+  ["31200","Psychologists",1.5],
+  ["31202","Physiotherapists",1.5],
+  ["31203","Occupational therapists",1.5],
+  ["31300","Nursing coordinators and supervisors",1.5],
+  ["31301","Registered nurses and registered psychiatric nurses",1.5],
+  ["32111","Dental hygienists and dental therapists",1.5],
+  ["40020","Administrators - post-secondary education and vocational training",1.5],
+  ["40021","School principals and administrators of elementary and secondary education",1.5],
+  ["40030","Managers in social, community and correctional services",1.5],
+  ["40042","Commissioned officers of the Canadian Armed Forces",1.5],
+  ["41210","College and other vocational instructors",1.5],
+  ["41220","Secondary school teachers",1.5],
+  ["41221","Elementary school and kindergarten teachers",1.5],
+  ["41310","Police investigators and other investigative occupations",1.5],
+  ["41311","Probation and parole officers",1.5],
+  ["41320","Educational counsellors",1.5],
+  ["41401","Economists and economic policy researchers and analysts",1.5],
+  ["41402","Business development officers and market researchers and analysts",1.5],
+  ["41404","Health policy researchers, consultants and program officers",1.5],
+  ["41407","Program officers unique to government",1.5],
+  ["42100","Police officers (except commissioned)",1.5],
+  ["42101","Firefighters",1.5],
+  ["50010","Library, archive, museum and art gallery managers",1.5],
+  ["50011","Managers - publishing, motion pictures, broadcasting and performing arts",1.5],
+  ["51100","Librarians",1.5],
+  ["70010","Construction managers",1.5],
+  ["70012","Facility operation and maintenance managers",1.5],
+  ["70020","Managers in transportation",1.5],
+  ["70021","Postal and courier services managers",1.5],
+  ["72011","Contractors and supervisors, electrical trades and telecommunications occupations",1.5],
+  ["72012","Contractors and supervisors, pipefitting trades",1.5],
+  ["72023","Supervisors, railway transport operations",1.5],
+  ["72103","Boilermakers",1.5],
+  ["72202","Power system electricians",1.5],
+  ["72203","Electrical power line and cable workers",1.5],
+  ["72301","Steamfitters, pipefitters and sprinkler system installers",1.5],
+  ["72406","Elevator constructors and mechanics",1.5],
+  ["72600","Air pilots, flight engineers and flying instructors",1.5],
+  ["72601","Air traffic controllers and related occupations",1.5],
+  ["72604","Railway traffic controllers and marine traffic regulators",1.5],
+  ["73310","Railway and yard locomotive engineers",1.5],
+  ["82020","Supervisors, mining and quarrying",1.5],
+  ["82021","Contractors and supervisors, oil and gas drilling and services",1.5],
+  ["83101","Oil and gas well drillers, servicers, testers and related workers",1.5],
+  ["90010","Manufacturing managers",1.5],
+  ["92011","Supervisors, petroleum, gas and chemical processing and utilities",1.5],
+  ["92100","Power engineers and power systems operators",1.5],
+  ["93100","Central control and process operators, mineral and metal processing",1.5],
+  ["93101","Central control and process operators, petroleum, gas and chemical processing",1.5],
+  ["00010","Legislators",1.3],
+  ["11100","Financial auditors and accountants",1.3],
+  ["11101","Financial and investment analysts",1.3],
+  ["11102","Financial advisors",1.3],
+  ["11109","Other financial officers",1.3],
+  ["11200","Human resources professionals",1.3],
+  ["12201","Insurance adjusters and claims examiners",1.3],
+  ["12203","Assessors, business valuators and appraisers",1.3],
+  ["21101","Chemists",1.3],
+  ["21110","Biologists and related scientists",1.3],
+  ["21112","Agricultural representatives, consultants and specialists",1.3],
+  ["21200","Architects",1.3],
+  ["21201","Landscape architects",1.3],
+  ["21203","Land surveyors",1.3],
+  ["21234","Web developers and programmers",1.3],
+  ["22214","Technical occupations in geomatics and meteorology",1.3],
+  ["22232","Occupational health and safety specialists",1.3],
+  ["22233","Construction inspectors",1.3],
+  ["22310","Electrical and electronics engineering technologists and technicians",1.3],
+  ["22313","Aircraft instrument, electrical and avionics mechanics, technicians and inspectors",1.3],
+  ["31121","Dietitians and nutritionists",1.3],
+  ["32102","Paramedical occupations",1.3],
+  ["32103","Respiratory therapists, clinical perfusionists and cardiopulmonary technologists",1.3],
+  ["32120","Medical laboratory technologists",1.3],
+  ["32121","Medical radiation technologists",1.3],
+  ["32122","Medical sonographers",1.3],
+  ["41300","Social workers",1.3],
+  ["41400","Natural and applied science policy researchers, consultants and program officers",1.3],
+  ["41403","Social policy researchers, consultants and program officers",1.3],
+  ["41405","Education policy researchers, consultants and program officers",1.3],
+  ["41409","Other professional occupations in social science",1.3],
+  ["43201","Correctional service officers",1.3],
+  ["43203","Border services, customs, and immigration officers",1.3],
+  ["50012","Recreation, sports and fitness program and service directors",1.3],
+  ["51101","Conservators and curators",1.3],
+  ["51102","Archivists",1.3],
+  ["51111","Authors and writers (except technical)",1.3],
+  ["51112","Technical writers",1.3],
+  ["51120","Producers, directors, choreographers and related occupations",1.3],
+  ["52112","Broadcast technicians",1.3],
+  ["60020","Retail and wholesale trade managers",1.3],
+  ["60031","Accommodation service managers",1.3],
+  ["60040","Managers in customer and personal services",1.3],
+  ["72010","Contractors and supervisors, machining, metal forming, shaping and erecting trades and related occupations",1.3],
+  ["72013","Contractors and supervisors, carpentry trades",1.3],
+  ["72014","Contractors and supervisors, other construction trades, installers, repairers and servicers",1.3],
+  ["72020","Contractors and supervisors, mechanic trades",1.3],
+  ["72021","Contractors and supervisors, heavy equipment operator crews",1.3],
+  ["72102","Sheet metal workers",1.3],
+  ["72105","Ironworkers",1.3],
+  ["72201","Industrial electricians",1.3],
+  ["72302","Gas fitters",1.3],
+  ["72320","Bricklayers",1.3],
+  ["72321","Insulators",1.3],
+  ["72401","Heavy-duty equipment mechanics",1.3],
+  ["72403","Railway carmen/women",1.3],
+  ["72404","Aircraft mechanics and aircraft inspectors",1.3],
+  ["72500","Crane operators",1.3],
+  ["72602","Deck officers, water transport",1.3],
+  ["72603","Engineer officers, water transport",1.3],
+  ["73311","Railway conductors and brakemen/women",1.3],
+  ["82010","Supervisors, logging and forestry",1.3],
+  ["83100","Underground production and development miners",1.3],
+  ["83120","Fishing masters and officers",1.3],
+  ["92010","Supervisors, mineral and metal processing",1.3],
+  ["93102","Pulping, papermaking and coating control operators",1.3]
+];
+// 抽签快照，官网读不到时用：[日期, 类别, 分数线, 邀请人数]
+const DRAWS_SNAPSHOT = [
+  ["2026-10-16","French-Language proficiency 2026-Version 2",435,5000],
+  ["2026-10-15","Canadian Experience Class",519,2500],
+  ["2026-10-13","Provincial Nominee Program",772,752],
+  ["2026-10-01","Trades Occupations, 2026-Version 3",476,3500],
+  ["2026-09-29","Canadian Experience Class",518,2000],
+  ["2026-09-28","Provincial Nominee Program",725,733],
+  ["2026-09-16","Senior managers with Canadian Work Experience, 2026-Version 1",389,250],
+  ["2026-09-15","Canadian Experience Class",519,2000],
+  ["2026-09-14","Provincial Nominee Program",734,576],
+  ["2026-09-04","Healthcare and Social Services Occupations, 2026-Version 3",475,3500],
+  ["2026-09-03","Physicians with Canadian Work Experience, 2026-Version 1",198,229],
+  ["2026-09-01","Canadian Experience Class",521,2000],
+  ["2026-08-31","Provincial Nominee Program",697,562],
+  ["2026-08-19","French-Language proficiency 2026-Version 2",382,5000],
+  ["2026-08-18","Canadian Experience Class",523,1000],
+  ["2026-08-17","Provincial Nominee Program",760,442],
+  ["2026-08-07","Transport Occupations, 2026-Version 2",470,300],
+  ["2026-08-06","French-Language proficiency 2026-Version 2",391,5000],
+  ["2026-08-05","Canadian Experience Class",516,3000],
+  ["2026-08-04","Provincial Nominee Program",768,507],
+  ["2026-07-23","Skilled Military Recruits, 2026-Version 1",368,4],
+  ["2026-07-22","French-Language proficiency 2026-Version 2",399,5000],
+  ["2026-07-21","Canadian Experience Class",516,2000],
+  ["2026-07-20","Provincial Nominee Program",744,511],
+  ["2026-07-10","Senior managers with Canadian Work Experience, 2026-Version 1",392,500],
+  ["2026-07-09","French-Language proficiency 2026-Version 2",420,5000],
+  ["2026-07-07","Canadian Experience Class",517,2000],
+  ["2026-07-06","Provincial Nominee Program",708,534],
+  ["2026-06-25","Healthcare and Social Services Occupations, 2026-Version 3",475,4000],
+  ["2026-06-24","Physicians with Canadian Work Experience, 2026-Version 1",223,271],
+  ["2026-06-23","Canadian Experience Class",516,4000],
+  ["2026-06-22","Provincial Nominee Program",730,955],
+  ["2026-05-28","French-Language proficiency 2026-Version 2",409,4500],
+  ["2026-05-27","Canadian Experience Class",518,3000],
+  ["2026-05-25","Provincial Nominee Program",805,334],
+  ["2026-05-11","Provincial Nominee Program",798,380],
+  ["2026-04-29","French-Language proficiency 2026-Version 2",400,4000],
+  ["2026-04-28","Canadian Experience Class",514,2000],
+  ["2026-04-27","Provincial Nominee Program",795,473],
+  ["2026-04-15","French-Language proficiency 2026-Version 2",419,4000],
+  ["2026-04-14","Canadian Experience Class",515,2000],
+  ["2026-04-13","Provincial Nominee Program",786,324],
+  ["2026-04-02","Trades Occupations, 2026-Version 3",477,3000],
+  ["2026-03-31","Canadian Experience Class",509,2250],
+  ["2026-03-30","Provincial Nominee Program",802,356],
+  ["2026-03-18","French-Language proficiency 2026-Version 2",393,4000],
+  ["2026-03-17","Canadian Experience Class",507,4000],
+  ["2026-03-16","Provincial Nominee Program",742,362],
+  ["2026-03-05","Senior managers with Canadian Work Experience, 2026-Version 1",429,250],
+  ["2026-03-04","French-Language proficiency 2026-Version 2",397,5500],
+  ["2026-03-03","Canadian Experience Class",508,4000],
+  ["2026-03-02","Provincial Nominee Program",710,264],
+  ["2026-02-20","Healthcare and Social Services Occupations, 2026-Version 3",467,4000],
+  ["2026-02-19","Physicians with Canadian Work Experience, 2026-Version 1",169,391],
+  ["2026-02-17","Canadian Experience Class",508,6000],
+  ["2026-02-16","Provincial Nominee Program",789,279],
+  ["2026-02-06","French-Language proficiency 2026-Version 2",400,8500],
+  ["2026-02-03","Provincial Nominee Program",749,423],
+  ["2026-01-21","Canadian Experience Class",509,6000],
+  ["2026-01-20","Provincial Nominee Program",746,681],
+  ["2026-01-07","Canadian Experience Class",511,8000],
+  ["2026-01-05","Provincial Nominee Program",711,574],
+  ["2025-12-17","French language proficiency (Version 1)",399,6000],
+  ["2025-12-16","Canadian Experience Class",515,5000],
+  ["2025-12-15","Provincial Nominee Program",731,399],
+  ["2025-12-11","Healthcare and social services occupations (Version 2)",476,1000],
+  ["2025-12-10","Canadian Experience Class",520,6000],
+  ["2025-12-08","Provincial Nominee Program",729,1123],
+  ["2025-11-28","French language proficiency (Version 1)",408,6000],
+  ["2025-11-26","Canadian Experience Class",531,1000],
+  ["2025-11-25","Provincial Nominee Program",699,777],
+  ["2025-11-14","Healthcare and social services occupations (Version 2)",462,3500],
+  ["2025-11-12","Canadian Experience Class",533,1000],
+  ["2025-11-10","Provincial Nominee Program",738,714],
+  ["2025-10-29","French language proficiency (Version 1)",416,6000],
+  ["2025-10-28","Canadian Experience Class",533,1000],
+  ["2025-10-27","Provincial Nominee Program",761,302],
+  ["2025-10-15","Healthcare and social services occupations (Version 2)",472,2500],
+  ["2025-10-14","Provincial Nominee Program",778,345],
+  ["2025-10-06","French language proficiency (Version 1)",432,4500],
+  ["2025-10-01","Canadian Experience Class",534,1000]
+];
+const SNAPSHOT_DATE = '2026-10-16';
+
+// CRS 年龄分（单身或配偶不随行 / 配偶随行）；20–29 岁另算
+const AGE_SINGLE = {17:0,18:99,19:105,30:105,31:99,32:94,33:88,34:83,35:77,36:72,37:66,38:61,39:55,40:50,41:39,42:28,43:17,44:6};
+const AGE_SPOUSE = {17:0,18:90,19:95,30:95,31:90,32:85,33:80,34:75,35:70,36:65,37:60,38:55,39:50,40:45,41:35,42:25,43:15,44:5};
+// 学历：[单身, 配偶随行, 作为配偶时的学历分, 转换分档位, 名称]
+const EDU = {
+  none:[0,0,0,0,'高中以下'], hs:[30,28,2,0,'高中'], y1:[90,84,6,1,'1 年制文凭/证书'], y2:[98,91,7,1,'2 年制文凭'],
+  ba:[120,112,8,1,'本科 / 3 年以上课程'], two:[128,119,9,2,'两个及以上学历'], ma:[135,126,10,2,'硕士 / 执业类学位'], phd:[150,140,10,2,'博士'],
+};
+const LANG1 = {4:[6,6],5:[6,6],6:[9,8],7:[17,16],8:[23,22],9:[31,29],10:[34,32]}; // 第一官方语言，每项
+const CWE = [[0,0],[40,35],[53,46],[64,56],[72,63],[80,70]];                    // 加拿大经验（新规叫「工作年限分」）
+const SP_CWE = [0,5,7,8,9,10];
+const HW_EXP = {2:70, 1.5:40, 1.3:20};     // 新规：在高薪职业里的加拿大经验满 12 个月
+const HW_OFFER = {2:100, 1.5:70, 1.3:50};  // 新规：高薪职业的 job offer（不用 LMIA）
+
+// 语言考试 → CLB/NCLC：每项从 CLB 10 到 CLB 4 的最低分
+const TESTS = {
+  ielts:{step:0.5, max:9, ph:'例如 7', L:[8.5,8,7.5,6,5.5,5,4.5], R:[8,7,6.5,6,5,4,3.5], W:[7.5,7,6.5,6,5.5,5,4], S:[7.5,7,6.5,6,5.5,5,4]},
+  celpip:{step:1, max:12, ph:'1–12', direct:true},
+  pte:{step:1, max:90, ph:'10–90', L:[89,82,71,60,50,39,28], R:[88,78,69,60,51,42,33], W:[90,88,79,69,60,51,41], S:[89,84,76,68,59,51,42]},
+  clb:{step:1, max:12, ph:'CLB', direct:true},
+  tef:{step:1, max:699, ph:'0–699', L:[546,503,462,434,393,352,306], R:[546,503,462,434,393,352,306], W:[558,512,472,428,379,330,268], S:[556,518,494,456,422,387,328]},
+  nclc:{step:1, max:12, ph:'NCLC', direct:true},
+};
+
+// OINP Ontario Workforce Priority EOI 打分（2026-07-20 公布，10-05 加了 $80k 档）
+const OINP = {
+  teer: t => t==null ? 0 : t<=1 ? 9 : t<=3 ? 6 : 0,
+  broad: c => c==null ? 0 : c===3 ? 10 : c===7 ? 8 : c===2 ? 6 : (c===5||c===6) ? 2 : 4,
+  wage: w => !(w>0) ? 0 : w>=40 ? 15 : w>=35 ? 12 : w>=30 ? 10 : w>=25 ? 8 : w>=20 ? 5 : 0,
+  pos: m => m>24 ? 18 : m>=13 ? 15 : m>=6 ? 12 : 0,   // 在 offer 职位上全职的月数
+  ont: m => m>24 ? 12 : m>=13 ? 9 : m>=6 ? 6 : 0,     // offer 职位不满 6 个月时，改看安省总经验
+  earn: e => !(e>0) ? 0 : e>=80000 ? 10 : e>=70000 ? 8 : e>=50000 ? 6 : e>=30000 ? 4 : 0,
+  status: {wp:10, sp:5, none:0},
+  edu: {phd:10, ma:8, above:6, ba:6, ocgc:5, below:5, college:5, trade:5, none:0},
+  creds: n => n>=2 ? 10 : n===1 ? 5 : 0,
+  lang: c => c==null ? 0 : c>=9 ? 15 : c===8 ? 12 : c===7 ? 8 : c===6 ? 4 : 0,
+  region: {north:15, east:10, central:10, sw:10, gta:5, toronto:0},
+  max: 132,
+};
+// OINP 里语言只要 CLB 5 的技工职业
+const isTrades = n => !!n && ((/^72/.test(n) && !/^726/.test(n)) || /^(73|82|83)/.test(n) || (/^93/.test(n) && !/^932/.test(n)) || /^6320/.test(n) || n==='62200');
+
+// 抽签类别中文名
+const CATS = [
+  [/Canadian Experience Class/i,'CEC 加拿大经验类','cec'], [/Provincial Nominee/i,'PNP 省提名','pnp'],
+  [/French/i,'法语类别','french'], [/Healthcare/i,'医疗与社会服务','health'], [/Trade/i,'技工类别','trades'],
+  [/Transport/i,'交通运输','transport'], [/Education/i,'教育','education'], [/STEM/i,'STEM','stem'],
+  [/Senior manager/i,'高管（需加拿大经验）','senior'], [/Physician/i,'医生（需加拿大经验）','physician'],
+  [/Research/i,'研究人员','research'], [/Military/i,'军队招募','military'], [/Agricult/i,'农业','agri'],
+  [/Federal Skilled Worker/i,'FSW 联邦技术移民','fsw'], [/Federal Skilled Trades/i,'FST 联邦技工','fst'],
+  [/General|No Program/i,'综合（不限类别）','general'],
+];
+
+/* ================= 工具 ================= */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => (v===''||v==null||!isFinite(+v)) ? null : +v;
+const pad = n => String(n).padStart(2,'0');
+const D = s => (typeof s==='string' && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? new Date(s+'T00:00:00Z') : null;
+const iso = d => d ? d.toISOString().slice(0,10) : '';
+const todayISO = () => { const n = new Date(); return `${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`; };
+const addDays = (d,n) => new Date(d.getTime() + n*864e5);
+const addMonths = (d,n) => {
+  const y = d.getUTCFullYear(), m = d.getUTCMonth()+n, day = d.getUTCDate();
+  const last = new Date(Date.UTC(y, m+1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, m, Math.min(day,last)));
+};
+const addYears = (d,n) => addMonths(d, 12*n);
+const dayDiff = (a,b) => Math.round((b-a)/864e5);
+const ageAt = (dob,d) => { let a = d.getUTCFullYear()-dob.getUTCFullYear(); const m = d.getUTCMonth()-dob.getUTCMonth(); if(m<0 || (m===0 && d.getUTCDate()<dob.getUTCDate())) a--; return a; };
+const SK = ['L','R','W','S'];
+const SKN = {L:'听', R:'读', W:'写', S:'说'};
+const minOf = a => a.some(c => c==null) ? null : Math.min(...a);
+const allGE = (a,n) => a.every(c => c!=null && c>=n);
+const money = n => Math.round(n).toLocaleString('en-CA');
+const signed = n => (n>0 ? '+' : n<0 ? '−' : '±') + Math.abs(n);
+const HW_MAP = Object.fromEntries(HIGH_WAGE.map(r => [r[0], r]));
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch {} },
+};
+function countdown(d, t0){
+  const n = dayDiff(t0, d);
+  if(n===0) return '就是今天';
+  const a = Math.abs(n), s = a>=60 ? `${Math.round(a/30.4375)} 个月` : `${a} 天`;
+  return n>0 ? `还有 ${s}` : `${s}前`;
+}
+
+function toClb(test, skill, v){
+  const T = TESTS[test];
+  if(v==null || !T) return null;
+  if(T.direct) return v>0 ? Math.min(Math.floor(v), 12) : null;
+  const row = T[skill];
+  for(let i=0; i<row.length; i++) if(v>=row[i]) return 10-i;
+  return 3; // CLB 4 以下
+}
+
+/* ================= 读表单 → 档案 ================= */
+const FIELDS = $$('[data-k]');
+function readState(){
+  const s = {};
+  for(const el of FIELDS) s[el.dataset.k] = el.type==='checkbox' ? el.checked : el.value;
+  return s;
+}
+function writeState(s){
+  for(const el of FIELDS){
+    const v = s[el.dataset.k];
+    if(v===undefined) continue;
+    if(el.type==='checkbox') el.checked = !!v; else el.value = v;
+  }
+}
+
+function build(s, at){
+  const today = todayISO();
+  const evalISO = at || s.evalDate || today;
+  const d = D(evalISO) || D(today);
+  const grad = D(s.grad), pStart = D(s.pgwpStart);
+  let pEnd = D(s.pgwpEnd);
+  const pEndAuto = !pEnd && !!pStart && +s.pgwpYears>0;
+  if(pEndAuto) pEnd = addYears(pStart, +s.pgwpYears);
+  const sp = s.marital==='spouse';
+  const en = SK.map(k => toClb(s.enTest, k, num(s['en'+k])));
+  const fr = s.frTest==='none' ? [null,null,null,null] : SK.map(k => toClb(s.frTest, k, num(s['fr'+k])));
+  const m = String(s.noc||'').match(/\d{5}/);
+  const noc = m ? m[0] : '';
+  const teer = noc ? +noc[1] : null, broad = noc ? +noc[0] : null;
+  const hwRow = noc ? HW_MAP[noc] || null : null;
+  const hwLevel = hwRow ? hwRow[2] : 0;
+  const skilled = teer==null || teer<=3;
+
+  // 加拿大经验：全职按每周 30 小时封顶，1,560 小时 = 1 年
+  const notes = [];
+  const hpw = Math.min(Math.max(num(s.hours) ?? 40, 1), 80), eff = Math.min(hpw, 30);
+  let wStart = D(s.workStart);
+  if(wStart && grad && wStart < grad){ wStart = grad; notes.push('毕业前（全日制学生期间）的工作不算加拿大经验，已从毕业日起算。'); }
+  let wEnd = d;
+  if(pEnd && wEnd > pEnd){ wEnd = pEnd; notes.push('算分日期在工签到期之后：经验只累计到工签到期那天（续签或过桥工签另算）。'); }
+  const days = wStart ? Math.max(0, dayDiff(wStart, wEnd)) : 0;
+  const cweAuto = skilled ? Math.floor(days/7*eff/1560 + 1e-9) : 0;
+  if(!skilled && wStart) notes.push(`TEER ${teer} 的工作不算 CRS 加拿大经验，也不能用来申请 CEC。`);
+  const cweManual = !!s.cweManual && s.cweManual!=='auto';
+  const cwe = cweManual ? +s.cweManual : cweAuto;
+  const yearDate = n => wStart ? addDays(wStart, Math.ceil(n*1560/eff*7)) : null;
+  const working = !!wStart && wStart<=d && !(pEnd && d>pEnd);
+  const posAuto = working && hpw>=30 ? Math.floor(days/30.4375) : 0;
+  const posMonths = s.oPosAuto ? posAuto : (num(s.oPosMonths) ?? 0);
+  const ontMonths = num(s.oOntMonths) ?? posMonths;
+  let status = s.oStatus || 'auto';
+  if(status==='auto') status = (pEnd && d>pEnd) ? 'none' : 'wp';
+
+  return {
+    s, d, evalISO, today, grad, pStart, pEnd, pEndAuto, sp, en, fr, noc, teer, broad, hwRow, hwLevel, skilled,
+    hpw, eff, wStart, days, cwe, cweAuto, cweManual, yearDate, working, notes,
+    hwYears: s.cweInNoc ? cwe : 0, offer: !!s.offer, foreign: +s.foreign||0, cert: !!s.cert, pnp: !!s.pnp, sibling: !!s.sibling,
+    edu: EDU[s.edu] ? s.edu : 'none', eduSet: !!EDU[s.edu], caEdu: s.caEdu,
+    age: (s.dob && D(s.dob)) ? ageAt(D(s.dob), d) : null,
+    spEdu: s.spEdu, spLang: SK.map(k => num(s['sp'+k])), spCwe: +s.spCwe||0,
+    posMonths, ontMonths, status, recentGrad: !!s.oRecentGrad && !!grad && d<=addYears(grad,3),
+    wage: num(s.oWage), earn: num(s.oEarn), region: s.oRegion, oEdu: s.oEdu, creds: +s.oCreds||0, oOffer: !!s.oOffer,
+  };
+}
+const ruleFor = p => p.s.rules==='old' ? 'old' : p.s.rules==='new' ? 'new' : (p.evalISO >= NEW_RULES_DATE ? 'new' : 'old');
+
+/* ================= CRS ================= */
+function crs(p, rule){
+  const i = p.sp ? 1 : 0;
+  const age = p.age==null ? 0 : (p.age>=20 && p.age<=29) ? (p.sp?100:110) : ((p.sp?AGE_SPOUSE:AGE_SINGLE)[p.age] ?? 0);
+  const e = EDU[p.edu];
+  const edu = e[i];
+  const l1 = p.en.reduce((a,c) => a + (c>=4 ? LANG1[Math.min(c,10)][i] : 0), 0);
+  const l2 = Math.min(p.fr.reduce((a,c) => a + (c>=9 ? 6 : c>=7 ? 3 : c>=5 ? 1 : 0), 0), p.sp ? 22 : 24);
+  const cwePts = CWE[Math.min(p.cwe,5)][i];
+  let spEdu = 0, spLang = 0, spCwe = 0;
+  if(p.sp){
+    spEdu = (EDU[p.spEdu] || EDU.none)[2];
+    spLang = p.spLang.reduce((a,c) => a + (c>=9 ? 5 : c>=7 ? 3 : c>=5 ? 1 : 0), 0);
+    spCwe = SP_CWE[Math.min(p.spCwe,5)];
+  }
+  // 可转换技能
+  const tier = allGE(p.en,9) ? 2 : allGE(p.en,7) ? 1 : 0;
+  const cweTier = p.cwe>=2 ? 2 : p.cwe>=1 ? 1 : 0;
+  const pick = (g,t) => (!g || !t) ? 0 : (g===1 ? [0,13,25] : [0,25,50])[t];
+  const eduL = pick(e[3], tier), eduW = pick(e[3], cweTier);
+  const fg = p.foreign>=3 ? 2 : p.foreign>=1 ? 1 : 0;
+  const forL = pick(fg, tier), forW = pick(fg, cweTier);
+  const cert = p.cert ? (allGE(p.en,7) ? 50 : allGE(p.en,5) ? 25 : 0) : 0;
+  const eduG = Math.min(50, eduL+eduW), forG = Math.min(50, forL+forW);
+  const trans = Math.min(100, eduG + forG + cert);
+  // 附加分
+  const caEdu = p.caEdu==='short' ? 15 : p.caEdu==='long' ? 30 : 0;
+  const french = allGE(p.fr,7) ? (allGE(p.en,5) ? 50 : 25) : 0;
+  const pnp = p.pnp ? 600 : 0, sibling = p.sibling ? 15 : 0;
+  const add = Math.min(600, pnp + sibling + caEdu + french);
+  // 11/3 新规：劳动力市场融入（经验路线 vs job offer 路线，取高）
+  let lmi = null;
+  if(rule==='new'){
+    const hw = (p.hwLevel && p.hwYears>=1 && p.skilled) ? HW_EXP[p.hwLevel] : 0;
+    const offer = (p.offer && p.hwLevel) ? HW_OFFER[p.hwLevel] : 0;
+    lmi = {work:cwePts, hw, offer, exp:cwePts+hw, value:Math.max(cwePts+hw, offer)};
+    lmi.via = offer > lmi.exp ? 'offer' : 'exp';
+  }
+  const core = age + edu + l1 + l2 + (lmi ? 0 : cwePts);
+  const total = core + (lmi ? lmi.value : 0) + spEdu + spLang + spCwe + trans + add;
+  return {rule, age, edu, l1, l2, cwePts, spEdu, spLang, spCwe, eduL, eduW, forL, forW, cert, eduG, forG, trans, caEdu, french, pnp, sibling, add, lmi, total};
+}
+
+function cecCheck(p){
+  const need = (p.teer!=null && p.teer>=2) ? 5 : 7;
+  const langOk = allGE(p.en, need) || allGE(p.fr, need);
+  const expOk = p.cwe>=1 && p.skilled;
+  return {ok: langOk && expOk, langOk, expOk, need};
+}
+
+/* ================= OINP ================= */
+function oinp(p){
+  const enMin = minOf(p.en), frMin = minOf(p.fr);
+  const bestC = (enMin==null && frMin==null) ? null : Math.max(enMin ?? -1, frMin ?? -1);
+  const both = enMin!=null && frMin!=null && enMin>=6 && frMin>=6;
+  const viaPos = p.posMonths>=6;
+  const rows = [
+    {name:'职业等级 TEER', pts:OINP.teer(p.teer), max:9, note: p.teer==null ? '填 NOC 自动算' : `TEER ${p.teer}`},
+    {name:'职业大类', pts:OINP.broad(p.broad), max:10, note: p.broad==null ? '' : `NOC 第一位 ${p.broad}`},
+    {name:'offer 时薪', pts:OINP.wage(p.wage), max:15, note: p.wage ? `$${p.wage}/小时` : '未填'},
+    {name:'安省工作经验', pts: viaPos ? OINP.pos(p.posMonths) : OINP.ont(p.ontMonths), max:18,
+      note: viaPos ? `offer 职位上 ${p.posMonths} 个月` : `offer 职位不满 6 个月，按安省总经验 ${p.ontMonths} 个月（最多 12）`},
+    {name:'收入（单年报税单）', pts:OINP.earn(p.earn), max:10, note: p.earn ? `$${money(p.earn)}` : '未填'},
+    {name:'合法身份', pts:OINP.status[p.status] ?? 0, max:10, note: {wp:'有效工签', sp:'有效学签', none:'没有有效工签/学签'}[p.status]},
+    {name:'最高学历', pts:OINP.edu[p.oEdu] ?? 0, max:10, note: p.oEdu ? '' : '未选'},
+    {name:'加拿大学历数量', pts:OINP.creds(p.creds), max:10, note:`${p.creds>=2 ? '2+' : p.creds} 个`},
+    {name:'语言（四项最低）', pts:OINP.lang(bestC), max:15, note: bestC==null ? '没填考试成绩' : `最低 CLB ${bestC}`},
+    {name:'官方语言数量', pts: both ? 10 : bestC!=null ? 5 : 0, max:10, note: both ? '英法都 ≥ CLB 6' : ''},
+    {name:'工作地点', pts:OINP.region[p.region] ?? 0, max:15, note: p.region ? '' : '未选'},
+  ];
+  return {rows, total: rows.reduce((a,r) => a + r.pts, 0), bestC, enMin, frMin};
+}
+
+function oinpElig(p, o){
+  const items = [], low = p.teer!=null && p.teer>=4;
+  items.push({ok:p.oOffer, t:'安省雇主的全职、长期 job offer（雇主先提交，你再注册 EOI）'});
+  if(!low){
+    const need = p.recentGrad ? 3 : 6;
+    const ok = p.posMonths>=need || p.cwe>=2;
+    let when = '';
+    if(!ok && p.wStart && p.s.oPosAuto) when = `，预计 ${iso(addMonths(p.wStart, need))} 满`;
+    items.push({ok, t:`经验：在 offer 职位上连续全职 ≥ ${need} 个月${p.recentGrad ? '（安省应届生优惠）' : ''}，或同一 NOC 近 5 年累计 2 年 —— 现在 ${p.posMonths} 个月${when}`});
+    const needC = isTrades(p.noc) ? 5 : 6;
+    const langOk = p.recentGrad || (o.bestC!=null && o.bestC>=needC);
+    items.push({ok:langOk, t: p.recentGrad ? '语言：安省应届生免考（不考就没有语言分）' : `语言：四项都 ≥ CLB ${needC}，考试在递交前 2 年内 —— 现在最低 ${o.bestC ?? '未填'}`});
+    const eduOk = ['y1','y2','ba','two','ma','phd'].includes(p.edu) || (isTrades(p.noc) && p.edu==='hs');
+    items.push({ok:eduOk, t:'学历：≥ 1 年的大专或大学学历（技工职业高中即可；海外学历要 ECA）'});
+  } else {
+    items.push({ok:p.posMonths>=9, t:`TEER 4–5 通道：近 2 年在 offer 职位上累计全职 ≥ 9 个月 —— 现在 ${p.posMonths} 个月`});
+    items.push({ok:o.bestC!=null && o.bestC>=4, t:'语言：四项都 ≥ CLB 4'});
+    items.push({ok:p.eduSet && p.edu!=='none', t:'学历：高中及以上'});
+  }
+  items.push({ok:p.status!=='none', t:'在加拿大有合法身份（工签、学签、访客记录或维持身份都行）'});
+  return items;
+}
+
+/* ================= 提分建议 ================= */
+function needText(p, skills, target){
+  const T = TESTS[p.s.enTest];
+  return '要：' + skills.map(k => {
+    const j = SK.indexOf(k), cur = p.s['en'+k];
+    if(T && !T.direct) return `${SKN[k]} ${cur || '?'}→${T[k][10-Math.min(target,10)]}`;
+    return `${SKN[k]} CLB ${p.en[j] ?? '?'}→${target}`;
+  }).join('、');
+}
+function rank(list, big, starMid){
+  for(const x of list){
+    x.big = x.gain>=big;
+    x.star = !x.special && ((['easy','time'].includes(x.feas) && x.big) || (x.feas==='mid' && x.gain>=starMid));
+  }
+  return list.sort((a,b) => (b.star-a.star) || (b.gain-a.gain));
+}
+function suggestCRS(p){
+  const rule = 'new', base = crs(p, rule).total, out = [];
+  const add = o => { const g = crs(o.p, rule).total - base; if(g>0) out.push({...o, gain:g}); };
+  const same = (a,b) => a.every((v,i) => v===b[i]);
+  if(p.en.some(c => c!=null)){
+    let t9 = null;
+    for(const target of [9,10]){
+      if(allGE(p.en, target)) continue;
+      const en = p.en.map(c => Math.max(c ?? 0, target));
+      if(target===9) t9 = en;
+      add({grp:'lang', feas: target===9 ? 'easy' : 'mid', title:`英语四项都到 CLB ${target}`, detail:needText(p, SK.filter((k,j) => (p.en[j] ?? 0)<target), target), p:{...p, en}});
+    }
+    const singles = [];
+    p.en.forEach((c,j) => {
+      if(c==null || c>=10) return;
+      const en = [...p.en]; en[j] = Math.max(c+1, 4);
+      if(t9 && same(en, t9)) return;
+      singles.push({j, c, to:en[j], p:{...p, en}, g: crs({...p, en}, rule).total - base});
+    });
+    singles.sort((a,b) => b.g-a.g).slice(0,1).forEach(x => add({grp:'lang', feas:'easy', title:`只提一项：${SKN[SK[x.j]]} CLB ${x.c}→${x.to}`, detail:needText(p, [SK[x.j]], x.to), p:x.p}));
+  } else {
+    add({grp:'lang', feas:'easy', title:'先考雅思普通类：四项 CLB 9', detail:'听 8 / 读 7 / 写 7 / 说 7', p:{...p, en:[9,9,9,9]}});
+  }
+  if(p.cwe<5 && p.skilled){
+    const n = p.cwe+1, dt = p.cweManual ? null : p.yearDate(n);
+    const late = dt && p.pEnd && dt>p.pEnd;
+    add({grp:'work', feas:'time', title:`加拿大工作经验满 ${n} 年`,
+      detail: dt ? (late ? `按现在的工时要到 ${iso(dt)}，晚于工签到期` : `按时间线预计 ${iso(dt)}`) + (p.hwLevel && p.s.cweInNoc && n===1 ? `；含高薪职业经验 +${HW_EXP[p.hwLevel]}` : '') : '时间到了就有',
+      p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
+  }
+  if(p.hwLevel && !p.offer){
+    add({grp:'offer', feas:'mid', title:`拿到这个职业的 job offer（高薪 ×${p.hwLevel}）`, detail:`11/3 起 offer 值 ${HW_OFFER[p.hwLevel]} 分、不用 LMIA；和「加拿大经验」两条路取高的。现雇主出也算`, p:{...p, offer:true}});
+  }
+  if(p.edu==='ba' && p.caEdu!=='none'){
+    add({grp:'edu', feas:'easy', title:'申报「两个及以上学历」', detail:'如果你确实有两个学历（比如国内 4 年本科＋加拿大文凭）：把海外那个做 ECA 就能按这档算', p:{...p, edu:'two'}});
+  }
+  if(['hs','y1','y2','ba','two'].includes(p.edu)){
+    add({grp:'edu', feas:'hard', title:'在加拿大读硕士', detail:'时间和钱都贵，一般不当首选', p:{...p, edu:'ma', caEdu:'long'}});
+  }
+  if(!allGE(p.fr,7)){
+    const fr = recentLine('french');
+    add({grp:'fr', feas:'hard', title:'法语四项 NCLC 7', detail:'法语加分＋第二语言分；还能进法语类别抽签' + (fr ? `（最近一次线 ${fr[2]}）` : ''), p:{...p, fr:p.fr.map(c => Math.max(c ?? 0, 7))}});
+  }
+  if(!p.pnp) add({grp:'pnp', feas:'mid', special:true, title:'省提名（比如 OINP 选走 EE 提名）', detail:'+600，基本等于下一轮必拿 ITA；OINP 现在要有安省雇主 offer', p:{...p, pnp:true}});
+  if(p.sp){
+    if(!allGE(p.spLang,9)) add({grp:'spouse', feas:'mid', title:'配偶英语四项 CLB 9', detail:'配偶语言每项最多 5 分', p:{...p, spLang:p.spLang.map(c => Math.max(c ?? 0, 9))}});
+    const g = crs({...p, sp:false}, rule).total - base;
+    if(g>0) out.push({grp:'spouse', feas:'mid', special:true, title:'配偶不随行（按单身算）', detail:'只是算分上的选择，要想清楚；配偶以后可以走团聚', gain:g});
+  }
+  return rank(out, 20, 50);
+}
+function suggestOINP(p){
+  const base = oinp(p).total, out = [];
+  const add = o => { const g = oinp(o.p).total - base; if(g>0) out.push({...o, gain:g}); };
+  const enMin = minOf(p.en);
+  if(enMin==null && !p.en.some(c => c!=null)) add({grp:'lang', feas:'easy', title:'考雅思普通类：四项最低 CLB 9', detail:'OINP 只看最低的那一项', p:{...p, en:[9,9,9,9]}});
+  else if(enMin!=null && enMin<9){
+    add({grp:'lang', feas:'easy', title:'英语四项最低到 CLB 9', detail:needText(p, SK.filter((k,j) => p.en[j]<9), 9), p:{...p, en:p.en.map(c => Math.max(c,9))}});
+    if(enMin<8) add({grp:'lang', feas:'easy', title:'英语四项最低到 CLB 8', detail:needText(p, SK.filter((k,j) => p.en[j]<8), 8), p:{...p, en:p.en.map(c => Math.max(c,8))}});
+  }
+  const next = [6,13,25].find(m => p.posMonths<m);
+  if(next){
+    const dt = (p.s.oPosAuto && p.wStart) ? addMonths(p.wStart, next) : null;
+    add({grp:'work', feas:'time', title:`在 offer 职位上满 ${next===25 ? '24 个月以上' : next+' 个月'}`, detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, posMonths:next}});
+  }
+  const nw = [20,25,30,35,40].find(x => (p.wage || 0)<x);
+  if(nw) add({grp:'wage', feas:'mid', title:`时薪到 $${nw}`, detail:'按 offer 上写的时薪算', p:{...p, wage:nw}});
+  const ne = [30000,50000,70000,80000].find(x => (p.earn || 0)<x);
+  if(ne) add({grp:'earn', feas:'mid', title:`单年收入到 $${money(ne)}`, detail:'看 CRA 报税单（NOA）；当年收入第二年报完税才有', p:{...p, earn:ne}});
+  if(['toronto','gta'].includes(p.region)) add({grp:'region', feas:'hard', title:'offer 在 GTA 以外', detail:'东/中/西南安省 +10，北安省 +15', p:{...p, region:'east'}});
+  if(!(minOf(p.fr)>=6)) add({grp:'fr', feas:'hard', title:'法语四项 CLB 6', detail:'「两门官方语言」 +5', p:{...p, fr:p.fr.map(c => Math.max(c ?? 0, 6))}});
+  if(p.creds<2) add({grp:'edu', feas:'hard', title:'再拿一个加拿大学历', detail:'≥ 1 年全日制', p:{...p, creds:2}});
+  if(p.status==='none') add({grp:'status', feas:'mid', title:'保持有效工签/学签', detail:'到期前续签或换签', p:{...p, status:'wp'}});
+  return rank(out, 3, 6);
+}
+
+/* ================= 抽签线 ================= */
+let draws = {src:'snapshot', at:null, rows:DRAWS_SNAPSHOT};
+let drawErr = false;
+function catOf(name){
+  for(const [re,label,key] of CATS) if(re.test(name)) return {label, key};
+  return {label:name, key:name};
+}
+function drawGroups(){
+  const since = iso(addMonths(D(todayISO()), -12));
+  const g = new Map();
+  for(const r of draws.rows){
+    if(r[0]<since) continue;
+    const c = catOf(r[1]);
+    if(!g.has(c.key)) g.set(c.key, {...c, list:[]});
+    g.get(c.key).list.push(r);
+  }
+  for(const v of g.values()) v.list.sort((a,b) => b[0].localeCompare(a[0]));
+  return [...g.values()].sort((a,b) => b.list[0][0].localeCompare(a.list[0][0]));
+}
+function recentLine(key){ const g = drawGroups().find(x => x.key===key); return g ? g.list[0] : null; }
+async function loadDraws(force){
+  const cached = store.get(DRAWS_KEY);
+  if(cached && Array.isArray(cached.rows) && cached.rows.length) draws = cached;
+  if(!force && cached && Date.now()-cached.at < 6*3600e3){ render(); return; }
+  drawErr = false;
+  try{
+    const res = await fetch(DRAWS_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error(res.status);
+    const j = await res.json();
+    const cut = iso(addMonths(D(todayISO()), -24));
+    const rows = (j.rounds || []).map(x => [x.drawDate, x.drawName, +x.drawCRS, +String(x.drawSize).replace(/,/g,'')]).filter(r => D(r[0]) && r[2]>0 && r[0]>=cut);
+    if(rows.length){ draws = {src:'live', at:Date.now(), rows}; store.set(DRAWS_KEY, draws); }
+  }catch(e){ drawErr = true; }
+  render();
+}
+
+/* ================= 渲染 ================= */
+const FEAS = {easy:['easy','✅ 可控'], time:['time','⏳ 等时间'], mid:['mid','🟡 看机会'], hard:['hard','🔺 难']};
+function sugHTML(list){
+  if(!list.length) return '<li class="empty">这一项已经拿满，或者还缺信息。</li>';
+  return list.map(x => `<li class="${x.star ? 'star' : ''}"><span class="gain">${signed(x.gain)}</span><span class="t">${esc(x.title)}</span>`
+    + (x.detail ? `<span class="d">${esc(x.detail)}</span>` : '')
+    + `<span class="tags">${x.star ? '<span class="badge star">⭐ 优先</span>' : ''}<span class="badge ${FEAS[x.feas][0]}">${FEAS[x.feas][1]}</span>${x.special ? '<span class="badge">🎯 关键路径</span>' : ''}</span></li>`).join('');
+}
+function row(name, pts, max, note, cls=''){
+  return `<tr class="${cls}"><th>${esc(name)}${note ? ` <span class="dim">${esc(note)}</span>` : ''}</th><td class="n">${pts}</td><td class="mx">${max!=null ? '/ '+max : ''}</td></tr>`;
+}
+const sec = t => `<tr class="sec"><th colspan="3">${esc(t)}</th></tr>`;
+
+function renderCRS(p, r, other){
+  const sp = p.sp;
+  $('#crsTotal').innerHTML = `${r.total}<small>分</small>`;
+  const t = todayISO();
+  $('#crsMeta').innerHTML = `${r.rule==='new' ? '按 11/3 新规' : '按旧规（11/2 前）'} · ${p.evalISO===t ? '今天' : '按 '+p.evalISO+' 算'}`
+    + (p.evalISO!==t ? ` <button type="button" class="link" id="btnToday">改回今天</button>` : '')
+    + (other.total!==r.total ? `<br>${other.rule==='new' ? '11/3 新规下' : '旧规下'}：${other.total} 分` : '');
+  const chips = [];
+  const cec = recentLine('cec');
+  if(cec){ const diff = r.total - cec[2]; chips.push(`<span class="chip ${diff>=0 ? 'good' : 'bad'}">CEC 最近一次线 ${cec[2]}（${cec[0].slice(5)}）· 差 ${signed(diff)}</span>`); }
+  const c = cecCheck(p);
+  chips.push(`<span class="chip ${c.ok ? 'good' : ''}">${c.ok ? '✓ 符合 CEC 基本条件' : `CEC：${!c.expOk ? '加拿大经验还不满 1 年' : ''}${!c.expOk && !c.langOk ? '，' : ''}${!c.langOk ? `语言要四项 ≥ CLB ${c.need}` : ''}`}</span>`);
+  $('#crsChips').innerHTML = chips.join('');
+
+  let h = sec('A 核心（人力资本）')
+    + row('年龄', r.age, sp?100:110, p.age!=null ? `${p.age} 岁` : '未填出生日期')
+    + row('学历', r.edu, sp?140:150, p.eduSet ? EDU[p.edu][4] : '未选')
+    + row('英语', r.l1, sp?128:136, p.en.some(c => c!=null) ? p.en.map((c,j) => SKN[SK[j]]+(c ?? '-')).join(' ') : '未填')
+    + row('法语（第二语言）', r.l2, sp?22:24);
+  if(!r.lmi) h += row('加拿大工作经验', r.cwePts, sp?70:80, `${p.cwe} 年`);
+  if(r.lmi){
+    h += sec('劳动力市场融入（11/3 新规，两条路取高）')
+      + row('经验路线', r.lmi.exp, sp?140:150, `年限 ${r.lmi.work} ＋ 高薪职业 ${r.lmi.hw}`, r.lmi.via==='exp' ? 'sum' : '')
+      + row('job offer 路线', r.lmi.offer, 100, p.offer ? (p.hwLevel ? `高薪 ×${p.hwLevel}` : '职业不在高薪名单 → 0') : '没有 offer', r.lmi.via==='offer' ? 'sum' : '');
+  }
+  if(sp) h += sec('B 配偶') + row('配偶学历', r.spEdu, 10) + row('配偶语言', r.spLang, 20) + row('配偶加拿大经验', r.spCwe, 10);
+  h += sec('C 可转换技能（每组最多 50，总共最多 100）')
+    + row('学历 × 语言', r.eduL, null) + row('学历 × 加拿大经验', r.eduW, null)
+    + row('海外经验 × 语言', r.forL, null) + row('海外经验 × 加拿大经验', r.forW, null);
+  if(p.cert) h += row('技工证书 × 语言', r.cert, 50);
+  h += row('小计', r.trans, 100, r.eduL+r.eduW>50 || r.forL+r.forW>50 ? '已按每组 50 封顶' : '', 'sum')
+    + sec('D 附加分')
+    + row('省提名', r.pnp, 600) + row('加拿大学历', r.caEdu, 30) + row('法语加分', r.french, 50) + row('兄弟姐妹', r.sibling, 15)
+    + `<tr class="tot"><th>合计</th><td class="n">${r.total}</td><td class="mx"></td></tr>`;
+  $('#crsTable').innerHTML = h;
+  const notes = [...p.notes];
+  if(!p.eduSet) notes.unshift('先在「② 基本情况」里选最高学历，分数才准。');
+  if(p.age==null) notes.unshift('填出生日期才有年龄分（最多 110）。');
+  $('#crsNotes').innerHTML = notes.map(n => `<p>${esc(n)}</p>`).join('');
+}
+
+function renderOINP(p, o){
+  $('#oinpTotal').innerHTML = `${o.total}<small>/ ${OINP.max}</small>`;
+  const low = p.teer!=null && p.teer>=4;
+  $('#oinpMeta').textContent = `Ontario Workforce Priority · ${p.teer==null ? '先填 NOC' : low ? 'TEER 4–5 通道' : 'TEER 0–3 通道'} · ${p.evalISO===todayISO() ? '今天' : '按 '+p.evalISO}`;
+  const cut = num(p.s.oCut);
+  $('#oinpChips').innerHTML = cut ? `<span class="chip ${o.total>=cut ? 'good' : 'bad'}">你填的参考线 ${cut} · 差 ${signed(o.total-cut)}</span>` : '';
+  $('#oinpElig').innerHTML = oinpElig(p, o).map(x => `<li><span class="${x.ok ? 'ok' : 'no'}">${x.ok ? '✓' : '✗'}</span><span>${esc(x.t)}</span></li>`).join('');
+  $('#oinpTable').innerHTML = o.rows.map(r => row(r.name, r.pts, r.max, r.note)).join('')
+    + `<tr class="tot"><th>合计</th><td class="n">${o.total}</td><td class="mx">/ ${OINP.max}</td></tr>`;
+}
+
+function renderDraws(p, r){
+  const groups = drawGroups();
+  const c = cecCheck(p);
+  const elig = {cec: c.ok ? '✓' : '还不符合', pnp: p.pnp ? '✓' : '要先拿提名', french: allGE(p.fr,7) ? '✓' : '要 NCLC 7'};
+  const src = draws.src==='live'
+    ? `数据：IRCC 官网（${new Date(draws.at).toLocaleString('zh-CN', {hour12:false})} 读取）`
+    : `数据：内置快照（截至 ${SNAPSHOT_DATE}）${drawErr ? ' —— 这次没连上官网' : ''}`;
+  $('#drawStatus').textContent = `${src} · 你的 CRS：${r.total}（${r.rule==='new' ? '新规' : '旧规'}）`;
+  if(!groups.length){ $('#drawTable').innerHTML = '<tr><td class="empty">没有最近 12 个月的抽签数据。</td></tr>'; return; }
+  $('#drawTable').innerHTML = `<tr><th>类别</th><th class="n">最近</th><th class="n">分数线</th><th class="n">差</th></tr>`
+    + groups.map(g => {
+      const last = g.list[0], six = g.list.slice(0,6).map(x => x[2]);
+      const diff = r.total - last[2], known = g.key in elig;
+      return `<tr><th>${esc(g.label)}<div class="dim">近 ${six.length} 次 ${Math.min(...six)}–${Math.max(...six)} · 最近一次 ${money(last[3])} 人 · ${esc(elig[g.key] || '看职业')}</div></th>`
+        + `<td class="n">${esc(last[0].slice(2))}</td><td class="n"><b>${last[2]}</b></td><td class="n ${known ? (diff>=0 ? 'up' : 'down') : 'dim'}">${signed(diff)}</td></tr>`;
+    }).join('');
+}
+
+function projection(s){
+  const t0 = D(todayISO()), p0 = build(s, iso(t0));
+  const horizon = p0.pEnd && p0.pEnd>t0 ? addYears(p0.pEnd, 1) : addYears(t0, 5);
+  const pts = [{d:t0, label:'今天'}];
+  if(iso(t0)<NEW_RULES_DATE) pts.push({d:D(NEW_RULES_DATE), label:'CRS 新规生效'});
+  if(p0.wStart && !p0.cweManual && p0.skilled) for(let n=1; n<=5; n++){
+    const d = p0.yearDate(n);
+    if(d>t0 && d<=horizon && (!p0.pEnd || d<=p0.pEnd)) pts.push({d, label:`加拿大经验满 ${n} 年`});
+  }
+  if(D(s.dob)){
+    const dob = D(s.dob);
+    for(let a = Math.max(ageAt(dob,t0)+1, 30); a<=45; a++){
+      const d = addYears(dob, a);
+      if(d>horizon) break;
+      pts.push({d, label:`${a} 岁生日`});
+    }
+  }
+  if(p0.pEnd && p0.pEnd>t0) pts.push({d:p0.pEnd, label:'工签到期'});
+  const seen = new Map();
+  for(const x of pts.sort((a,b) => a.d-b.d)){ const k = iso(x.d); seen.has(k) ? seen.get(k).label += ' · '+x.label : seen.set(k, {...x}); }
+  return [...seen.values()].map(x => { const p = build(s, iso(x.d)); const r = crs(p, ruleFor(p)); return {...x, age:p.age, cwe:p.cwe, total:r.total, rule:r.rule}; });
+}
+function renderProj(s){
+  const rows = projection(s);
+  const cec = recentLine('cec');
+  const max = Math.max(...rows.map(r => r.total), cec ? cec[2] : 0, 1);
+  let prev = null;
+  $('#projTable').innerHTML = `<tr><th>日期</th><th>发生什么</th><th class="n">CRS</th><th></th></tr>` + rows.map(r => {
+    const delta = prev==null ? '' : r.total-prev; prev = r.total;
+    return `<tr><td class="n">${iso(r.d)}</td><td>${esc(r.label)}<div class="dim">${r.age!=null ? r.age+' 岁 · ' : ''}经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'}</div></td>`
+      + `<td class="n"><b>${r.total}</b>${delta!=='' && delta!==0 ? ` <span class="${delta>0 ? 'up' : 'down'}">${signed(delta)}</span>` : ''}</td>`
+      + `<td class="bar-cell"><div class="pb" style="width:${Math.round(r.total/max*100)}%"></div></td></tr>`;
+  }).join('');
+  const best = rows.reduce((a,b) => b.total>a.total ? b : a, rows[0]);
+  $('#projNote').innerHTML = `<p>这段时间里最高：<b>${best.total}</b>（${iso(best.d)}，${esc(best.label)}）。${cec ? `参考：CEC 最近一次线 ${cec[2]}（新规后大概率上涨）。` : ''}</p>`
+    + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」这些节点。</p>');
+}
+
+function renderTimeline(s){
+  const t0 = D(todayISO()), p = build(s, iso(t0)), ev = [];
+  const push = (d, text, cls='') => { if(d) ev.push({d, text, cls}); };
+  push(p.grad, '毕业');
+  push(p.pStart, '工签生效');
+  push(p.wStart, '开始全职技术工作（开始累计加拿大经验）');
+  if(p.wStart && p.skilled){
+    const m = s.oRecentGrad ? 3 : 6;
+    push(addMonths(p.wStart, m), `在岗满 ${m} 个月：有安省 offer 的话，OINP 的经验条件就够了`);
+    for(let n=1; n<=3; n++){
+      const d = p.yearDate(n);
+      if(p.pEnd && d>p.pEnd){ ev.push({d:p.pEnd, text:`按现在的工时，工签到期前满不了 ${n} 年经验`, cls:'warn'}); break; }
+      const pp = build(s, iso(d)), r = crs(pp, ruleFor(pp));
+      push(d, `加拿大经验满 ${n} 年${n===1 ? '：可以申请 CEC（语言也要够）' : ''} → CRS ${r.total}`);
+    }
+  }
+  if(iso(t0)<=NEW_RULES_DATE) push(D(NEW_RULES_DATE), 'CRS 新规生效：高薪职业经验 / offer 加分，抽签暂停约 2 周重算');
+  if(p.grad && s.oRecentGrad) push(addYears(p.grad,3), 'OINP「安省应届生」优惠到期（在岗 3 个月、免语言考试）');
+  if(D(s.testDate)) push(addYears(D(s.testDate),2), '语言成绩过期（递交 PR 时要在 2 年内）', 'warn');
+  if(D(s.dob)){
+    const dob = D(s.dob), from = p.grad || p.pStart || t0, to = p.pEnd ? addYears(p.pEnd,1) : addYears(t0,4);
+    for(let a=30; a<=45; a++){
+      const d = addYears(dob, a);
+      if(d<from) continue;
+      if(d>to) break;
+      const pts = x => (p.sp ? AGE_SPOUSE : AGE_SINGLE)[x] ?? (x>=20 && x<=29 ? (p.sp ? 100 : 110) : 0);
+      push(d, `${a} 岁生日：年龄分 ${pts(a-1)} → ${pts(a)}`);
+    }
+  }
+  if(p.pEnd){
+    push(addMonths(p.pEnd,-8), '经验估算：最好在这之前拿到 ITA（递交 60 天＋审理约 6 个月）', 'warn');
+    push(p.pEnd, '工签到期' + (p.pEndAuto ? '（按年限推算，以工签上的日期为准）' : ''), 'warn');
+  }
+  ev.sort((a,b) => a.d-b.d);
+  const nextI = ev.findIndex(e => e.d>=t0);
+  $('#events').innerHTML = ev.length
+    ? ev.map((e,i) => `<li class="${e.d<t0 ? 'past' : i===nextI ? 'next' : ''} ${e.cls}"><time>${iso(e.d)}</time><span>${esc(e.text)}</span><i>${countdown(e.d,t0)}</i></li>`).join('')
+    : '<li class="empty">填上面的日期，这里会排出你的关键时间点。</li>';
+  const box = $('#permit');
+  if(p.pStart && p.pEnd && p.pEnd>p.pStart){
+    const total = dayDiff(p.pStart, p.pEnd), used = Math.min(Math.max(dayDiff(p.pStart, t0), 0), total);
+    $('#permitFill').style.width = (used/total*100).toFixed(1)+'%';
+    $('#permitTxt').innerHTML = t0<p.pStart ? `工签 ${iso(p.pStart)} 生效`
+      : t0>p.pEnd ? `<span class="no">工签已于 ${iso(p.pEnd)} 到期</span>`
+      : `工签已用 <b>${Math.round(used/30.4375)}</b> 个月 · 还剩 <b>${Math.round((total-used)/30.4375)}</b> 个月（${iso(p.pEnd)} 到期${p.pEndAuto ? '，按年限推算' : ''}）`;
+    box.hidden = false;
+  } else box.hidden = true;
+}
+
+function renderIelts(p){
+  const isI = p.s.enTest==='ielts', T = TESTS.ielts;
+  let h = `<tr><th>CLB</th><th>听 L</th><th>读 R</th><th>写 W</th><th>说 S</th><th class="n">CRS 每项<br>单身 / 配偶随行</th><th class="n">OINP<br>（看最低项）</th></tr>`;
+  for(let c=10; c>=4; c--){
+    h += `<tr><th>${c}</th>` + SK.map((k,j) => `<td class="${p.en[j]===c || (c===10 && p.en[j]>10) ? 'me' : ''}">${T[k][10-c]}</td>`).join('')
+      + `<td class="n">${LANG1[c][0]} / ${LANG1[c][1]}</td><td class="n">${OINP.lang(c)}</td></tr>`;
+  }
+  h += `<tr><th>&lt;4</th>${SK.map((k,j) => `<td class="${p.en[j]!=null && p.en[j]<4 ? 'me' : ''}">&lt; ${T[k][6]}</td>`).join('')}<td class="n">0</td><td class="n">0</td></tr>`;
+  $('#ieltsTable').innerHTML = h + (isI ? '' : `<tr><td colspan="7" class="dim">你选的不是雅思，高亮按换算出的 CLB 显示。</td></tr>`);
+}
+
+function renderFields(p, crsSug, oinpSug){
+  const T = TESTS[p.s.enTest] || TESTS.ielts;
+  SK.forEach((k,j) => {
+    const el = $(`[data-k="en${k}"]`);
+    el.step = T.step; el.max = T.max; el.min = 0; el.placeholder = T.ph;
+    $('#clb'+k).textContent = p.en[j]==null ? '' : p.en[j]<4 ? 'CLB 4 以下' : `CLB ${p.en[j]}`;
+    const fe = $(`[data-k="fr${k}"]`), FT = TESTS[p.s.frTest];
+    if(FT){ fe.step = FT.step; fe.max = FT.max; fe.min = 0; fe.placeholder = FT.ph; }
+    $('#nclc'+k).textContent = p.fr[j]==null ? '' : p.fr[j]<4 ? 'NCLC 4 以下' : `NCLC ${p.fr[j]}`;
+  });
+  $('#frBox').hidden = p.s.frTest==='none';
+  $('#spouseCard').hidden = !p.sp;
+  $('#posManual').hidden = !!p.s.oPosAuto;
+
+  if(p.age!=null){
+    const r0 = crs(p,'new').age, r1 = crs({...p, age:p.age+1},'new').age;
+    $('#ageInfo').innerHTML = `${p.age} 岁 · 年龄分 <b>${r0}</b>` + (r1<r0 ? ` · 下个生日后 ${r1}` : '');
+  } else $('#ageInfo').textContent = '';
+
+  const raw = String(p.s.noc||'').trim();
+  $('#nocInfo').innerHTML = !raw ? '填了才能算高薪职业分和 OINP 的职业分'
+    : !p.noc ? '要 5 位数字'
+    : `TEER ${p.teer} · 大类 ${p.broad}${p.hwRow ? ` · <b>${esc(p.hwRow[1])}</b> · 高薪 ×${p.hwLevel}：经验满 1 年 +${HW_EXP[p.hwLevel]}，offer ${HW_OFFER[p.hwLevel]}` : ' · 不在高薪职业名单（新规的高薪分和 offer 分都没有，经验年限分照算）'}`
+      + (p.teer>=4 ? ' · <span class="no">TEER 4–5 不算 CRS 经验</span>' : '');
+
+  if(p.cweManual) $('#cweInfo').textContent = '手动指定';
+  else if(!p.wStart) $('#cweInfo').textContent = '在「① 时间线」填工作开始日后自动算';
+  else {
+    const nx = p.cwe<5 ? p.yearDate(p.cwe+1) : null;
+    $('#cweInfo').innerHTML = `已满 <b>${p.cwe}</b> 年（${p.days} 天，每周按 ${p.eff} 小时算）` + (nx ? ` · 满 ${p.cwe+1} 年：${iso(nx)}` : '');
+  }
+  $('#posInfo').textContent = p.s.oPosAuto ? (p.wStart ? `自动：在岗 ${p.posMonths} 个月${p.hpw<30 ? '（每周不到 30 小时，不算全职）' : ''}` : '填了工作开始日才会自动算') : '';
+
+  // 区块标签：优先显示 ⭐ 那条，再补一句「最多 +N」；难的不上标签（法语除外，明说难）
+  const badge = (key, list, txt, showHard=false) => {
+    const el = $(`[data-badge="${key}"]`);
+    if(!el) return;
+    const g = list.filter(x => x.grp===key).sort((a,b) => b.gain-a.gain);
+    const star = g.find(x => x.star), top = g[0];
+    const x = star || (top && (showHard || top.feas!=='hard') ? top : null);
+    el.className = 'badge' + (x ? (star ? ' star' : ' '+FEAS[x.feas][0]) : '');
+    el.textContent = x ? txt(x, top) : '';
+  };
+  const std = pre => (x, top) => `${x.star ? '⭐ ' : ''}${pre}${signed(x.gain)}${x.star && top.gain>x.gain && top.feas!=='hard' ? ` · 最多 ${signed(top.gain)}` : ''}`;
+  badge('lang', crsSug, std(''));
+  badge('work', crsSug, x => `${x.star ? '⭐ ' : ''}⏳ 满 ${p.cwe+1} 年 ${signed(x.gain)}`);
+  badge('offer', crsSug, std(''));
+  badge('edu', crsSug, std('学历 '));
+  badge('fr', crsSug, x => `🔺 ${signed(x.gain)} 但难`, true);
+  badge('pnp', crsSug, () => '提名 +600', true);
+  badge('spouse', crsSug, std(''));
+  const os = oinpSug.find(x => x.star) || oinpSug.find(x => ['easy','time'].includes(x.feas));
+  const ob = $('[data-badge="oinp"]');
+  ob.className = 'badge' + (os ? (os.star ? ' star' : ' '+FEAS[os.feas][0]) : '');
+  ob.textContent = os ? `${os.star ? '⭐ ' : ''}${os.title} ${signed(os.gain)}` : '';
+}
+
+let tab = store.get(TAB_KEY) || 'crs';
+function showTab(t){
+  tab = $(`[data-panel="${t}"]`) ? t : 'crs';
+  $$('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab===tab)));
+  $$('[data-panel]').forEach(el => el.hidden = el.dataset.panel!==tab);
+}
+
+function render(){
+  const s = readState(), p = build(s);
+  const rule = ruleFor(p), r = crs(p, rule), other = crs(p, rule==='new' ? 'old' : 'new');
+  const o = oinp(p), cs = suggestCRS(p), os = suggestOINP(p);
+  renderFields(p, cs, os);
+  renderCRS(p, r, other);
+  $('#crsSug').innerHTML = sugHTML(cs);
+  renderOINP(p, o);
+  $('#oinpSug').innerHTML = sugHTML(os);
+  renderDraws(p, r);
+  renderTimeline(s);
+  renderProj(s);
+  renderIelts(p);
+  $('#mbCrs').textContent = r.total;
+  $('#mbOinp').textContent = `${o.total}/${OINP.max}`;
+}
+
+/* ================= 保存 / 备份 ================= */
+let saveTimer = null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const ok = store.set(STORE_KEY, {v:1, savedAt:Date.now(), data:readState()});
+    const el = $('#saveState');
+    el.className = 'save' + (ok ? '' : ' warn');
+    el.textContent = ok ? `已自动保存 ${new Date().toLocaleTimeString('zh-CN', {hour12:false})}` : '⚠ 浏览器不让存，记得导出备份';
+  }, 250);
+}
+function onChange(){ render(); save(); }
+
+function init(){
+  $('#checkedOn').textContent = CHECKED_ON;
+  $('#nocList').innerHTML = HIGH_WAGE.map(r => `<option value="${r[0]}">${esc(r[1])} · 高薪 ×${r[2]}</option>`).join('');
+  const clbOpts = '<option value="">—</option><option value="0">≤4</option>' + [5,6,7,8,9,10].map(c => `<option value="${c}">${c}${c===10 ? '+' : ''}</option>`).join('');
+  ['spL','spR','spW','spS'].forEach(k => { $(`[data-k="${k}"]`).innerHTML = clbOpts; });
+
+  const saved = store.get(STORE_KEY);
+  if(saved && saved.data){
+    writeState(saved.data);
+    $('#saveState').textContent = `已读取上次填写（${new Date(saved.savedAt).toLocaleString('zh-CN', {hour12:false})}）`;
+  }
+  document.addEventListener('input', e => { if(e.target.matches('[data-k]')) onChange(); });
+  document.addEventListener('change', e => { if(e.target.matches('[data-k]')) onChange(); });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if(!b) return;
+    if(b.dataset.tab){ showTab(b.dataset.tab); store.set(TAB_KEY, tab); }
+    if(b.id==='btnToday'){ $('[data-k="evalDate"]').value = ''; onChange(); }
+    if(b.id==='btnDraws'){ $('#drawStatus').textContent = '正在从 IRCC 官网读取…'; loadDraws(true); }
+  });
+  $('#btnExport').onclick = () => {
+    const blob = new Blob([JSON.stringify({app:'canada-pr-calculator', v:1, exportedAt:new Date().toISOString(), data:readState()}, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `pr-calculator-${todayISO()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+  $('#fileImport').onchange = async e => {
+    const f = e.target.files[0];
+    if(!f) return;
+    try{
+      const j = JSON.parse(await f.text());
+      writeState(j.data || j);
+      onChange();
+      $('#saveState').textContent = `已从 ${f.name} 导入`;
+    }catch{ alert('这个文件读不了：不是本页导出的备份？'); }
+    e.target.value = '';
+  };
+  $('#btnReset').onclick = () => {
+    if(!confirm('清空所有填写的内容？建议先「导出备份」。')) return;
+    store.del(STORE_KEY);
+    location.reload();
+  };
+  showTab(tab);
+  render();
+  loadDraws(false);
+}
+window.PRCalc = {build, crs, oinp, ruleFor, suggestCRS, suggestOINP, readState};
+init();
+</script>
+</body>
+</html>
