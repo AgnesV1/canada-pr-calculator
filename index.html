@@ -101,6 +101,8 @@ tr.tot td,tr.tot th{font-weight:700;font-size:15px;border-top:2px solid var(--in
 .dim{color:var(--muted);font-size:12px}
 .note{font-size:12px;color:var(--muted);margin:10px 0 0}
 .note p{margin:4px 0}
+details.diff{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+details.diff summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:13px}
 ul.elig{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:5px;font-size:13px}
 ul.elig li{display:grid;grid-template-columns:20px 1fr;gap:6px}
 .ok{color:var(--good)}.no{color:var(--bad)}
@@ -219,8 +221,8 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
             </select></label>
           <label class="f"><span>CRS 规则</span>
             <select data-k="rules">
-              <option value="auto">自动：按算分日期（11/3 起用新规）</option>
-              <option value="new">一律按 11/3 新规</option>
+              <option value="new">按 11/3 新规（推荐）</option>
+              <option value="auto">按算分日期：11/2 以前用旧规</option>
               <option value="old">一律按旧规</option>
             </select></label>
         </div>
@@ -378,6 +380,14 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <h3>分项</h3>
         <table id="crsTable"></table>
         <div class="note" id="crsNotes"></div>
+        <details class="note diff">
+          <summary>和别的计算器对不上？</summary>
+          <p>· 本页默认按 11/3 新规。还没更新的计算器按旧规算；有的还在给 job offer 加 50 或 200 分，这个 2025-03-25 就取消了。</p>
+          <p>· 新规里「加拿大经验（年限分＋高薪分）」和「job offer」只能二选一、取高的，不能相加；年限分也只算这一次，核心分里不再重复算。</p>
+          <p>· 加拿大经验要满 1 年（1,560 小时）才有分，高薪分也要在名单里的职业上满 12 个月。本页按你填的开始日期自动算；别的计算器常让你自己选「1 年」，没满就选会多出 90 分左右。</p>
+          <p>· job offer 分只给高薪名单里的职业，不在名单里就是 0。</p>
+          <p>· 学历选「本科」还是「两个及以上学历」、加拿大学历算 1–2 年还是 3 年以上，会差 8–20 分；年龄按出生日期算到算分那天。</p>
+        </details>
       </div>
 
       <div class="panel" data-panel="oinp" hidden>
@@ -1138,7 +1148,7 @@ function renderCRS(p, r, other){
   const t = todayISO();
   $('#crsMeta').innerHTML = `${r.rule==='new' ? '按 11/3 新规' : '按旧规（11/2 前）'} · ${p.evalISO===t ? '今天' : '按 '+p.evalISO+' 算'}`
     + (p.evalISO!==t ? ` <button type="button" class="link" id="btnToday">改回今天</button>` : '')
-    + (other.total!==r.total ? `<br>${other.rule==='new' ? '11/3 新规下' : '旧规下'}：${other.total} 分` : '');
+    + (other.total!==r.total && (r.rule==='old' || t<NEW_RULES_DATE) ? `<br>${other.rule==='new' ? '11/3 新规下' : '11/2 以前的抽签还按旧规'}：${other.total} 分` : '');
   const chips = [];
   const cec = recentLine('cec');
   if(cec){ const diff = r.total - cec[2]; chips.push(`<span class="chip ${diff>=0 ? 'good' : 'bad'}">CEC 最近一次线 ${cec[2]}（${cec[0].slice(5)}）· 差 ${signed(diff)}</span>`); }
@@ -1386,7 +1396,7 @@ let saveTimer = null;
 function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    const ok = store.set(STORE_KEY, {v:1, savedAt:Date.now(), data:readState()});
+    const ok = store.set(STORE_KEY, {v:2, savedAt:Date.now(), data:readState()});
     const el = $('#saveState');
     el.className = 'save' + (ok ? '' : ' warn');
     el.textContent = ok ? `已自动保存 ${new Date().toLocaleTimeString('zh-CN', {hour12:false})}` : '⚠ 浏览器不让存，记得导出备份';
@@ -1402,6 +1412,7 @@ function init(){
 
   const saved = store.get(STORE_KEY);
   if(saved && saved.data){
+    if((saved.v || 1)<2 && saved.data.rules==='auto') saved.data.rules = 'new'; // v1 的默认值是 auto，v2 起默认按新规
     writeState(saved.data);
     $('#saveState').textContent = `已读取上次填写（${new Date(saved.savedAt).toLocaleString('zh-CN', {hour12:false})}）`;
   }
