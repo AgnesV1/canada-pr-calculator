@@ -46,12 +46,16 @@ h2{font-size:16px;margin:0}
 h2 small,h3 small{font-weight:400;color:var(--muted);font-size:12px}
 h3{font-size:14px;margin:18px 0 8px}
 .hint{color:var(--muted);font-size:12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 14px}
+/* 列宽跟着字号走：字调大了每列自动变宽、变少 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,13em),1fr));gap:10px 14px}
 .f{display:flex;flex-direction:column;gap:4px;font-size:13px;min-width:0}
 .f>span{color:var(--muted)}
-.f em{font-style:normal;font-size:11px;opacity:.85}
+.f em{display:inline-block;font-style:normal;font-size:11px;opacity:.85}
 .f.wide{grid-column:1/-1}
 input,select{font:inherit;font-size:15px;padding:7px 10px;min-height:38px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%;min-width:0}
+select{-webkit-appearance:none;appearance:none;padding-right:30px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%238a94a6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;background-size:12px 8px}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
+@supports (-webkit-touch-callout:none){input[type=date]{-webkit-appearance:none;appearance:none}} /* iPhone 的日期框按页面样式画 */
 input:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:var(--accent);flex:none}
 .chk{display:flex;align-items:flex-start;gap:8px;font-size:14px;cursor:pointer;line-height:1.4}
@@ -69,8 +73,9 @@ input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:v
 .badge.mid{background:var(--mid-soft);color:var(--mid)}
 .badge.easy{background:var(--good-soft);color:var(--good)}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:0 16px;align-items:start}
-.results{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;margin:12px 0;padding:0;scrollbar-width:thin;scroll-margin-top:56px}
-.tabs{display:flex;gap:4px;padding:10px 10px 0;position:sticky;top:0;background:var(--card);z-index:2;border-bottom:1px solid var(--line)}
+.results{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;margin:12px 0;padding:0;scrollbar-width:thin;scroll-margin-top:calc(var(--mb,44px) + 12px)}
+.tabs{display:flex;gap:4px;padding:10px 10px 0;position:sticky;top:0;background:var(--card);z-index:2;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
 .tabs button{border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:8px 12px;font-weight:600;border-bottom:2px solid transparent}
 .tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
 .panel{padding:14px 16px 18px}
@@ -143,18 +148,21 @@ ul.tips{margin:10px 0 0;padding-left:18px;font-size:13px}
 ul.tips li{margin:3px 0}
 .src{font-size:13px;columns:2;column-gap:28px}
 .src li{margin:3px 0;break-inside:avoid}
-.minibar{display:none;position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:8px 16px;font-size:14px;gap:14px;align-items:center;box-shadow:var(--shadow)}
+.minibar{display:none;position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);padding:5px 16px;font-size:14px;gap:2px 14px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow)}
+.minibar.tall{position:static} /* 字太大换了行就不吸顶，免得占半屏 */
+.minibar>span{white-space:nowrap}
 .minibar b{font-size:18px;font-variant-numeric:tabular-nums}
-.minibar a{margin-left:auto;font-size:13px;padding:8px 0 8px 14px}
+.minibar a{margin-left:auto;font-size:13px;padding:7px 0 7px 14px;white-space:nowrap}
 [hidden]{display:none!important}
 footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 @media (max-width:980px){
   .cols{grid-template-columns:1fr}
   .results{position:static;max-height:none;overflow:visible}
-  .tabs{top:44px}
+  .tabs{top:var(--mb,44px)} /* --mb = 顶部那条的实际高度，字调大换行了也不会挡住标签 */
   .minibar{display:flex}
   .src{columns:1}
-  input,select{font-size:16px} /* 小于 16px 时 iPhone 点输入框会自动放大页面 */
+  input,select{font-size:16px;min-height:42px;padding:8px 12px} /* 小于 16px 时 iPhone 点输入框会自动放大页面 */
+  select{padding-right:32px}
 }
 @media (max-width:520px){
   header.top{padding:14px 0 2px}
@@ -162,16 +170,14 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .sub{font-size:12px}
   .sub .sm-hide{display:none}
   .actions{width:100%;gap:6px}
-  .actions button,.actions .btn{flex:1;justify-content:center;min-height:38px}
+  .actions button,.actions .btn{flex:1 1 auto;justify-content:center;min-height:38px;white-space:nowrap}
   .actions .save{order:3;width:100%}
   .card{padding:14px;margin:10px 0}
-  /* 两列表单：每个字段占 3 行（标题 / 输入框 / 说明）并共用行高，同一行的输入框对齐 */
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:0}
-  .grid>.f{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:4px;margin-bottom:12px}
+  .grid{grid-template-columns:1fr;row-gap:12px} /* 手机上一行一个，输入框占满宽，字号调大也放得下 */
   .big{font-size:40px}
   .panel{padding:12px 12px 16px}
   .tabs{padding:6px 6px 0}
-  .tabs button{flex:1;padding:9px 4px}
+  .tabs button{flex:1 0 auto;padding:9px 6px;white-space:nowrap}
   .events li{grid-template-columns:1fr auto;grid-template-areas:"d c" "t t";gap:1px 8px}
   .events time{grid-area:d;font-size:12px}
   .events i{grid-area:c}
@@ -188,10 +194,15 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .ielts .sm{display:inline}
   .src li{margin:7px 0}
 }
+@media (max-width:360px){
+  .minibar{padding:5px 12px;gap:2px 10px;font-size:13px}
+  .minibar b{font-size:16px}
+  .minibar .mb-t{display:none}
+}
 </style>
 </head>
 <body>
-<div class="minibar" id="minibar"><span>CRS <b id="mbCrs">—</b></span><span>OINP <b id="mbOinp">—</b></span><a href="#results">看分析 ↓</a></div>
+<div class="minibar" id="minibar"><span>CRS <b id="mbCrs">—</b></span><span>OINP <b id="mbOinp">—</b></span><a href="#results" aria-label="看分析"><span class="mb-t">看分析 </span>↓</a></div>
 
 <header class="top">
   <div class="wrap">
@@ -1413,6 +1424,16 @@ function renderFields(p, crsSug, oinpSug){
   ob.textContent = os ? `${os.star ? '⭐ ' : ''}${os.title} ${signed(os.gain)}` : '';
 }
 
+// 顶部那条在手机上可能因为字大换行，量出实际高度给下面的标签栏让位
+function syncMinibar(){
+  const mb = $('#minibar');
+  mb.classList.remove('tall');
+  const tall = mb.offsetHeight > 64;
+  mb.classList.toggle('tall', tall);
+  document.documentElement.style.setProperty('--mb', (tall ? 0 : mb.offsetHeight) + 'px');
+}
+addEventListener('resize', syncMinibar);
+
 let tab = store.get(TAB_KEY) || 'crs';
 function showTab(t){
   tab = $(`[data-panel="${t}"]`) ? t : 'crs';
@@ -1435,6 +1456,7 @@ function render(){
   renderIelts(p);
   $('#mbCrs').textContent = r.total;
   $('#mbOinp').textContent = `${o.total}/${OINP.max}`;
+  syncMinibar();
 }
 
 /* ================= 保存 / 备份 ================= */
