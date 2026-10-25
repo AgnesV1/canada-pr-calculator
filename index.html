@@ -992,19 +992,23 @@ function writeState(s){
 }
 
 // 按年薪估以后每年的报税单：第一年按入职日折算，工签到期后不再算；第二年 month 月底拿到
-function estimateNoas(wStart, pEnd, salary, month){
-  if(!wStart || !(salary>0)) return [];
+// raise = {amount, from}：从 from 那天起年薪变成 amount（推算页「收入」滑块用）
+function estimateNoas(wStart, pEnd, salary, month, raise){
+  const base = salary>0 ? salary : 0, up = raise && raise.amount>0 ? raise : null;
+  if(!wStart || !(base>0 || up)) return [];
   const out = [], y0 = wStart.getUTCFullYear();
   for(let y=y0; y<=y0+8; y++){
     const from = new Date(Date.UTC(y,0,1)), to = new Date(Date.UTC(y+1,0,1));
-    const a = wStart>from ? wStart : from, b = pEnd && pEnd<to ? pEnd : to;
+    const a = wStart>from ? wStart : from, b = pEnd && pEnd<to ? pEnd : to; // 工签到期后没有收入
     if(b<=a) break;
-    out.push({year:y, income:Math.round(salary*dayDiff(a,b)/dayDiff(from,to)/100)*100, date:new Date(Date.UTC(y+1, month, 0))});
+    const c = !up ? b : up.from<a ? a : up.from>b ? b : up.from;
+    const income = (base*dayDiff(a,c) + (up ? up.amount*dayDiff(c,b) : 0)) / dayDiff(from,to);
+    out.push({year:y, income:Math.round(income/100)*100, date:new Date(Date.UTC(y+1, month, 0))});
   }
   return out;
 }
 
-function build(s, at){
+function build(s, at, ov={}){
   const today = todayISO();
   const evalISO = at || s.evalDate || today;
   const d = D(evalISO) || D(today);
@@ -1044,7 +1048,7 @@ function build(s, at){
   if(status==='auto') status = (pEnd && d>pEnd) ? 'none' : 'wp';
 
   // OINP 收入：手上已有的报税单，和按年薪估的、到算分那天已经拿到（近 5 年）的报税单，取高
-  const noas = estimateNoas(wStart, pEnd, num(s.oSalary), +s.oNoaMonth || 3);
+  const noas = estimateNoas(wStart, pEnd, num(s.oSalary), +s.oNoaMonth || 3, ov.raise);
   const earnBase = num(s.oEarn) || 0;
   const earnEst = Math.max(0, ...noas.filter(n => n.date<=d && n.date>addYears(d,-5)).map(n => n.income));
 
@@ -1141,7 +1145,7 @@ function oinpElig(p, o){
     const need = p.recentGrad ? 3 : 6;
     const ok = p.posMonths>=need || p.cwe>=2;
     let when = '';
-    if(!ok && p.wStart && p.s.oPosAuto) when = `，预计 ${iso(p.posDate(need))} 满`;
+    if(!ok && p.wStart && p.s.oPosAuto) when = p.pEnd && p.posDate(need)>p.pEnd ? '，工签到期前满不了' : `，预计 ${iso(p.posDate(need))} 满`;
     items.push({ok, t:`经验：在 offer 职位上连续全职 ≥ ${need} 个月${p.recentGrad ? '（安省应届生优惠）' : ''}，或同一 NOC 近 5 年累计 2 年 —— 现在 ${p.posMonths} 个月${when}`});
     const needC = isTrades(p.noc) ? 5 : 6;
     const langOk = p.recentGrad || (o.bestC!=null && o.bestC>=needC);
@@ -1196,17 +1200,18 @@ function suggestCRS(p){
   } else {
     add({grp:'lang', feas:'easy', title:'先考雅思普通类：四项 CLB 9', detail:'听 8 / 读 7 / 写 7 / 说 7', p:{...p, en:[9,9,9,9]}});
   }
+  // 加拿大经验：工签到期后不再累积，到期前满不了的就不算可行的提分
+  const inPermit = d => !d || !p.pEnd || d<=p.pEnd;
   if(p.cwe<5 && p.skilled){
     const n = p.cwe+1, dt = p.cweManual ? null : p.yearDate(n);
-    const late = dt && p.pEnd && dt>p.pEnd;
-    add({grp:'work', feas:'time', title:`加拿大工作经验满 ${n} 年`,
-      detail: dt ? (late ? `按现在的工时要到 ${iso(dt)}，晚于工签到期` : `按时间线预计 ${iso(dt)}`) + (p.hwLevel && p.s.cweInNoc && n===1 ? `；含高薪职业经验 +${HW_EXP[p.hwLevel]}` : '') : '时间到了就有',
+    if(inPermit(dt)) add({grp:'work', feas:'time', title:`加拿大工作经验满 ${n} 年`,
+      detail: (dt ? `按时间线预计 ${iso(dt)}` : '时间到了就有') + (p.hwLevel && p.s.cweInNoc && n===1 ? `；含高薪职业经验 +${HW_EXP[p.hwLevel]}` : ''),
       p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
   }
   if(p.cwe<4 && p.skilled){ // 更高目标：再多一年
     const n = p.cwe+2, dt = p.cweManual ? null : p.yearDate(n);
-    add({grp:'work', feas:'time', stretch:true, title:`加拿大工作经验满 ${n} 年`,
-      detail: dt ? (p.pEnd && dt>p.pEnd ? `要到 ${iso(dt)}，晚于工签到期` : `预计 ${iso(dt)}`) : '', p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
+    if(inPermit(dt)) add({grp:'work', feas:'time', stretch:true, title:`加拿大工作经验满 ${n} 年`,
+      detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
   }
   if(p.hwLevel && !p.offer){
     add({grp:'offer', feas:'mid', title:`拿到这个职业的 job offer（高薪 ×${p.hwLevel}）`, detail:`11/3 起 offer 值 ${HW_OFFER[p.hwLevel]} 分、不用 LMIA；和「加拿大经验」两条路取高的。现雇主出也算`, p:{...p, offer:true}});
@@ -1238,14 +1243,14 @@ function suggestOINP(p){
     add({grp:'lang', feas:'easy', title:'英语四项最低到 CLB 9', detail:needText(p, SK.filter((k,j) => p.en[j]<9), 9), p:{...p, en:p.en.map(c => Math.max(c,9))}});
     if(enMin<8) add({grp:'lang', feas:'easy', title:'英语四项最低到 CLB 8', detail:needText(p, SK.filter((k,j) => p.en[j]<8), 8), p:{...p, en:p.en.map(c => Math.max(c,8))}});
   }
+  // 在岗月数：工签到期后不再累积，到期前满不了的不算
+  const inPermit = d => !d || !p.pEnd || d<=p.pEnd;
   const next = [6,13,25].find(m => p.posMonths<m);
   if(next){
     const dt = (p.s.oPosAuto && p.wStart) ? p.posDate(next) : null;
-    add({grp:'work', feas:'time', title:`在 offer 职位上满 ${next===25 ? '24 个月以上' : next+' 个月'}`, detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, posMonths:next}});
-    if(next<25){ // 更高目标：最高一档
-      const dt2 = (p.s.oPosAuto && p.wStart) ? p.posDate(25) : null;
-      add({grp:'work', feas:'time', stretch:true, title:'在 offer 职位上满 24 个月以上', detail: dt2 ? `预计 ${iso(dt2)}` : '最高一档 18 分', p:{...p, posMonths:25}});
-    }
+    if(inPermit(dt)) add({grp:'work', feas:'time', title:`在 offer 职位上满 ${next===25 ? '24 个月以上' : next+' 个月'}`, detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, posMonths:next}});
+    const dt2 = (p.s.oPosAuto && p.wStart) ? p.posDate(25) : null;
+    if(next<25 && inPermit(dt2)) add({grp:'work', feas:'time', stretch:true, title:'在 offer 职位上满 24 个月以上', detail: dt2 ? `预计 ${iso(dt2)}` : '最高一档 18 分', p:{...p, posMonths:25}});
   }
   const nw = [20,25,30,35,40].find(x => (p.wage || 0)<x);
   if(nw) add({grp:'wage', feas:'mid', title:`时薪到 $${nw}`, detail:'按 offer 上写的时薪算', p:{...p, wage:nw}});
@@ -1258,8 +1263,11 @@ function suggestOINP(p){
   if(bestNoa && bestNoa!==nextNoa) add({grp:'earn', feas:'time', stretch:true, title:`等 ${bestNoa.year} 年完整一年的报税单（估 $${money(bestNoa.income)}）`, detail:`${iso(bestNoa.date)} 前后能拿到`, p:{...p, earn:bestNoa.income}});
   const top = Math.max(p.earn || 0, bestNoa ? bestNoa.income : 0);
   const ne = [30000,50000,70000,80000].find(x => top<x);
-  if(ne) add({grp:'earn', feas:'mid', stretch:p.noas.length>0, title:`单年收入到 $${money(ne)}`,
-    detail: top ? `比${bestNoa ? '估的' : '现在的'} $${money(top)} 再多 $${money(ne-top)}；看 CRA 报税单（NOA）` : '看 CRA 报税单（NOA）；当年收入第二年报完税才有', p:{...p, earn:ne}});
+  // 更高一档最早哪张报税单能有：就算从现在起年薪就是这么多，也要等完整一年后的报税单；工签到期前拿不到就不算
+  const firstNoa = ne && p.wStart ? estimateNoas(p.wStart, p.pEnd, num(p.s.oSalary), +p.s.oNoaMonth || 3, {amount:ne, from:p.d}).find(n => n.date>p.d && OINP.earn(n.income)>=OINP.earn(ne)) : null;
+  if(ne && (!p.wStart || firstNoa)) add({grp:'earn', feas:'mid', stretch:p.noas.length>0, title:`单年收入到 $${money(ne)}`,
+    detail: firstNoa ? `就算从现在起年薪就有 $${money(ne)}，最早也要等 ${iso(firstNoa.date)} 的报税单` : top ? `比现在的 $${money(top)} 再多 $${money(ne-top)}；看 CRA 报税单（NOA）` : '看 CRA 报税单（NOA）；当年收入第二年报完税才有',
+    p:{...p, earn:ne}});
   if(['toronto','gta'].includes(p.region)) add({grp:'region', feas:'hard', title:'offer 在 GTA 以外', detail:'东/中/西南安省 +10，北安省 +15', p:{...p, region:'east'}});
   if(!(minOf(p.fr)>=6)) add({grp:'fr', feas:'hard', title:'法语四项 CLB 6', detail:'「两门官方语言」 +5', p:{...p, fr:p.fr.map(c => Math.max(c ?? 0, 6))}});
   if(p.creds<2) add({grp:'edu', feas:'hard', title:'再拿一个加拿大学历', detail:'≥ 1 年全日制', p:{...p, creds:2}});
@@ -1403,8 +1411,9 @@ function milestones(s){
     if(!p0.pEnd || d<=p0.pEnd) add(d, `加拿大经验满 ${n} 年${n===1 ? '（可申请 CEC）' : ''}`, n===1 ? 'cec' : '');
   }
   if(p0.wStart && s.oPosAuto && p0.hpw>=30){
-    if(s.oRecentGrad) add(p0.posDate(3), '在岗满 3 个月（OINP 应届生经验够了）', 'oinp');
-    for(const m of [6,13,25]) add(p0.posDate(m), `在岗满 ${m===25 ? '24 个月以上' : m+' 个月'}`, m===6 && !s.oRecentGrad ? 'oinp' : '');
+    const inPermit = d => !p0.pEnd || d<=p0.pEnd; // 工签到期后在岗月数不再累积
+    if(s.oRecentGrad && inPermit(p0.posDate(3))) add(p0.posDate(3), '在岗满 3 个月（OINP 应届生经验够了）', 'oinp');
+    for(const m of [6,13,25]) if(inPermit(p0.posDate(m))) add(p0.posDate(m), `在岗满 ${m===25 ? '24 个月以上' : m+' 个月'}`, m===6 && !s.oRecentGrad ? 'oinp' : '');
   }
   for(const x of earnSteps(p0, s)) add(x.d, `${x.year} 年报税单到手`);
   if(D(s.dob)){ const dob = D(s.dob); for(let a = ageAt(dob,t0)+1; a<=45; a++) add(addYears(dob,a), `${a} 岁生日`); }
@@ -1424,11 +1433,11 @@ function milestones(s){
   }
   return out;
 }
-// 情景：英语每项至少到某个 CLB、收入至少到某一档；算分还是用 crs() / oinp()
+// 情景：英语每项至少到某个 CLB；算分还是用 crs() / oinp()。
+// 收入不在这里改：滑块改的是「从今天起的年薪」，用 build(s, 日期, {raise}) 重新估报税单，所以多出来的分只会出现在拿到那张报税单之后
 function applyScenario(p, sc){
   const q = {...p};
   if(sc.clb) q.en = p.en.map(c => Math.max(c ?? 0, sc.clb));
-  if(sc.inc) q.earn = Math.max(p.earn || 0, sc.inc);
   return q;
 }
 const EARN_BANDS = [[30000,4],[50000,6],[70000,8],[80000,10]];
@@ -1468,22 +1477,28 @@ function earnSteps(p, s){
 function renderProj(s){
   const nodes = milestones(s), {ee, oi} = bandsOf(s), cec = recentLine('cec');
   const eeAt = d => (iso(d)<NEW_RULES_DATE && cec) ? [cec[2], cec[2]] : ee; // 11/3 以前用实际最近一次 CEC 线
-  // 三个滑块：时间节点 / 英语（只出现还没达到的档）/ 收入（只出现比这个节点时间线更高、能多拿分的档）
+  // 三个滑块：时间节点 / 英语（只出现还没达到的档）/ 收入
   let ti = nodes.findIndex(n => iso(n.d)===scn.date); if(ti<0) ti = 0;
   const node = nodes[ti], minNow = minOf(node.p.en) ?? 0;
   const enSteps = [{v:0, t:'现在'}].concat([9,10].filter(c => minNow<c).map(c => ({v:c, t:`CLB ${c}`})));
   let ei = enSteps.findIndex(x => x.v===scn.clb); if(ei<0) ei = 0;
-  const curPts = OINP.earn(node.p.earn);
-  const inSteps = [{v:0, t:'按时间线'}].concat(EARN_BANDS.filter(b => b[1]>curPts).map(b => ({v:b[0], t:`$${b[0]/1000}k`})));
+  // 收入 = 从今天起的年薪（比你填的年薪高、能多拿 OINP 分的档）；报税单按日期重新估，工签到期后没有收入
+  const sal = num(s.oSalary) || 0, t0 = nodes[0].d;
+  const inSteps = [{v:0, t: sal ? `$${Math.round(sal/1000)}k（你填的）` : '按你填的'}]
+    .concat(node.p.wStart ? EARN_BANDS.filter(b => b[0]>sal).map(b => ({v:b[0], t:`$${b[0]/1000}k`})) : []);
   let ii = inSteps.findIndex(x => x.v===scn.inc); if(ii<0) ii = 0;
   scnSteps = {nodes, en:enSteps, inc:inSteps};
   const sc = {clb:enSteps[ei].v, inc:inSteps[ii].v};
+  const ov = sc.inc ? {raise:{amount:sc.inc, from:t0}} : null;
+  const withInc = n => ov ? build(s, iso(n.d), ov) : n.p;
+  const firstNoa = ov ? withInc(nodes[0]).noas.find(n => n.date>t0 && OINP.earn(n.income)>=OINP.earn(sc.inc)) : null;
   setSlider('slTime', nodes.map(n => n.label), ti, ti ? `${iso(node.d)} ${node.label}` : '现在', false);
   setSlider('slEn', enSteps.map(x => x.t), ei, sc.clb ? `四项都到 CLB ${sc.clb}` : '按你填的成绩', true);
-  setSlider('slIn', inSteps.map(x => x.t), ii, sc.inc ? `单年 $${money(sc.inc)}（OINP 收入分 ${OINP.earn(sc.inc)}）` : (node.p.earn ? `$${money(node.p.earn)}` : '还没有报税单'), true);
+  setSlider('slIn', inSteps.map(x => x.t), ii, !sc.inc ? (sal ? `按年薪 $${money(sal)} 自动估报税单` : '没填年薪，只按手上的报税单')
+    : firstNoa ? `从今天起年薪 $${money(sc.inc)}：${iso(firstNoa.date)} 的报税单起收入分 ${OINP.earn(sc.inc)}` : `从今天起年薪 $${money(sc.inc)}：工签到期前拿不到这么多的报税单`, true);
 
   // 结果卡：和「现在、不加情景」比
-  const q = applyScenario(node.p, sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
+  const q = applyScenario(withInc(node), sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
   $('#scnCrs').textContent = rc; $('#scnCrsD').innerHTML = deltaTag(rc - nodes[0].crs);
   $('#scnOinp').textContent = ro; $('#scnOinpD').innerHTML = deltaTag(ro - nodes[0].oinp);
   const eLine = eeAt(node.d), e1 = vsLine(rc, eLine), o1 = vsLine(ro, oi);
@@ -1491,7 +1506,7 @@ function renderProj(s){
     + `<div class="${o1.c}">OINP 预计线 ${oi[0]}–${oi[1]}：${o1.t}</div>`;
 
   // 节点列表：每个节点两条横条（CRS / OINP），虚线框是预计分数线
-  const rows = nodes.map(n => { const r = applyScenario(n.p, sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
+  const rows = nodes.map(n => { const r = applyScenario(withInc(n), sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
   const scale = (vals, pad, cap) => {
     const lo = Math.max(0, Math.min(...vals) - pad), hi = Math.min(cap, Math.max(...vals) + pad/4);
     return v => Math.max(0, Math.min(100, (v-lo)/(hi-lo || 1)*100));
@@ -1503,12 +1518,12 @@ function renderProj(s){
     const dc = prev ? r.c-prev.c : 0, dO = prev ? r.o-prev.o : 0; prev = r;
     return `<li class="${i===ti ? 'sel' : ''}" data-node="${iso(r.d)}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
       + `<span class="pj-s">CRS <b>${r.c}</b>${deltaTag(dc)} · OINP <b>${r.o}</b>${deltaTag(dO)}</span></div>`
-      + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年 · ${ruleFor(r.p)==='new' ? '新规' : '旧规'}</div>`
+      + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年 · ${ruleFor(r.p)==='new' ? '新规' : '旧规'}${r.p.pEnd && r.d>r.p.pEnd ? ' · <span class="down">工签已到期，经验和收入不再累积</span>' : ''}</div>`
       + `<div class="pb2"><span class="k">CRS</span><div class="pb"><i style="width:${pc(r.c).toFixed(1)}%"></i>${band(pc, eeAt(r.d))}</div></div>`
       + `<div class="pb2"><span class="k">OINP</span><div class="pb o"><i style="width:${po(r.o).toFixed(1)}%"></i>${band(po, oi)}</div></div></li>`;
   }).join('');
   const best = rows.reduce((a,b) => b.c>a.c ? b : a, rows[0]);
-  $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有。英语、收入两个滑块对整条时间线都生效；点哪一行就把时间滑到那里。</p>`
+  $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有；工签到期后经验、在岗月数、收入都不再累积。英语滑块对整条时间线生效；收入滑块是「从今天起的年薪」，多出来的分要等拿到那张报税单才算。点哪一行就把时间滑到那里。</p>`
     + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；Moving2Canada 估新规后头几轮 520 多、可能到 530–540 多，也有说法至少 540–550）；OINP ${oi[0]}–${oi[1]}（新类别还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
     + `<p>这个情景下 CRS 最高：<b>${best.c}</b>（${iso(best.d)}，${esc(best.label)}）。</p>`
     + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」「在岗满 N 个月」这些节点。</p>');
@@ -1522,7 +1537,7 @@ function renderTimeline(s){
   push(p.wStart, '开始全职技术工作（开始累计加拿大经验）');
   if(p.wStart && p.skilled){
     const m = s.oRecentGrad ? 3 : 6;
-    push(p.posDate(m), `在岗满 ${m} 个月：有安省 offer 的话，OINP 的经验条件就够了`);
+    if(!p.pEnd || p.posDate(m)<=p.pEnd) push(p.posDate(m), `在岗满 ${m} 个月：有安省 offer 的话，OINP 的经验条件就够了`);
     for(let n=1; n<=3; n++){
       const d = p.yearDate(n);
       if(p.pEnd && d>p.pEnd){ ev.push({d:p.pEnd, text:`按现在的工时，工签到期前满不了 ${n} 年经验`, cls:'warn'}); break; }
@@ -1605,7 +1620,8 @@ function renderFields(p, crsSug, oinpSug){
   else if(!p.wStart) $('#cweInfo').textContent = '在「① 时间线」填工作开始日后自动算';
   else {
     const nx = p.cwe<5 ? p.yearDate(p.cwe+1) : null;
-    $('#cweInfo').innerHTML = `已满 <b>${p.cwe}</b> 年（${p.days} 天，每周按 ${p.eff} 小时算）` + (nx ? ` · 满 ${p.cwe+1} 年：${iso(nx)}` : '');
+    $('#cweInfo').innerHTML = `已满 <b>${p.cwe}</b> 年（${p.days} 天，每周按 ${p.eff} 小时算）`
+      + (!nx ? '' : p.pEnd && nx>p.pEnd ? ` · 工签到期前满不了 ${p.cwe+1} 年` : ` · 满 ${p.cwe+1} 年：${iso(nx)}`);
   }
   $('#posInfo').textContent = p.s.oPosAuto ? (p.wStart ? `自动：在岗 ${p.posMonths} 个月${p.hpw<30 ? '（每周不到 30 小时，不算全职）' : ''}` : '填了工作开始日才会自动算') : '';
 
