@@ -65,6 +65,14 @@ input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:v
 .lang4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .lang4 label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
 .clb{font-size:12px;font-weight:600;color:var(--accent)}
+/* 区块收起：只留标题和一行摘要（时间线的进度条和节点照常显示） */
+.card[data-fold]{position:relative}
+.card[data-fold] .card-h{padding-right:64px}
+.fold{position:absolute;top:12px;right:12px;font-size:12px;padding:4px 11px;min-height:30px;border-radius:999px;color:var(--muted)}
+.sum{display:none;font-size:13px;color:var(--muted);line-height:1.65;cursor:pointer}
+.card.collapsed>.sum{display:block}
+.card.collapsed>:not(.card-h):not(.sum):not(.permit):not(.events){display:none}
+.card.collapsed .card-h{margin-bottom:4px}
 .badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
 .badge:empty{display:none}
 .badge.star{background:var(--star-soft);color:var(--star)}
@@ -137,7 +145,8 @@ ol.pj{list-style:none;margin:6px 0 0;padding:0}
 .pb{position:relative;height:6px;border-radius:3px;background:var(--soft);margin-top:7px}
 .pb>i{display:block;height:100%;border-radius:3px;background:var(--accent);opacity:.8}
 .pb>.cut{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--bad);border-radius:1px}
-.sug li.sug-more{display:none;border:0;padding:4px 0}
+.sug li.sug-more{display:block;border:0;padding:4px 0}
+.sug:not(.open) li.more{display:none}
 .sug.open .sug-more .o,.sug:not(.open) .sug-more .c{display:none}
 .ielts .sm{display:none}
 .up{color:var(--good)}.down{color:var(--bad)}
@@ -187,8 +196,6 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .lang4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .legend .badge:not(.star){display:none}
   .sug li{padding:7px 9px}
-  .sug:not(.open) li.more{display:none}
-  .sug li.sug-more{display:block}
   .ielts td,.ielts th{padding:5px 4px}
   .ielts .lg{display:none}
   .ielts .sm{display:inline}
@@ -221,8 +228,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 
 <main class="wrap">
   <!-- ① 时间线 -->
-  <section class="card" aria-labelledby="h-tl">
-    <div class="card-h"><h2 id="h-tl">① 时间线</h2><span class="hint">决定加拿大经验哪天满 1 年、工签还剩多久、OINP 应届身份到哪天</span></div>
+  <section class="card" data-fold="tl" aria-labelledby="h-tl">
+    <div class="card-h"><h2 id="h-tl">① 时间线</h2><span class="hint">决定加拿大经验哪天满 1 年、工签还剩多久、OINP 应届身份到哪天</span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+    <div class="sum" data-sum="tl"></div>
     <div class="grid">
       <label class="f"><span>毕业日期 <em>完成课程那天</em></span><input type="date" data-k="grad"></label>
       <label class="f"><span>工签生效日 <em>PGWP 开始</em></span><input type="date" data-k="pgwpStart"></label>
@@ -241,8 +249,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   <div class="cols">
     <form id="form" autocomplete="off" onsubmit="return false">
       <!-- ② 基本情况 -->
-      <section class="card" aria-labelledby="h-basic">
-        <div class="card-h"><h2 id="h-basic">② 基本情况</h2><span class="badge" data-badge="edu"></span></div>
+      <section class="card" data-fold="basic" aria-labelledby="h-basic">
+        <div class="card-h"><h2 id="h-basic">② 基本情况</h2><span class="badge" data-badge="edu"></span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="basic"></div>
         <div class="grid">
           <label class="f"><span>出生日期</span><input type="date" data-k="dob"><div class="info" id="ageInfo"></div></label>
           <label class="f"><span>婚姻状况</span>
@@ -279,8 +288,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </section>
 
       <!-- ③ 语言 -->
-      <section class="card" aria-labelledby="h-lang">
-        <div class="card-h"><h2 id="h-lang">③ 语言</h2><span class="badge" data-badge="lang"></span><span class="hint">CRS 和 OINP 都看单项，不看总分</span></div>
+      <section class="card" data-fold="lang" aria-labelledby="h-lang">
+        <div class="card-h"><h2 id="h-lang">③ 语言</h2><span class="badge" data-badge="lang"></span><span class="hint">CRS 和 OINP 都看单项，不看总分</span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="lang"></div>
         <div class="grid">
           <label class="f wide"><span>英语考试</span>
             <select data-k="enTest">
@@ -313,8 +323,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </section>
 
       <!-- ④ 工作 -->
-      <section class="card" aria-labelledby="h-work">
-        <div class="card-h"><h2 id="h-work">④ 工作与职业</h2><span class="badge" data-badge="work"></span></div>
+      <section class="card" data-fold="work" aria-labelledby="h-work">
+        <div class="card-h"><h2 id="h-work">④ 工作与职业</h2><span class="badge" data-badge="work"></span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="work"></div>
         <div class="grid">
           <label class="f wide"><span>职业 NOC 代码（5 位）<em> · 不知道代码可以去 <a href="https://noc.esdc.gc.ca/" target="_blank" rel="noopener">NOC 官网</a>搜职位名；列表里是 186 个「高薪职业」</em></span>
             <input type="text" data-k="noc" list="nocList" placeholder="例如 21232" maxlength="80"><div class="info" id="nocInfo"></div></label>
@@ -336,8 +347,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </section>
 
       <!-- ⑤ 其他加分 -->
-      <section class="card" aria-labelledby="h-other">
-        <div class="card-h"><h2 id="h-other">⑤ 其他加分</h2><span class="badge" data-badge="pnp"></span></div>
+      <section class="card" data-fold="other" aria-labelledby="h-other">
+        <div class="card-h"><h2 id="h-other">⑤ 其他加分</h2><span class="badge" data-badge="pnp"></span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="other"></div>
         <div class="grid">
           <label class="chk"><input type="checkbox" data-k="pnp"><span>已拿到省提名（走 EE 的）<small>+600</small></span></label>
           <label class="chk"><input type="checkbox" data-k="sibling"><span>兄弟姐妹在加拿大（公民/PR，18 岁以上）<small>+15</small></span></label>
@@ -346,8 +358,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </section>
 
       <!-- ⑥ 配偶 -->
-      <section class="card" id="spouseCard" aria-labelledby="h-sp" hidden>
-        <div class="card-h"><h2 id="h-sp">⑥ 配偶</h2><span class="badge" data-badge="spouse"></span><span class="hint">配偶随行时，主申请人的分会按另一套表算，配偶最多再加 40</span></div>
+      <section class="card" id="spouseCard" data-fold="sp" aria-labelledby="h-sp" hidden>
+        <div class="card-h"><h2 id="h-sp">⑥ 配偶</h2><span class="badge" data-badge="spouse"></span><span class="hint">配偶随行时，主申请人的分会按另一套表算，配偶最多再加 40</span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="sp"></div>
         <div class="grid">
           <label class="f"><span>配偶最高学历</span>
             <select data-k="spEdu">
@@ -367,8 +380,9 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </section>
 
       <!-- ⑦ OINP -->
-      <section class="card" aria-labelledby="h-oinp">
-        <div class="card-h"><h2 id="h-oinp">⑦ OINP 额外信息</h2><span class="badge" data-badge="oinp"></span><span class="hint">只影响 OINP 分；没有安省 offer 也可以先填着看</span></div>
+      <section class="card" data-fold="oinp" aria-labelledby="h-oinp">
+        <div class="card-h"><h2 id="h-oinp">⑦ OINP 额外信息</h2><span class="badge" data-badge="oinp"></span><span class="hint">只影响 OINP 分；没有安省 offer 也可以先填着看</span><button type="button" class="fold" data-fold-btn aria-expanded="true">收起</button></div>
+        <div class="sum" data-sum="oinp"></div>
         <div class="grid">
           <div class="f wide"><label class="chk"><input type="checkbox" data-k="oOffer"><span>有安省雇主的全职、长期 job offer<small>雇主要先在 OINP 系统提交 offer，你才能注册 EOI；雇主自己也有门槛（经营满 3 年、营收、本地员工数）</small></span></label></div>
           <label class="f"><span>offer 时薪（加元/小时）</span><input type="number" data-k="oWage" min="0" step="0.01" inputmode="decimal" placeholder="例如 32.5"></label>
@@ -382,7 +396,10 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
               <option value="sw">西南安省：Hamilton / London / Windsor / Niagara 等（10）</option>
               <option value="north">北安省：Sudbury / Thunder Bay / North Bay 等（15）</option>
             </select></label>
-          <label class="f"><span>报税单上单年最高收入 <em>近 5 年任一年，CRA NOA</em></span><input type="number" data-k="oEarn" min="0" step="1000" inputmode="numeric" placeholder="例如 52000"></label>
+          <label class="f"><span>现在手上报税单的单年最高收入 <em>近 5 年任一年，CRA NOA</em></span><input type="number" data-k="oEarn" min="0" step="1000" inputmode="numeric" placeholder="还没有就空着"></label>
+          <label class="f"><span>年薪（全年、税前） <em>用来估以后每年的报税单</em></span><input type="number" data-k="oSalary" min="0" step="1000" inputmode="numeric" placeholder="例如 74000"><div class="info" id="noaInfo"></div></label>
+          <label class="f"><span>报税单一般几月拿到 <em>按第二年这个月底算</em></span>
+            <select data-k="oNoaMonth"><option value="2">2 月</option><option value="3" selected>3 月</option><option value="4">4 月</option><option value="5">5 月</option><option value="6">6 月</option></select></label>
           <label class="f"><span>合法身份</span>
             <select data-k="oStatus">
               <option value="auto">按工签日期自动</option>
@@ -904,6 +921,19 @@ function writeState(s){
   }
 }
 
+// 按年薪估以后每年的报税单：第一年按入职日折算，工签到期后不再算；第二年 month 月底拿到
+function estimateNoas(wStart, pEnd, salary, month){
+  if(!wStart || !(salary>0)) return [];
+  const out = [], y0 = wStart.getUTCFullYear();
+  for(let y=y0; y<=y0+8; y++){
+    const from = new Date(Date.UTC(y,0,1)), to = new Date(Date.UTC(y+1,0,1));
+    const a = wStart>from ? wStart : from, b = pEnd && pEnd<to ? pEnd : to;
+    if(b<=a) break;
+    out.push({year:y, income:Math.round(salary*dayDiff(a,b)/dayDiff(from,to)/100)*100, date:new Date(Date.UTC(y+1, month, 0))});
+  }
+  return out;
+}
+
 function build(s, at){
   const today = todayISO();
   const evalISO = at || s.evalDate || today;
@@ -942,6 +972,11 @@ function build(s, at){
   let status = s.oStatus || 'auto';
   if(status==='auto') status = (pEnd && d>pEnd) ? 'none' : 'wp';
 
+  // OINP 收入：手上已有的报税单，和按年薪估的、到算分那天已经拿到（近 5 年）的报税单，取高
+  const noas = estimateNoas(wStart, pEnd, num(s.oSalary), +s.oNoaMonth || 3);
+  const earnBase = num(s.oEarn) || 0;
+  const earnEst = Math.max(0, ...noas.filter(n => n.date<=d && n.date>addYears(d,-5)).map(n => n.income));
+
   return {
     s, d, evalISO, today, grad, pStart, pEnd, pEndAuto, sp, en, fr, noc, teer, broad, hwRow, hwLevel, skilled,
     hpw, eff, wStart, days, cwe, cweAuto, cweManual, yearDate, working, notes,
@@ -950,7 +985,7 @@ function build(s, at){
     age: (s.dob && D(s.dob)) ? ageAt(D(s.dob), d) : null,
     spEdu: s.spEdu, spLang: SK.map(k => num(s['sp'+k])), spCwe: +s.spCwe||0,
     posMonths, ontMonths, status, recentGrad: !!s.oRecentGrad && !!grad && d<=addYears(grad,3),
-    wage: num(s.oWage), earn: num(s.oEarn), region: s.oRegion, oEdu: s.oEdu, creds: +s.oCreds||0, oOffer: !!s.oOffer,
+    wage: num(s.oWage), earn: Math.max(earnBase, earnEst), earnBase, earnEst, noas, region: s.oRegion, oEdu: s.oEdu, creds: +s.oCreds||0, oOffer: !!s.oOffer,
   };
 }
 const ruleFor = p => p.s.rules==='old' ? 'old' : p.s.rules==='new' ? 'new' : (p.evalISO >= NEW_RULES_DATE ? 'new' : 'old');
@@ -1017,7 +1052,7 @@ function oinp(p){
     {name:'offer 时薪', pts:OINP.wage(p.wage), max:15, note: p.wage ? `$${p.wage}/小时` : '未填'},
     {name:'安省工作经验', pts: viaPos ? OINP.pos(p.posMonths) : OINP.ont(p.ontMonths), max:18,
       note: viaPos ? `offer 职位上 ${p.posMonths} 个月` : `offer 职位不满 6 个月，按安省总经验 ${p.ontMonths} 个月（最多 12）`},
-    {name:'收入（单年报税单）', pts:OINP.earn(p.earn), max:10, note: p.earn ? `$${money(p.earn)}` : '未填'},
+    {name:'收入（单年报税单）', pts:OINP.earn(p.earn), max:10, note: p.earn ? `$${money(p.earn)}${p.earnEst>p.earnBase ? '（按年薪估）' : ''}` : '还没有报税单'},
     {name:'合法身份', pts:OINP.status[p.status] ?? 0, max:10, note: {wp:'有效工签', sp:'有效学签', none:'没有有效工签/学签'}[p.status]},
     {name:'最高学历', pts:OINP.edu[p.oEdu] ?? 0, max:10, note: p.oEdu ? '' : '未选'},
     {name:'加拿大学历数量', pts:OINP.creds(p.creds), max:10, note:`${p.creds>=2 ? '2+' : p.creds} 个`},
@@ -1063,7 +1098,7 @@ function needText(p, skills, target){
 function rank(list, big, starMid){
   for(const x of list){
     x.big = x.gain>=big;
-    x.star = !x.special && ((['easy','time'].includes(x.feas) && x.big) || (x.feas==='mid' && x.gain>=starMid));
+    x.star = !x.special && !x.stretch && ((['easy','time'].includes(x.feas) && x.big) || (x.feas==='mid' && x.gain>=starMid));
   }
   return list.sort((a,b) => (b.star-a.star) || (b.gain-a.gain));
 }
@@ -1077,7 +1112,7 @@ function suggestCRS(p){
       if(allGE(p.en, target)) continue;
       const en = p.en.map(c => Math.max(c ?? 0, target));
       if(target===9) t9 = en;
-      add({grp:'lang', feas: target===9 ? 'easy' : 'mid', title:`英语四项都到 CLB ${target}`, detail:needText(p, SK.filter((k,j) => (p.en[j] ?? 0)<target), target), p:{...p, en}});
+      add({grp:'lang', feas: target===9 ? 'easy' : 'mid', stretch: target===10, title:`英语四项都到 CLB ${target}`, detail:needText(p, SK.filter((k,j) => (p.en[j] ?? 0)<target), target), p:{...p, en}});
     }
     const singles = [];
     p.en.forEach((c,j) => {
@@ -1096,6 +1131,11 @@ function suggestCRS(p){
     add({grp:'work', feas:'time', title:`加拿大工作经验满 ${n} 年`,
       detail: dt ? (late ? `按现在的工时要到 ${iso(dt)}，晚于工签到期` : `按时间线预计 ${iso(dt)}`) + (p.hwLevel && p.s.cweInNoc && n===1 ? `；含高薪职业经验 +${HW_EXP[p.hwLevel]}` : '') : '时间到了就有',
       p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
+  }
+  if(p.cwe<4 && p.skilled){ // 更高目标：再多一年
+    const n = p.cwe+2, dt = p.cweManual ? null : p.yearDate(n);
+    add({grp:'work', feas:'time', stretch:true, title:`加拿大工作经验满 ${n} 年`,
+      detail: dt ? (p.pEnd && dt>p.pEnd ? `要到 ${iso(dt)}，晚于工签到期` : `预计 ${iso(dt)}`) : '', p:{...p, cwe:n, hwYears: p.s.cweInNoc ? n : 0}});
   }
   if(p.hwLevel && !p.offer){
     add({grp:'offer', feas:'mid', title:`拿到这个职业的 job offer（高薪 ×${p.hwLevel}）`, detail:`11/3 起 offer 值 ${HW_OFFER[p.hwLevel]} 分、不用 LMIA；和「加拿大经验」两条路取高的。现雇主出也算`, p:{...p, offer:true}});
@@ -1131,11 +1171,24 @@ function suggestOINP(p){
   if(next){
     const dt = (p.s.oPosAuto && p.wStart) ? addMonths(p.wStart, next) : null;
     add({grp:'work', feas:'time', title:`在 offer 职位上满 ${next===25 ? '24 个月以上' : next+' 个月'}`, detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, posMonths:next}});
+    if(next<25){ // 更高目标：最高一档
+      const dt2 = (p.s.oPosAuto && p.wStart) ? addMonths(p.wStart, 25) : null;
+      add({grp:'work', feas:'time', stretch:true, title:'在 offer 职位上满 24 个月以上', detail: dt2 ? `预计 ${iso(dt2)}` : '最高一档 18 分', p:{...p, posMonths:25}});
+    }
   }
   const nw = [20,25,30,35,40].find(x => (p.wage || 0)<x);
   if(nw) add({grp:'wage', feas:'mid', title:`时薪到 $${nw}`, detail:'按 offer 上写的时薪算', p:{...p, wage:nw}});
-  const ne = [30000,50000,70000,80000].find(x => (p.earn || 0)<x);
-  if(ne) add({grp:'earn', feas:'mid', title:`单年收入到 $${money(ne)}`, detail:'看 CRA 报税单（NOA）；当年收入第二年报完税才有', p:{...p, earn:ne}});
+  if(nw && nw<40) add({grp:'wage', feas:'mid', stretch:true, title:'时薪到 $40', detail:'最高一档 15 分', p:{...p, wage:40}});
+  // 收入：按年薪估的下一张报税单是「等时间」；估到的最高那张、再往上一档是「更高目标」
+  const cur = OINP.earn(p.earn);
+  const future = p.noas.filter(n => n.date>p.d && OINP.earn(n.income)>cur);
+  const nextNoa = future[0], bestNoa = future.reduce((a,n) => !a || n.income>a.income ? n : a, null);
+  if(nextNoa) add({grp:'earn', feas:'time', title:`等 ${nextNoa.year} 年的报税单（估 $${money(nextNoa.income)}）`, detail:`按你填的年薪，${iso(nextNoa.date)} 前后能拿到`, p:{...p, earn:nextNoa.income}});
+  if(bestNoa && bestNoa!==nextNoa) add({grp:'earn', feas:'time', stretch:true, title:`等 ${bestNoa.year} 年完整一年的报税单（估 $${money(bestNoa.income)}）`, detail:`${iso(bestNoa.date)} 前后能拿到`, p:{...p, earn:bestNoa.income}});
+  const top = Math.max(p.earn || 0, bestNoa ? bestNoa.income : 0);
+  const ne = [30000,50000,70000,80000].find(x => top<x);
+  if(ne) add({grp:'earn', feas:'mid', stretch:p.noas.length>0, title:`单年收入到 $${money(ne)}`,
+    detail: top ? `比${bestNoa ? '估的' : '现在的'} $${money(top)} 再多 $${money(ne-top)}；看 CRA 报税单（NOA）` : '看 CRA 报税单（NOA）；当年收入第二年报完税才有', p:{...p, earn:ne}});
   if(['toronto','gta'].includes(p.region)) add({grp:'region', feas:'hard', title:'offer 在 GTA 以外', detail:'东/中/西南安省 +10，北安省 +15', p:{...p, region:'east'}});
   if(!(minOf(p.fr)>=6)) add({grp:'fr', feas:'hard', title:'法语四项 CLB 6', detail:'「两门官方语言」 +5', p:{...p, fr:p.fr.map(c => Math.max(c ?? 0, 6))}});
   if(p.creds<2) add({grp:'edu', feas:'hard', title:'再拿一个加拿大学历', detail:'≥ 1 年全日制', p:{...p, creds:2}});
@@ -1183,11 +1236,13 @@ async function loadDraws(force){
 const FEAS = {easy:['easy','✅ 可控'], time:['time','⏳ 等时间'], mid:['mid','🟡 看机会'], hard:['hard','🔺 难']};
 function sugHTML(list){
   if(!list.length) return '<li class="empty">这一项已经拿满，或者还缺信息。</li>';
-  const fold = list.some(x => x.star) ? list.filter(x => !x.star).length : 0; // 手机上先只显示 ⭐ 那几条
-  return list.map(x => `<li class="${x.star ? 'star' : fold ? 'more' : ''}"><span class="gain">${signed(x.gain)}</span><span class="t">${esc(x.title)}</span>`
+  // 先只显示 ⭐ 那几条（没有 ⭐ 就显示全部），更高目标和其他的收进折叠区，更高目标排在前面
+  const anyStar = list.some(x => x.star), hide = x => x.stretch || (anyStar && !x.star);
+  const folded = list.filter(hide).sort((a,b) => (!!b.stretch - !!a.stretch) || (b.gain-a.gain));
+  return [...list.filter(x => !hide(x)), ...folded].map(x => `<li class="${x.star ? 'star' : ''}${hide(x) ? ' more' : ''}"><span class="gain">${signed(x.gain)}</span><span class="t">${esc(x.title)}</span>`
     + (x.detail ? `<span class="d">${esc(x.detail)}</span>` : '')
-    + `<span class="tags">${x.star ? '<span class="badge star">⭐ 优先</span>' : ''}<span class="badge ${FEAS[x.feas][0]}">${FEAS[x.feas][1]}</span>${x.special ? '<span class="badge">🎯 关键路径</span>' : ''}</span></li>`).join('')
-    + (fold ? `<li class="sug-more"><button type="button" class="link" data-more><span class="o">再看 ${fold} 条（难度高或看机会）</span><span class="c">收起</span></button></li>` : '');
+    + `<span class="tags">${x.star ? '<span class="badge star">⭐ 优先</span>' : ''}${x.stretch ? '<span class="badge">📈 更高目标</span>' : ''}<span class="badge ${FEAS[x.feas][0]}">${FEAS[x.feas][1]}</span>${x.special ? '<span class="badge">🎯 关键路径</span>' : ''}</span></li>`).join('')
+    + (folded.length ? `<li class="sug-more"><button type="button" class="link" data-more><span class="o">展开更高目标和其他 ${folded.length} 条</span><span class="c">收起</span></button></li>` : '');
 }
 function row(name, pts, max, note, cls=''){
   return `<tr class="${cls}"><th>${esc(name)}${note ? ` <span class="dim">${esc(note)}</span>` : ''}</th><td class="n">${pts}</td><td class="mx">${max!=null ? '/ '+max : ''}</td></tr>`;
@@ -1282,9 +1337,21 @@ function projection(s){
     }
   }
   if(p0.pEnd && p0.pEnd>t0) pts.push({d:p0.pEnd, label:'工签到期'});
+  for(const x of earnSteps(p0, s)) if(x.d>t0 && x.d<=horizon) pts.push({d:x.d, label:`${x.year} 年报税单到手`});
   const seen = new Map();
   for(const x of pts.sort((a,b) => a.d-b.d)){ const k = iso(x.d); seen.has(k) ? seen.get(k).label += ' · '+x.label : seen.set(k, {...x}); }
-  return [...seen.values()].map(x => { const p = build(s, iso(x.d)); const r = crs(p, ruleFor(p)); return {...x, age:p.age, cwe:p.cwe, total:r.total, rule:r.rule}; });
+  return [...seen.values()].map(x => { const p = build(s, iso(x.d)); const r = crs(p, ruleFor(p)); return {...x, age:p.age, cwe:p.cwe, total:r.total, rule:r.rule, oinp:oinp(p).total}; });
+}
+// 按年薪估的报税单里，会让 OINP 收入分变化的那几张
+function earnSteps(p, s){
+  const out = [];
+  let prev = OINP.earn(num(s.oEarn) || 0);
+  for(const n of p.noas){
+    const to = Math.max(prev, OINP.earn(n.income));
+    if(to!==prev) out.push({d:n.date, year:n.year, income:n.income, from:prev, to});
+    prev = to;
+  }
+  return out;
 }
 function renderProj(s){
   const rows = projection(s);
@@ -1299,7 +1366,7 @@ function renderProj(s){
     const delta = prev==null ? 0 : r.total-prev; prev = r.total;
     return `<li class="${r===best ? 'best' : ''}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
       + `<span class="pj-s"><b>${r.total}</b>${delta ? ` <span class="${delta>0 ? 'up' : 'down'}">${signed(delta)}</span>` : ''}</span></div>`
-      + `<div class="pj-m">${iso(r.d)}${r.age!=null ? ' · '+r.age+' 岁' : ''} · 经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'}</div>`
+      + `<div class="pj-m">${iso(r.d)}${r.age!=null ? ' · '+r.age+' 岁' : ''} · 经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'} · OINP ${r.oinp}</div>`
       + `<div class="pb"><i style="width:${pct(r.total)}%"></i>${cec ? `<span class="cut" style="left:${pct(cec[2])}%"></span>` : ''}</div></li>`;
   }).join('');
   $('#projNote').innerHTML = `<p>这段时间里最高：<b>${best.total}</b>（${iso(best.d)}，${esc(best.label)}）。${cec ? `红线是 CEC 最近一次分数线 ${cec[2]}，新规后大概率上涨。` : ''}</p>`
@@ -1325,6 +1392,7 @@ function renderTimeline(s){
   if(iso(t0)<=NEW_RULES_DATE) push(D(NEW_RULES_DATE), 'CRS 新规生效：高薪职业经验 / offer 加分，抽签暂停约 2 周重算');
   if(p.grad && s.oRecentGrad) push(addYears(p.grad,3), 'OINP「安省应届生」优惠到期（在岗 3 个月、免语言考试）');
   if(D(s.testDate)) push(addYears(D(s.testDate),2), '语言成绩过期（递交 PR 时要在 2 年内）', 'warn');
+  for(const x of earnSteps(p, s)) push(x.d, `${x.year} 年报税单（估 $${money(x.income)}）→ OINP 收入分 ${x.from}→${x.to}`);
   if(D(s.dob)){
     const dob = D(s.dob), from = p.grad || p.pStart || t0, to = p.pEnd ? addYears(p.pEnd,1) : addYears(t0,4);
     for(let a=30; a<=45; a++){
@@ -1424,6 +1492,46 @@ function renderFields(p, crsSug, oinpSug){
   ob.textContent = os ? `${os.star ? '⭐ ' : ''}${os.title} ${signed(os.gain)}` : '';
 }
 
+// 收起的区块只显示一行摘要
+const REGION_NAME = {toronto:'多伦多市', gta:'GTA 其他', central:'中安省', east:'东安省', sw:'西南安省', north:'北安省'};
+const OEDU_NAME = {phd:'博士', ma:'硕士', above:'本科以上证书', ba:'本科', ocgc:'OCGC', below:'本科以下证书', college:'College', trade:'技工证书', none:'无学历'};
+function renderSummaries(p){
+  const s = p.s;
+  const set = (k, parts) => { const el = $(`[data-sum="${k}"]`); if(el) el.textContent = parts.filter(Boolean).join(' · ') || '还没填'; };
+  set('tl', [p.grad && '毕业 '+iso(p.grad), p.pStart && `工签 ${iso(p.pStart)} 起${p.pEnd ? '，到 '+iso(p.pEnd) : ''}`,
+    p.wStart && `工作 ${iso(p.wStart)} 起，每周 ${p.hpw} 小时`, D(s.testDate) && '语言考试 '+s.testDate, s.evalDate && '按 '+s.evalDate+' 算分']);
+  set('basic', [p.age!=null ? p.age+' 岁' : '没填生日', {single:'单身', spouse_na:'配偶不随行', spouse:'配偶随行'}[s.marital],
+    p.eduSet ? EDU[p.edu][4] : '学历没选', {short:'加拿大 1–2 年制', long:'加拿大 3 年以上/硕博'}[s.caEdu], {new:'按新规', auto:'按日期选规则', old:'按旧规'}[s.rules]]);
+  const tn = {ielts:'雅思 ', celpip:'CELPIP ', pte:'PTE '}[s.enTest] || '';
+  set('lang', [p.en.some(c => c!=null) ? `${tn}${SK.map(k => SKN[k]+(s['en'+k] || '-')).join(' ')}（CLB ${p.en.map(c => c ?? '-').join('/')}）` : '英语没填',
+    s.frTest==='none' ? '没考法语' : `法语 NCLC ${p.fr.map(c => c ?? '-').join('/')}`]);
+  set('work', [p.noc ? `NOC ${p.noc}${p.hwRow ? `（高薪 ×${p.hwLevel}）` : ''}` : 'NOC 没填', `加拿大经验 ${p.cwe} 年`, p.foreign && `海外 ${p.foreign>=3 ? '3+' : p.foreign} 年`, p.offer && '有 offer']);
+  const other = [p.pnp && '已有省提名', p.sibling && '兄弟姐妹在加拿大', p.cert && '有技工证书'].filter(Boolean);
+  set('other', other.length ? other : ['都没有']);
+  set('sp', [EDU[s.spEdu] && '学历 '+EDU[s.spEdu][4], p.spLang.some(c => c!=null) && 'CLB '+p.spLang.map(c => c ?? '-').join('/'), `加拿大经验 ${p.spCwe} 年`]);
+  set('oinp', [p.oOffer ? '有安省 offer' : '没有安省 offer', p.wage && `$${p.wage}/小时`, REGION_NAME[p.region], OEDU_NAME[p.oEdu], `加拿大学历 ${p.creds>=2 ? '2+' : p.creds} 个`,
+    num(s.oSalary) && `年薪 $${money(num(s.oSalary))}`, p.earnBase && `报税单 $${money(p.earnBase)}`]);
+  $('#noaInfo').textContent = p.noas.length ? '估：' + p.noas.slice(0,3).map(n => `${n.year} 年约 $${money(n.income)}（${iso(n.date).slice(0,7)} 拿到）`).join('；') : '';
+}
+
+// 区块收起/展开，记在这台电脑的浏览器里
+const FOLD_KEY = 'pr-calc:folded';
+let folded = new Set(Array.isArray(store.get(FOLD_KEY)) ? store.get(FOLD_KEY) : []);
+function applyFold(){
+  $$('[data-fold]').forEach(c => {
+    const on = folded.has(c.dataset.fold), b = $('[data-fold-btn]', c);
+    c.classList.toggle('collapsed', on);
+    b.textContent = on ? '展开' : '收起';
+    b.setAttribute('aria-expanded', String(!on));
+  });
+}
+function toggleFold(card){
+  const k = card.dataset.fold;
+  folded.has(k) ? folded.delete(k) : folded.add(k);
+  store.set(FOLD_KEY, [...folded]);
+  applyFold();
+}
+
 // 顶部那条在手机上可能因为字大换行，量出实际高度给下面的标签栏让位
 function syncMinibar(){
   const mb = $('#minibar');
@@ -1454,6 +1562,7 @@ function render(){
   renderTimeline(s);
   renderProj(s);
   renderIelts(p);
+  renderSummaries(p);
   $('#mbCrs').textContent = r.total;
   $('#mbOinp').textContent = `${o.total}/${OINP.max}`;
   syncMinibar();
@@ -1487,8 +1596,11 @@ function init(){
   document.addEventListener('input', e => { if(e.target.matches('[data-k]')) onChange(); });
   document.addEventListener('change', e => { if(e.target.matches('[data-k]')) onChange(); });
   document.addEventListener('click', e => {
+    const sm = e.target.closest('.sum');
+    if(sm){ toggleFold(sm.closest('[data-fold]')); return; }
     const b = e.target.closest('button');
     if(!b) return;
+    if(b.hasAttribute('data-fold-btn')) toggleFold(b.closest('[data-fold]'));
     if(b.dataset.tab){ showTab(b.dataset.tab); store.set(TAB_KEY, tab); }
     if(b.hasAttribute('data-more')) b.closest('ol').classList.toggle('open');
     if(b.hasAttribute('data-past')) $('#events').classList.toggle('show-past');
@@ -1520,6 +1632,7 @@ function init(){
     location.reload();
   };
   showTab(tab);
+  applyFold();
   render();
   loadDraws(false);
 }
