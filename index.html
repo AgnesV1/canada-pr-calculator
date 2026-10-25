@@ -132,7 +132,8 @@ ol.events{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:2px}
 .events li.next{background:var(--accent-soft)}
 .events li.next i{color:var(--accent);font-weight:600}
 .events li.warn span{color:var(--star)}
-.events li.past-toggle{display:none;padding:0 8px}
+.events li.past-toggle{display:block;padding:0 8px}
+.events:not(.show-past) li.past{display:none} /* 已经过去的节点默认收起，电脑和手机都一样 */
 .past-toggle button,.sug-more button{padding:9px 0}
 .events.show-past .past-toggle .o,.events:not(.show-past) .past-toggle .c{display:none}
 /* 推算：情景卡 + 三个滑块 */
@@ -155,6 +156,10 @@ ol.events{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:2px}
 ol.pj{list-style:none;margin:6px 0 0;padding:0}
 .pj li{padding:9px 8px;border-bottom:1px solid var(--line);border-radius:8px;cursor:pointer}
 .pj li.sel{background:var(--accent-soft)}
+.pj:not(.show-post) li.post{display:none}
+.pj li.pj-more{border:0;cursor:default;padding:4px 8px}
+.pj li.pj-more button{padding:9px 0}
+.pj.show-post .pj-more .o,.pj:not(.show-post) .pj-more .c{display:none}
 .pj-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 10px}
 .pj-l{font-weight:600}
 .pj-s{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
@@ -226,8 +231,6 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .events time{grid-area:d;font-size:12px}
   .events i{grid-area:c}
   .events span{grid-area:t}
-  .events:not(.show-past) li.past{display:none}
-  .events li.past-toggle{display:block}
   .lang4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .legend .badge:not(.star){display:none}
   .sug li{padding:7px 9px}
@@ -274,7 +277,8 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       <label class="f"><span>工签到期日 <em>可不填；填了以它为准</em></span><input type="date" data-k="pgwpEnd"></label>
       <label class="f"><span>全职技术工作开始日 <em>TEER 0–3 的工作</em></span><input type="date" data-k="workStart"></label>
       <label class="f"><span>每周工时 <em>≥30 小时按全职算</em></span><input type="number" data-k="hours" value="40" min="1" max="80" step="0.5" inputmode="decimal"></label>
-      <label class="f"><span>语言考试日期 <em>成绩有效 2 年</em></span><input type="date" data-k="testDate"></label>
+      <label class="f"><span>最近一次正式语言考试 <em>不填就读雅思记录</em></span><input type="date" data-k="testDate"><div class="info" id="testInfo"></div></label>
+      <label class="f"><span>下次考试日期 <em>打算哪天考</em></span><input type="date" data-k="nextTest"></label>
       <label class="f"><span>按哪天算分 <em>不填 = 今天</em></span><input type="date" data-k="evalDate"></label>
     </div>
     <div class="permit" id="permit" hidden><div class="bar"><i id="permitFill"></i></div><div class="txt" id="permitTxt"></div></div>
@@ -540,9 +544,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
           </div>
           <div class="scn-lines" id="scnLines"></div>
           <label class="sl"><span>时间 · 往右滑到下一个节点 <b id="slTimeV"></b></span><input type="range" id="slTime" min="0" max="0" step="1" value="0"><span class="ticks dots" id="slTimeT"></span></label>
-          <label class="sl"><span>英语 · 往右滑升级 <b id="slEnV"></b></span><input type="range" id="slEn" min="0" max="0" step="1" value="0"><span class="ticks" id="slEnT"></span></label>
-          <label class="sl"><span>收入（只影响 OINP）· 往右滑升级 <b id="slInV"></b></span><input type="range" id="slIn" min="0" max="0" step="1" value="0"><span class="ticks" id="slInT"></span></label>
-        </div>
+          <label class="sl"><span>英语 · 往右滑升级 <b id="slEnV"></b></span><input type="range" id="slEn" min="0" max="0" step="1" value="0"><span class="ticks" id="slEnT"></span></label>        </div>
         <div class="bands">预计线（可改）EE <input type="number" data-k="eeLo" value="520" inputmode="numeric" aria-label="EE 预计线下限">–<input type="number" data-k="eeHi" value="550" inputmode="numeric" aria-label="EE 预计线上限"> · OINP <input type="number" data-k="oLo" value="81" inputmode="numeric" aria-label="OINP 预计线下限">–<input type="number" data-k="oHi" value="90" inputmode="numeric" aria-label="OINP 预计线上限"></div>
         <ol class="pj" id="projList"></ol>
         <div class="note" id="projNote"></div>
@@ -992,7 +994,7 @@ function writeState(s){
 }
 
 // 按年薪估以后每年的报税单：第一年按入职日折算，工签到期后不再算；第二年 month 月底拿到
-// raise = {amount, from}：从 from 那天起年薪变成 amount（推算页「收入」滑块用）
+// raise = {amount, from}：从 from 那天起年薪变成 amount（算「收入再上一档最早哪天」用）
 function estimateNoas(wStart, pEnd, salary, month, raise){
   const base = salary>0 ? salary : 0, up = raise && raise.amount>0 ? raise : null;
   if(!wStart || !(base>0 || up)) return [];
@@ -1008,7 +1010,7 @@ function estimateNoas(wStart, pEnd, salary, month, raise){
   return out;
 }
 
-function build(s, at, ov={}){
+function build(s, at){
   const today = todayISO();
   const evalISO = at || s.evalDate || today;
   const d = D(evalISO) || D(today);
@@ -1048,7 +1050,7 @@ function build(s, at, ov={}){
   if(status==='auto') status = (pEnd && d>pEnd) ? 'none' : 'wp';
 
   // OINP 收入：手上已有的报税单，和按年薪估的、到算分那天已经拿到（近 5 年）的报税单，取高
-  const noas = estimateNoas(wStart, pEnd, num(s.oSalary), +s.oNoaMonth || 3, ov.raise);
+  const noas = estimateNoas(wStart, pEnd, num(s.oSalary), +s.oNoaMonth || 3);
   const earnBase = num(s.oEarn) || 0;
   const earnEst = Math.max(0, ...noas.filter(n => n.date<=d && n.date>addYears(d,-5)).map(n => n.income));
 
@@ -1148,8 +1150,9 @@ function oinpElig(p, o){
     if(!ok && p.wStart && p.s.oPosAuto) when = p.pEnd && p.posDate(need)>p.pEnd ? '，工签到期前满不了' : `，预计 ${iso(p.posDate(need))} 满`;
     items.push({ok, t:`经验：在 offer 职位上连续全职 ≥ ${need} 个月${p.recentGrad ? '（安省应届生优惠）' : ''}，或同一 NOC 近 5 年累计 2 年 —— 现在 ${p.posMonths} 个月${when}`});
     const needC = isTrades(p.noc) ? 5 : 6;
-    const langOk = p.recentGrad || (o.bestC!=null && o.bestC>=needC);
-    items.push({ok:langOk, t: p.recentGrad ? '语言：安省应届生免考（不考就没有语言分）' : `语言：四项都 ≥ CLB ${needC}，考试在递交前 2 年内 —— 现在最低 ${o.bestC ?? '未填'}`});
+    const expired = testExpired(p.s, p.d);
+    const langOk = p.recentGrad || (o.bestC!=null && o.bestC>=needC && !expired);
+    items.push({ok:langOk, t: p.recentGrad ? '语言：安省应届生免考（不考就没有语言分）' : `语言：四项都 ≥ CLB ${needC}，考试在递交前 2 年内 —— 现在最低 ${o.bestC ?? '未填'}${expired ? '，但成绩已过期' : ''}`});
     const eduOk = ['y1','y2','ba','two','ma','phd'].includes(p.edu) || (isTrades(p.noc) && p.edu==='hs');
     items.push({ok:eduOk, t:'学历：≥ 1 年的大专或大学学历（技工职业高中即可；海外学历要 ECA）'});
   } else {
@@ -1341,6 +1344,7 @@ function renderCRS(p, r, other){
   if(cec && cec[0]<NEW_RULES_DATE){ const {ee} = bandsOf(p.s); chips.push(`<span class="chip">11/3 后预计 ${ee[0]}–${ee[1]}</span>`); }
   const c = cecCheck(p);
   chips.push(`<span class="chip ${c.ok ? 'good' : ''}">${c.ok ? '✓ 符合 CEC 基本条件' : `CEC：${!c.expOk ? '加拿大经验还不满 1 年' : ''}${!c.expOk && !c.langOk ? '，' : ''}${!c.langOk ? `语言要四项 ≥ CLB ${c.need}` : ''}`}</span>`);
+  if(testExpired(p.s, p.d)) chips.push(`<span class="chip bad">语言成绩已过期（${lastTestISO(p.s)} 考的）：建 EE 档案、递交 PR 都要 2 年内的成绩</span>`);
   $('#crsChips').innerHTML = chips.join('');
 
   let h = sec('A 核心（人力资本）')
@@ -1399,6 +1403,13 @@ function renderDraws(p, r){
     }).join('');
 }
 
+// 最近一次正式语言考试：手填的和雅思记录里「正式考试」取最近的（成绩 2 年有效）
+function lastTestISO(s){
+  const fromLog = ieltsLog.filter(r => r.type==='real' && D(r.date)).map(r => r.date).sort().pop();
+  return [D(s.testDate) ? s.testDate : '', fromLog || ''].sort().pop();
+}
+const testExpired = (s, d) => { const t = lastTestISO(s); return !!t && addYears(D(t), 2) < d; };
+
 // 推算节点：只留 EE 或 OINP 分数有变化、或资格有变化（key）的日子；同一天的合并
 function milestones(s){
   const t0 = D(todayISO()), p0 = build(s, iso(t0));
@@ -1419,7 +1430,9 @@ function milestones(s){
   if(D(s.dob)){ const dob = D(s.dob); for(let a = ageAt(dob,t0)+1; a<=45; a++) add(addYears(dob,a), `${a} 岁生日`); }
   if(p0.pEnd) add(p0.pEnd, '工签到期', 'permit');
   if(p0.grad && s.oRecentGrad) add(addYears(p0.grad,3), 'OINP 应届生优惠到期', 'oinp');
-  if(D(s.testDate)) add(addYears(D(s.testDate),2), '语言成绩过期', 'lang');
+  const lt = lastTestISO(s);
+  if(lt) add(addYears(D(lt),2), '语言成绩过期', 'lang');
+  if(D(s.nextTest)) add(D(s.nextTest), '下次语言考试', 'lang');
   const merged = new Map();
   for(const x of cand.sort((a,b) => a.d-b.d)){
     const k = iso(x.d), m = merged.get(k);
@@ -1433,8 +1446,7 @@ function milestones(s){
   }
   return out;
 }
-// 情景：英语每项至少到某个 CLB；算分还是用 crs() / oinp()。
-// 收入不在这里改：滑块改的是「从今天起的年薪」，用 build(s, 日期, {raise}) 重新估报税单，所以多出来的分只会出现在拿到那张报税单之后
+// 情景：英语每项至少到某个 CLB；算分还是用 crs() / oinp()
 function applyScenario(p, sc){
   const q = {...p};
   if(sc.clb) q.en = p.en.map(c => Math.max(c ?? 0, sc.clb));
@@ -1442,8 +1454,8 @@ function applyScenario(p, sc){
 }
 const EARN_BANDS = [[30000,4],[50000,6],[70000,8],[80000,10]];
 const SCN_KEY = 'pr-calc:scn';
-let scn = Object.assign({date:'', clb:0, inc:0}, store.get(SCN_KEY) || {});
-let scnSteps = {nodes:[], en:[], inc:[]};
+let scn = Object.assign({date:'', clb:0}, store.get(SCN_KEY) || {});
+let scnSteps = {nodes:[], en:[]};
 function bandsOf(s){
   const fix = (a, b, d) => { let lo = num(a) ?? d[0], hi = num(b) ?? d[1]; if(lo>hi) [lo, hi] = [hi, lo]; return [lo, hi]; };
   return {ee: fix(s.eeLo, s.eeHi, EE_BAND), oi: fix(s.oLo, s.oHi, OINP_BAND)};
@@ -1477,28 +1489,19 @@ function earnSteps(p, s){
 function renderProj(s){
   const nodes = milestones(s), {ee, oi} = bandsOf(s), cec = recentLine('cec');
   const eeAt = d => (iso(d)<NEW_RULES_DATE && cec) ? [cec[2], cec[2]] : ee; // 11/3 以前用实际最近一次 CEC 线
-  // 三个滑块：时间节点 / 英语（只出现还没达到的档）/ 收入
+  // 两个滑块：时间节点 / 英语（从现在最低那项的 CLB 往上，每一级一档）。收入按你填的年薪自动估，不另设滑块
   let ti = nodes.findIndex(n => iso(n.d)===scn.date); if(ti<0) ti = 0;
   const node = nodes[ti], minNow = minOf(node.p.en) ?? 0;
-  const enSteps = [{v:0, t:'现在'}].concat([9,10].filter(c => minNow<c).map(c => ({v:c, t:`CLB ${c}`})));
+  const enSteps = [{v:0, t: minNow>=4 ? `现在 CLB ${minNow}` : '现在'}]
+    .concat([5,6,7,8,9,10].filter(c => c>minNow).map(c => ({v:c, t:`CLB ${c}`})));
   let ei = enSteps.findIndex(x => x.v===scn.clb); if(ei<0) ei = 0;
-  // 收入 = 从今天起的年薪（比你填的年薪高、能多拿 OINP 分的档）；报税单按日期重新估，工签到期后没有收入
-  const sal = num(s.oSalary) || 0, t0 = nodes[0].d;
-  const inSteps = [{v:0, t: sal ? `$${Math.round(sal/1000)}k（你填的）` : '按你填的'}]
-    .concat(node.p.wStart ? EARN_BANDS.filter(b => b[0]>sal).map(b => ({v:b[0], t:`$${b[0]/1000}k`})) : []);
-  let ii = inSteps.findIndex(x => x.v===scn.inc); if(ii<0) ii = 0;
-  scnSteps = {nodes, en:enSteps, inc:inSteps};
-  const sc = {clb:enSteps[ei].v, inc:inSteps[ii].v};
-  const ov = sc.inc ? {raise:{amount:sc.inc, from:t0}} : null;
-  const withInc = n => ov ? build(s, iso(n.d), ov) : n.p;
-  const firstNoa = ov ? withInc(nodes[0]).noas.find(n => n.date>t0 && OINP.earn(n.income)>=OINP.earn(sc.inc)) : null;
+  scnSteps = {nodes, en:enSteps};
+  const sc = {clb:enSteps[ei].v};
   setSlider('slTime', nodes.map(n => n.label), ti, ti ? `${iso(node.d)} ${node.label}` : '现在', false);
   setSlider('slEn', enSteps.map(x => x.t), ei, sc.clb ? `四项都到 CLB ${sc.clb}` : '按你填的成绩', true);
-  setSlider('slIn', inSteps.map(x => x.t), ii, !sc.inc ? (sal ? `按年薪 $${money(sal)} 自动估报税单` : '没填年薪，只按手上的报税单')
-    : firstNoa ? `从今天起年薪 $${money(sc.inc)}：${iso(firstNoa.date)} 的报税单起收入分 ${OINP.earn(sc.inc)}` : `从今天起年薪 $${money(sc.inc)}：工签到期前拿不到这么多的报税单`, true);
 
   // 结果卡：和「现在、不加情景」比
-  const q = applyScenario(withInc(node), sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
+  const q = applyScenario(node.p, sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
   $('#scnCrs').textContent = rc; $('#scnCrsD').innerHTML = deltaTag(rc - nodes[0].crs);
   $('#scnOinp').textContent = ro; $('#scnOinpD').innerHTML = deltaTag(ro - nodes[0].oinp);
   const eLine = eeAt(node.d), e1 = vsLine(rc, eLine), o1 = vsLine(ro, oi);
@@ -1506,24 +1509,28 @@ function renderProj(s){
     + `<div class="${o1.c}">OINP 预计线 ${oi[0]}–${oi[1]}：${o1.t}</div>`;
 
   // 节点列表：每个节点两条横条（CRS / OINP），虚线框是预计分数线
-  const rows = nodes.map(n => { const r = applyScenario(withInc(n), sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
+  const rows = nodes.map(n => { const r = applyScenario(n.p, sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
   const scale = (vals, pad, cap) => {
     const lo = Math.max(0, Math.min(...vals) - pad), hi = Math.min(cap, Math.max(...vals) + pad/4);
     return v => Math.max(0, Math.min(100, (v-lo)/(hi-lo || 1)*100));
   };
   const pc = scale(rows.map(r => r.c).concat(ee, cec ? [cec[2]] : []), 40, 1200), po = scale(rows.map(r => r.o).concat(oi), 15, OINP.max);
   const band = (f, [lo, hi]) => `<em class="band" style="left:${f(lo).toFixed(1)}%;width:${Math.max(f(hi)-f(lo), 0.8).toFixed(1)}%"></em>`;
+  // 工签到期之后的节点默认收起（选中了才自动展开）
+  const isPost = r => !!r.p.pEnd && r.d>r.p.pEnd, post = rows.filter(isPost).length;
+  if(isPost(rows[ti])) $('#projList').classList.add('show-post');
   let prev = null;
   $('#projList').innerHTML = rows.map((r,i) => {
     const dc = prev ? r.c-prev.c : 0, dO = prev ? r.o-prev.o : 0; prev = r;
-    return `<li class="${i===ti ? 'sel' : ''}" data-node="${iso(r.d)}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
+    return `<li class="${i===ti ? 'sel' : ''}${isPost(r) ? ' post' : ''}" data-node="${iso(r.d)}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
       + `<span class="pj-s">CRS <b>${r.c}</b>${deltaTag(dc)} · OINP <b>${r.o}</b>${deltaTag(dO)}</span></div>`
       + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年 · ${ruleFor(r.p)==='new' ? '新规' : '旧规'}${r.p.pEnd && r.d>r.p.pEnd ? ' · <span class="down">工签已到期，经验和收入不再累积</span>' : ''}</div>`
       + `<div class="pb2"><span class="k">CRS</span><div class="pb"><i style="width:${pc(r.c).toFixed(1)}%"></i>${band(pc, eeAt(r.d))}</div></div>`
       + `<div class="pb2"><span class="k">OINP</span><div class="pb o"><i style="width:${po(r.o).toFixed(1)}%"></i>${band(po, oi)}</div></div></li>`;
-  }).join('');
+  }).join('')
+    + (post ? `<li class="pj-more"><button type="button" class="link" data-pjmore><span class="o">显示工签到期后的 ${post} 个节点</span><span class="c">收起工签到期后的节点</span></button></li>` : '');
   const best = rows.reduce((a,b) => b.c>a.c ? b : a, rows[0]);
-  $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有；工签到期后经验、在岗月数、收入都不再累积。英语滑块对整条时间线生效；收入滑块是「从今天起的年薪」，多出来的分要等拿到那张报税单才算。点哪一行就把时间滑到那里。</p>`
+  $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有；工签到期后经验、在岗月数、收入都不再累积。英语滑块对整条时间线生效；收入按「⑦ OINP」里填的手上报税单、年薪和入职日自动估，年薪变了改那里就行。点哪一行就把时间滑到那里。</p>`
     + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；Moving2Canada 估新规后头几轮 520 多、可能到 530–540 多，也有说法至少 540–550）；OINP ${oi[0]}–${oi[1]}（新类别还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
     + `<p>这个情景下 CRS 最高：<b>${best.c}</b>（${iso(best.d)}，${esc(best.label)}）。</p>`
     + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」「在岗满 N 个月」这些节点。</p>');
@@ -1547,7 +1554,11 @@ function renderTimeline(s){
   }
   if(iso(t0)<=NEW_RULES_DATE) push(D(NEW_RULES_DATE), 'CRS 新规生效：高薪职业经验 / offer 加分，抽签暂停约 2 周重算');
   if(p.grad && s.oRecentGrad) push(addYears(p.grad,3), 'OINP「安省应届生」优惠到期（在岗 3 个月、免语言考试）');
-  if(D(s.testDate)) push(addYears(D(s.testDate),2), '语言成绩过期（递交 PR 时要在 2 年内）', 'warn');
+  const lt = lastTestISO(s), ltEnd = lt ? addYears(D(lt), 2) : null;
+  if(lt) push(ltEnd, `语言成绩过期（${lt} 那次考试；建 EE 档案、递交 PR 都要 2 年内的成绩）`, 'warn');
+  if(D(s.nextTest)) push(D(s.nextTest), '下次语言考试');
+  $('#testInfo').innerHTML = !lt ? '没填，雅思记录里也没有正式考试'
+    : `用的是 ${lt}${lt!==s.testDate ? '（雅思记录）' : ''} · ` + (ltEnd<t0 ? '<span class="no">已过期，要重考</span>' : `有效到 ${iso(ltEnd)}`);
   for(const x of earnSteps(p, s)) push(x.d, `${x.year} 年报税单（估 $${money(x.income)}）→ OINP 收入分 ${x.from}→${x.to}`);
   if(D(s.dob)){
     const dob = D(s.dob), from = p.grad || p.pStart || t0, to = p.pEnd ? addYears(p.pEnd,1) : addYears(t0,4);
@@ -1656,7 +1667,8 @@ function renderSummaries(p){
   const s = p.s;
   const set = (k, parts) => { const el = $(`[data-sum="${k}"]`); if(el) el.textContent = parts.filter(Boolean).join(' · ') || '还没填'; };
   set('tl', [p.grad && '毕业 '+iso(p.grad), p.pStart && `工签 ${iso(p.pStart)} 起${p.pEnd ? '，到 '+iso(p.pEnd) : ''}`,
-    p.wStart && `工作 ${iso(p.wStart)} 起，每周 ${p.hpw} 小时`, D(s.testDate) && '语言考试 '+s.testDate, s.evalDate && '按 '+s.evalDate+' 算分']);
+    p.wStart && `工作 ${iso(p.wStart)} 起，每周 ${p.hpw} 小时`, lastTestISO(s) && '最近考试 '+lastTestISO(s) + (testExpired(s, D(todayISO())) ? '（已过期）' : ''),
+    D(s.nextTest) && '下次考试 '+s.nextTest, s.evalDate && '按 '+s.evalDate+' 算分']);
   set('basic', [p.age!=null ? p.age+' 岁' : '没填生日', {single:'单身', spouse_na:'配偶不随行', spouse:'配偶随行'}[s.marital],
     p.eduSet ? EDU[p.edu][4] : '学历没选', {short:'加拿大 1–2 年制', long:'加拿大 3 年以上/硕博'}[s.caEdu], {new:'按新规', auto:'按日期选规则', old:'按旧规'}[s.rules]]);
   const tn = {ielts:'雅思 ', celpip:'CELPIP ', pte:'PTE '}[s.enTest] || '';
@@ -1780,7 +1792,7 @@ function addIelts(){
   store.set(IELTS_KEY, ieltsLog);
   ['ilL','ilR','ilW','ilS'].forEach(id => { $('#'+id).value = ''; });
   renderIeltsLog();
-  renderSummaries(build(readState()));
+  render(); // 最近一次考试日期会影响时间线、CRS 提醒和推算节点
 }
 function useIelts(id){
   const r = ieltsLog.find(x => x.id===id);
@@ -1795,7 +1807,7 @@ function delIelts(id){
   ieltsLog = ieltsLog.filter(x => x.id!==id);
   store.set(IELTS_KEY, ieltsLog);
   renderIeltsLog();
-  renderSummaries(build(readState()));
+  render(); // 最近一次考试日期会影响时间线、CRS 提醒和推算节点
 }
 
 /* ================= 保存 / 备份 ================= */
@@ -1831,9 +1843,7 @@ function init(){
     if(t.type!=='range') return;
     const i = +t.value;
     if(t.id==='slTime' && scnSteps.nodes[i]) scn.date = iso(scnSteps.nodes[i].d);
-    if(t.id==='slEn' && scnSteps.en[i]) scn.clb = scnSteps.en[i].v;
-    if(t.id==='slIn' && scnSteps.inc[i]) scn.inc = scnSteps.inc[i].v;
-    store.set(SCN_KEY, scn);
+    if(t.id==='slEn' && scnSteps.en[i]) scn.clb = scnSteps.en[i].v;    store.set(SCN_KEY, scn);
     renderProj(readState());
   });
   $('#ilType').onchange = syncIlType;
@@ -1851,6 +1861,7 @@ function init(){
     if(b.dataset.tab){ showTab(b.dataset.tab); store.set(TAB_KEY, tab); }
     if(b.hasAttribute('data-more')) b.closest('ol').classList.toggle('open');
     if(b.hasAttribute('data-past')) $('#events').classList.toggle('show-past');
+    if(b.hasAttribute('data-pjmore')) $('#projList').classList.toggle('show-post');
     if(b.id==='btnToday'){ $('[data-k="evalDate"]').value = ''; onChange(); }
     if(b.id==='btnDraws'){ $('#drawStatus').textContent = '正在从 IRCC 官网读取…'; loadDraws(true); }
   });
