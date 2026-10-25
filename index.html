@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>加拿大 PR 分数计算器</title>
 <meta name="description" content="Express Entry CRS（含 2026-11-03 新规）与安省 OINP Workforce Priority EOI 分数计算：时间线、提分建议、雅思 CLB 对照表。填写内容只保存在本机浏览器。">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%81%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%227%22 y=%2255%22 width=%2250%22 height=%225%22 rx=%222.5%22 fill=%22%236b4a34%22/%3E%3Crect x=%2212%22 y=%225%22 width=%2240%22 height=%2252%22 rx=%223%22 fill=%22%236b4a34%22/%3E%3Crect x=%2216.5%22 y=%229.5%22 width=%2231%22 height=%2246%22 fill=%22%23ffe2a0%22/%3E%3Cpath fill=%22%23d92d20%22 transform=%22translate(39 31.5) scale(.98)%22 d=%22M0-8 1.8-4.4 4-5.4 3.2-1 7-2.6 5.8.4 7.6 1.2 3.2 4 3.8 5.6.6 4.8.6 8.5-.6 8.5-.6 4.8-3.8 5.6-3.2 4-7.6 1.2-5.8.4-7-2.6-3.2-1-4-5.4-1.8-4.4Z%22/%3E%3Cpath d=%22M16.5 9.5 29.5 13.2v40.1l-13 2.2Z%22 fill=%22%23b5784d%22/%3E%3Cpath d=%22M29.5 13.2v40.1%22 stroke=%22%2386512f%22 stroke-width=%221.6%22/%3E%3Ccircle cx=%2226%22 cy=%2234%22 r=%221.8%22 fill=%22%23ffd36b%22/%3E%3C/svg%3E">
 <style>
 :root{
   color-scheme:light dark;
@@ -30,7 +30,7 @@ a{color:var(--accent)}
 header.top{padding:22px 0 6px}
 .title-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 h1{font-size:22px;margin:0;letter-spacing:.01em}
-h1 .leaf{color:#d92d20}
+h1 .logo{width:30px;height:30px;vertical-align:-6px;margin-right:2px}
 .sub{margin:6px 0 0;color:var(--muted);font-size:13px}
 .sub b{color:var(--ink);font-weight:600}
 .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -68,6 +68,7 @@ input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:v
 /* 区块收起：只留标题和一行摘要（时间线的进度条和节点照常显示） */
 .card[data-fold]{position:relative}
 .card[data-fold] .card-h{padding-right:64px}
+.card-h .badge{white-space:normal;max-width:100%;line-height:1.4} /* 长提示在窄屏上换行，别把整列撑宽 */
 .fold{position:absolute;top:12px;right:12px;font-size:12px;padding:4px 11px;min-height:30px;border-radius:999px;color:var(--muted)}
 .sum{display:none;font-size:13px;color:var(--muted);line-height:1.65;cursor:pointer}
 .card.collapsed>.sum{display:block}
@@ -134,17 +135,50 @@ ol.events{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:2px}
 .events li.past-toggle{display:none;padding:0 8px}
 .past-toggle button,.sug-more button{padding:9px 0}
 .events.show-past .past-toggle .o,.events:not(.show-past) .past-toggle .c{display:none}
+/* 推算：情景卡 + 三个滑块 */
+.scn{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft)}
+.scn-res{display:flex;flex-wrap:wrap;gap:4px 22px;align-items:baseline}
+.scn-res b{font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums;margin-left:6px}
+.scn-k{font-size:12px;font-weight:600;color:var(--muted)}
+.scn-lines{display:grid;gap:3px;margin:8px 0 2px;font-size:13px}
+.scn-lines .good{color:var(--good)}.scn-lines .mid{color:var(--star)}.scn-lines .bad{color:var(--bad)}
+.sl{display:block;margin-top:12px;font-size:13px}
+.sl>span:first-child{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 8px;color:var(--muted)}
+.sl b{color:var(--ink);font-weight:600}
+.sl input[type=range]{display:block;width:100%;height:30px;min-height:0;margin:2px 0 0;padding:0;border:0;background:none;accent-color:var(--accent)}
+.ticks{display:flex;justify-content:space-between;gap:4px;font-size:11px;color:var(--muted)}
+.ticks span.on{color:var(--accent);font-weight:700}
+.ticks.dots{padding:0 6px;letter-spacing:-1px}
+.bands{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 4px;font-size:12px;color:var(--muted)}
+.bands input{width:58px;min-height:32px;padding:3px 6px;font-size:16px}
+/* 推算列表：每个节点两条横条，虚线框是预计分数线 */
 ol.pj{list-style:none;margin:6px 0 0;padding:0}
-.pj li{padding:9px 0;border-bottom:1px solid var(--line)}
-.pj li.best .pj-l::after{content:" ⭐"}
-.pj-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pj li{padding:9px 8px;border-bottom:1px solid var(--line);border-radius:8px;cursor:pointer}
+.pj li.sel{background:var(--accent-soft)}
+.pj-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 10px}
 .pj-l{font-weight:600}
-.pj-s{white-space:nowrap;font-variant-numeric:tabular-nums}
-.pj-s b{font-size:17px}
+.pj-s{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
+.pj-s b{font-size:16px}
 .pj-m{font-size:12px;color:var(--muted);margin-top:1px}
-.pb{position:relative;height:6px;border-radius:3px;background:var(--soft);margin-top:7px}
-.pb>i{display:block;height:100%;border-radius:3px;background:var(--accent);opacity:.8}
-.pb>.cut{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--bad);border-radius:1px}
+.pb2{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:8px;margin-top:6px}
+.pb2 .k{font-size:11px;color:var(--muted)}
+.pb{position:relative;height:6px;border-radius:3px;background:var(--line)}
+.pb>i{display:block;height:100%;border-radius:3px;background:var(--accent);opacity:.85}
+.pb.o>i{background:var(--good)}
+/* 雅思记录 */
+details.ilog{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+details.ilog summary{cursor:pointer;font-weight:600;font-size:14px}
+.ilog-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,9em),1fr));gap:8px 10px;margin:10px 0;align-items:end}
+.ilog-form label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);min-width:0}
+.ilog-form button{min-height:38px;justify-content:center}
+ol.ilist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ilist li{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}
+.ilist li.empty{border:0;padding:0}
+.il-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:4px}
+.il-h .act{margin-left:auto;display:flex;gap:14px}
+.il-row{display:grid;grid-template-columns:20px 1fr;gap:6px;line-height:1.55}
+.il-row .ok{color:var(--good);font-weight:700}
+.pb>.band{position:absolute;top:-4px;bottom:-4px;border:1.5px dashed var(--star);border-radius:4px;background:color-mix(in srgb,var(--star-soft) 50%,transparent);pointer-events:none}
 .sug li.sug-more{display:block;border:0;padding:4px 0}
 .sug:not(.open) li.more{display:none}
 .sug.open .sug-more .o,.sug:not(.open) .sug-more .c{display:none}
@@ -183,6 +217,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
   .actions .save{order:3;width:100%}
   .card{padding:14px;margin:10px 0}
   .grid{grid-template-columns:1fr;row-gap:12px} /* 手机上一行一个，输入框占满宽，字号调大也放得下 */
+  .ilog-form .wide{grid-column:1/-1}
   .big{font-size:40px}
   .panel{padding:12px 12px 16px}
   .tabs{padding:6px 6px 0}
@@ -214,7 +249,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 <header class="top">
   <div class="wrap">
     <div class="title-row">
-      <h1><span class="leaf">🍁</span> 加拿大 PR 分数计算器</h1>
+      <h1><svg class="logo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="7" y="55" width="50" height="5" rx="2.5" fill="#6b4a34"/><rect x="12" y="5" width="40" height="52" rx="3" fill="#6b4a34"/><rect x="16.5" y="9.5" width="31" height="46" fill="#ffe2a0"/><path fill="#d92d20" transform="translate(39 31.5) scale(.98)" d="M0-8 1.8-4.4 4-5.4 3.2-1 7-2.6 5.8.4 7.6 1.2 3.2 4 3.8 5.6.6 4.8.6 8.5-.6 8.5-.6 4.8-3.8 5.6-3.2 4-7.6 1.2-5.8.4-7-2.6-3.2-1-4-5.4-1.8-4.4Z"/><path d="M16.5 9.5 29.5 13.2v40.1l-13 2.2Z" fill="#b5784d"/><path d="M29.5 13.2v40.1" stroke="#86512f" stroke-width="1.6"/><circle cx="26" cy="34" r="1.8" fill="#ffd36b"/></svg> 加拿大 PR 分数计算器</h1>
       <div class="actions">
         <span class="save" id="saveState"></span>
         <button type="button" id="btnExport" title="下载一个 JSON 备份文件">导出备份</button>
@@ -320,6 +355,20 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
           <label>写 W <input type="number" data-k="frW" inputmode="numeric"><span class="clb" id="nclcW"></span></label>
           <label>说 S <input type="number" data-k="frS" inputmode="numeric"><span class="clb" id="nclcS"></span></label>
         </div>
+        <details class="ilog" id="ilog">
+          <summary>雅思记录 <span class="dim" id="ilogSum"></span></summary>
+          <div class="ilog-form">
+            <label class="wide">日期<input type="date" id="ilDate"></label>
+            <label class="wide">类型<select id="ilType"><option value="mock">模考</option><option value="real">正式考试</option></select></label>
+            <label><span id="ilLk">听 错几题</span><input type="number" id="ilL" inputmode="decimal"></label>
+            <label><span id="ilRk">读 错几题</span><input type="number" id="ilR" inputmode="decimal"></label>
+            <label>写 分数<input type="number" id="ilW" min="0" max="9" step="0.5" inputmode="decimal" placeholder="如 6.5"></label>
+            <label>说 分数<input type="number" id="ilS" min="0" max="9" step="0.5" inputmode="decimal" placeholder="如 7"></label>
+            <button type="button" id="ilAdd">添加这一次</button>
+          </div>
+          <ol class="ilist" id="ilList"></ol>
+          <p class="note">换算按常见的答对题数 → 分数表（满分 40，不同卷子可能差 1 题）。CLB 9 = 听 8 / 读 7 / 写 7 / 说 7（听最多错 5 题、读最多错 6 题）；CLB 10 = 听 8.5 / 读 8 / 写 7.5 / 说 7.5（听、读都最多错 3 题）。</p>
+        </details>
       </section>
 
       <!-- ④ 工作 -->
@@ -484,7 +533,17 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       </div>
 
       <div class="panel" data-panel="proj" hidden>
-        <p class="meta" style="margin-top:0">假设语言、学历这些都不变，只让时间往前走：年龄、加拿大经验、新规生效。工签到期后经验不再累计。</p>
+        <div class="scn" id="scn">
+          <div class="scn-res">
+            <div><span class="scn-k">CRS</span><b id="scnCrs">—</b><span id="scnCrsD"></span></div>
+            <div><span class="scn-k">OINP</span><b id="scnOinp">—</b><span id="scnOinpD"></span></div>
+          </div>
+          <div class="scn-lines" id="scnLines"></div>
+          <label class="sl"><span>时间 · 往右滑到下一个节点 <b id="slTimeV"></b></span><input type="range" id="slTime" min="0" max="0" step="1" value="0"><span class="ticks dots" id="slTimeT"></span></label>
+          <label class="sl"><span>英语 · 往右滑升级 <b id="slEnV"></b></span><input type="range" id="slEn" min="0" max="0" step="1" value="0"><span class="ticks" id="slEnT"></span></label>
+          <label class="sl"><span>收入（只影响 OINP）· 往右滑升级 <b id="slInV"></b></span><input type="range" id="slIn" min="0" max="0" step="1" value="0"><span class="ticks" id="slInT"></span></label>
+        </div>
+        <div class="bands">预计线（可改）EE <input type="number" data-k="eeLo" value="520" inputmode="numeric" aria-label="EE 预计线下限">–<input type="number" data-k="eeHi" value="550" inputmode="numeric" aria-label="EE 预计线上限"> · OINP <input type="number" data-k="oLo" value="81" inputmode="numeric" aria-label="OINP 预计线下限">–<input type="number" data-k="oHi" value="90" inputmode="numeric" aria-label="OINP 预计线上限"></div>
         <ol class="pj" id="projList"></ol>
         <div class="note" id="projNote"></div>
       </div>
@@ -512,6 +571,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/rounds-invitations.html" target="_blank" rel="noopener">EE 抽签记录（IRCC）</a></li>
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/after-graduation/eligibility/language-results.html" target="_blank" rel="noopener">语言考试 ↔ CLB 换算（IRCC）</a></li>
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html" target="_blank" rel="noopener">EE 语言要求（CEC：TEER 0/1 要 CLB 7，2/3 要 CLB 5）</a></li>
+      <li><a href="https://moving2canada.com/2026/10/express-entry-crs-530-after-october-16-changes/" target="_blank" rel="noopener">11/3 后 CRS 分数线预测（Moving2Canada，非官方）</a></li>
       <li><a href="https://www.ontario.ca/page/ontario-workforce-priority-stream" target="_blank" rel="noopener">OINP Ontario Workforce Priority（打分表和条件）</a></li>
       <li><a href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">OINP 2026 更新公告（邀请记录也在这里）</a></li>
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html" target="_blank" rel="noopener">IRCC 审理时间</a></li>
@@ -806,6 +866,16 @@ const DRAWS_SNAPSHOT = [
   ["2025-10-01","Canadian Experience Class",534,1000]
 ];
 const SNAPSHOT_DATE = '2026-10-16';
+// 预计分数线（推算页的区间带，页面上也能改）
+// EE：11/3 新规后还没有抽签。Moving2Canada（2026-10）估头几轮 520 多、可能到 530–540 多；也有说法至少 540–550
+const EE_BAND = [520, 550];
+// OINP：Workforce Priority 新类别还没抽过；旧制度 2026-04-30 GTA 雇主担保（含国际学生类）81 分及以上，旧打分表只能参考
+const OINP_BAND = [81, 90];
+// 雅思答对题数 → 分数（满分 40；不同卷子可能差 1 题）：[最少答对, 分数]
+const IELTS_RAW = {
+  L: [[39,9],[37,8.5],[35,8],[32,7.5],[30,7],[26,6.5],[23,6],[18,5.5],[16,5],[13,4.5],[10,4],[8,3.5],[6,3],[4,2.5]],
+  R: [[40,9],[39,8.5],[37,8],[36,7.5],[34,7],[32,6.5],[30,6],[27,5.5],[23,5],[19,4.5],[15,4],[12,3.5],[9,3],[6,2.5]], // 普通类阅读
+};
 
 // CRS 年龄分（单身或配偶不随行 / 配偶随行）；20–29 岁另算
 const AGE_SINGLE = {17:0,18:99,19:105,30:105,31:99,32:94,33:88,34:83,35:77,36:72,37:66,38:61,39:55,40:50,41:39,42:28,43:17,44:6};
@@ -965,6 +1035,7 @@ function build(s, at){
   const cweManual = !!s.cweManual && s.cweManual!=='auto';
   const cwe = cweManual ? +s.cweManual : cweAuto;
   const yearDate = n => wStart ? addDays(wStart, Math.ceil(n*1560/eff*7)) : null;
+  const posDate = m => wStart ? addDays(wStart, Math.ceil(m*30.4375)) : null; // 在岗满 m 个月那天（和下面的月数算法一致）
   const working = !!wStart && wStart<=d && !(pEnd && d>pEnd);
   const posAuto = working && hpw>=30 ? Math.floor(days/30.4375) : 0;
   const posMonths = s.oPosAuto ? posAuto : (num(s.oPosMonths) ?? 0);
@@ -984,7 +1055,7 @@ function build(s, at){
     edu: EDU[s.edu] ? s.edu : 'none', eduSet: !!EDU[s.edu], caEdu: s.caEdu,
     age: (s.dob && D(s.dob)) ? ageAt(D(s.dob), d) : null,
     spEdu: s.spEdu, spLang: SK.map(k => num(s['sp'+k])), spCwe: +s.spCwe||0,
-    posMonths, ontMonths, status, recentGrad: !!s.oRecentGrad && !!grad && d<=addYears(grad,3),
+    posMonths, ontMonths, posDate, status, recentGrad: !!s.oRecentGrad && !!grad && d<=addYears(grad,3),
     wage: num(s.oWage), earn: Math.max(earnBase, earnEst), earnBase, earnEst, noas, region: s.oRegion, oEdu: s.oEdu, creds: +s.oCreds||0, oOffer: !!s.oOffer,
   };
 }
@@ -1070,7 +1141,7 @@ function oinpElig(p, o){
     const need = p.recentGrad ? 3 : 6;
     const ok = p.posMonths>=need || p.cwe>=2;
     let when = '';
-    if(!ok && p.wStart && p.s.oPosAuto) when = `，预计 ${iso(addMonths(p.wStart, need))} 满`;
+    if(!ok && p.wStart && p.s.oPosAuto) when = `，预计 ${iso(p.posDate(need))} 满`;
     items.push({ok, t:`经验：在 offer 职位上连续全职 ≥ ${need} 个月${p.recentGrad ? '（安省应届生优惠）' : ''}，或同一 NOC 近 5 年累计 2 年 —— 现在 ${p.posMonths} 个月${when}`});
     const needC = isTrades(p.noc) ? 5 : 6;
     const langOk = p.recentGrad || (o.bestC!=null && o.bestC>=needC);
@@ -1169,10 +1240,10 @@ function suggestOINP(p){
   }
   const next = [6,13,25].find(m => p.posMonths<m);
   if(next){
-    const dt = (p.s.oPosAuto && p.wStart) ? addMonths(p.wStart, next) : null;
+    const dt = (p.s.oPosAuto && p.wStart) ? p.posDate(next) : null;
     add({grp:'work', feas:'time', title:`在 offer 职位上满 ${next===25 ? '24 个月以上' : next+' 个月'}`, detail: dt ? `预计 ${iso(dt)}` : '', p:{...p, posMonths:next}});
     if(next<25){ // 更高目标：最高一档
-      const dt2 = (p.s.oPosAuto && p.wStart) ? addMonths(p.wStart, 25) : null;
+      const dt2 = (p.s.oPosAuto && p.wStart) ? p.posDate(25) : null;
       add({grp:'work', feas:'time', stretch:true, title:'在 offer 职位上满 24 个月以上', detail: dt2 ? `预计 ${iso(dt2)}` : '最高一档 18 分', p:{...p, posMonths:25}});
     }
   }
@@ -1259,6 +1330,7 @@ function renderCRS(p, r, other){
   const chips = [];
   const cec = recentLine('cec');
   if(cec){ const diff = r.total - cec[2]; chips.push(`<span class="chip ${diff>=0 ? 'good' : 'bad'}">CEC 最近一次线 ${cec[2]}（${cec[0].slice(5)}）· 差 ${signed(diff)}</span>`); }
+  if(cec && cec[0]<NEW_RULES_DATE){ const {ee} = bandsOf(p.s); chips.push(`<span class="chip">11/3 后预计 ${ee[0]}–${ee[1]}</span>`); }
   const c = cecCheck(p);
   chips.push(`<span class="chip ${c.ok ? 'good' : ''}">${c.ok ? '✓ 符合 CEC 基本条件' : `CEC：${!c.expOk ? '加拿大经验还不满 1 年' : ''}${!c.expOk && !c.langOk ? '，' : ''}${!c.langOk ? `语言要四项 ≥ CLB ${c.need}` : ''}`}</span>`);
   $('#crsChips').innerHTML = chips.join('');
@@ -1319,28 +1391,68 @@ function renderDraws(p, r){
     }).join('');
 }
 
-function projection(s){
+// 推算节点：只留 EE 或 OINP 分数有变化、或资格有变化（key）的日子；同一天的合并
+function milestones(s){
   const t0 = D(todayISO()), p0 = build(s, iso(t0));
   const horizon = p0.pEnd && p0.pEnd>t0 ? addYears(p0.pEnd, 1) : addYears(t0, 5);
-  const pts = [{d:t0, label:'今天'}];
-  if(iso(t0)<NEW_RULES_DATE) pts.push({d:D(NEW_RULES_DATE), label:'CRS 新规生效'});
-  if(p0.wStart && !p0.cweManual && p0.skilled) for(let n=1; n<=5; n++){
+  const cand = [];
+  const add = (d, label, key='') => { if(d && d>t0 && d<=horizon) cand.push({d, label, key}); };
+  add(D(NEW_RULES_DATE), 'CRS 新规生效');
+  if(p0.wStart && p0.skilled && !p0.cweManual) for(let n=1; n<=5; n++){
     const d = p0.yearDate(n);
-    if(d>t0 && d<=horizon && (!p0.pEnd || d<=p0.pEnd)) pts.push({d, label:`加拿大经验满 ${n} 年`});
+    if(!p0.pEnd || d<=p0.pEnd) add(d, `加拿大经验满 ${n} 年${n===1 ? '（可申请 CEC）' : ''}`, n===1 ? 'cec' : '');
   }
-  if(D(s.dob)){
-    const dob = D(s.dob);
-    for(let a = Math.max(ageAt(dob,t0)+1, 30); a<=45; a++){
-      const d = addYears(dob, a);
-      if(d>horizon) break;
-      pts.push({d, label:`${a} 岁生日`});
-    }
+  if(p0.wStart && s.oPosAuto && p0.hpw>=30){
+    if(s.oRecentGrad) add(p0.posDate(3), '在岗满 3 个月（OINP 应届生经验够了）', 'oinp');
+    for(const m of [6,13,25]) add(p0.posDate(m), `在岗满 ${m===25 ? '24 个月以上' : m+' 个月'}`, m===6 && !s.oRecentGrad ? 'oinp' : '');
   }
-  if(p0.pEnd && p0.pEnd>t0) pts.push({d:p0.pEnd, label:'工签到期'});
-  for(const x of earnSteps(p0, s)) if(x.d>t0 && x.d<=horizon) pts.push({d:x.d, label:`${x.year} 年报税单到手`});
-  const seen = new Map();
-  for(const x of pts.sort((a,b) => a.d-b.d)){ const k = iso(x.d); seen.has(k) ? seen.get(k).label += ' · '+x.label : seen.set(k, {...x}); }
-  return [...seen.values()].map(x => { const p = build(s, iso(x.d)); const r = crs(p, ruleFor(p)); return {...x, age:p.age, cwe:p.cwe, total:r.total, rule:r.rule, oinp:oinp(p).total}; });
+  for(const x of earnSteps(p0, s)) add(x.d, `${x.year} 年报税单到手`);
+  if(D(s.dob)){ const dob = D(s.dob); for(let a = ageAt(dob,t0)+1; a<=45; a++) add(addYears(dob,a), `${a} 岁生日`); }
+  if(p0.pEnd) add(p0.pEnd, '工签到期', 'permit');
+  if(p0.grad && s.oRecentGrad) add(addYears(p0.grad,3), 'OINP 应届生优惠到期', 'oinp');
+  if(D(s.testDate)) add(addYears(D(s.testDate),2), '语言成绩过期', 'lang');
+  const merged = new Map();
+  for(const x of cand.sort((a,b) => a.d-b.d)){
+    const k = iso(x.d), m = merged.get(k);
+    if(m){ m.label += ' · '+x.label; m.key = m.key || x.key; } else merged.set(k, {...x});
+  }
+  const at = d => { const p = build(s, iso(d)); return {p, crs:crs(p, ruleFor(p)).total, oinp:oinp(p).total}; };
+  const out = [{d:t0, label:'现在', key:'now', ...at(t0)}];
+  for(const x of merged.values()){
+    const e = at(x.d), prev = out[out.length-1];
+    if(x.key || e.crs!==prev.crs || e.oinp!==prev.oinp) out.push({...x, ...e});
+  }
+  return out;
+}
+// 情景：英语每项至少到某个 CLB、收入至少到某一档；算分还是用 crs() / oinp()
+function applyScenario(p, sc){
+  const q = {...p};
+  if(sc.clb) q.en = p.en.map(c => Math.max(c ?? 0, sc.clb));
+  if(sc.inc) q.earn = Math.max(p.earn || 0, sc.inc);
+  return q;
+}
+const EARN_BANDS = [[30000,4],[50000,6],[70000,8],[80000,10]];
+const SCN_KEY = 'pr-calc:scn';
+let scn = Object.assign({date:'', clb:0, inc:0}, store.get(SCN_KEY) || {});
+let scnSteps = {nodes:[], en:[], inc:[]};
+function bandsOf(s){
+  const fix = (a, b, d) => { let lo = num(a) ?? d[0], hi = num(b) ?? d[1]; if(lo>hi) [lo, hi] = [hi, lo]; return [lo, hi]; };
+  return {ee: fix(s.eeLo, s.eeHi, EE_BAND), oi: fix(s.oLo, s.oHi, OINP_BAND)};
+}
+function vsLine(v, [lo, hi]){
+  if(lo===hi) return v>=lo ? {c:'good', t:`过线（+${v-lo}）`} : {c:'bad', t:`还差 ${lo-v}`};
+  if(v>=hi) return {c:'good', t:`已过上限（+${v-hi}）`};
+  if(v>=lo) return {c:'mid', t:`过了下限，离上限还差 ${hi-v}`};
+  return {c:'bad', t:`离下限还差 ${lo-v}，离上限差 ${hi-v}`};
+}
+const deltaTag = d => d ? ` <span class="${d>0 ? 'up' : 'down'}">${signed(d)}</span>` : '';
+function setSlider(id, labels, i, valText, showLabels){
+  const el = $('#'+id);
+  el.max = Math.max(0, labels.length-1);
+  el.value = i;
+  el.disabled = labels.length<2;
+  $('#'+id+'V').textContent = valText;
+  $('#'+id+'T').innerHTML = labels.map((t,j) => `<span class="${j===i ? 'on' : ''}">${showLabels ? esc(t) : '•'}</span>`).join('');
 }
 // 按年薪估的报税单里，会让 OINP 收入分变化的那几张
 function earnSteps(p, s){
@@ -1354,23 +1466,52 @@ function earnSteps(p, s){
   return out;
 }
 function renderProj(s){
-  const rows = projection(s);
-  const cec = recentLine('cec');
-  // 条形图不从 0 画起，差几十分也看得出来
-  const all = rows.map(r => r.total).concat(cec ? [cec[2]] : []);
-  const lo = Math.max(0, Math.min(...all) - 60), hi = Math.max(...all) + 15;
-  const pct = v => ((v-lo)/(hi-lo)*100).toFixed(1);
-  const best = rows.reduce((a,b) => b.total>a.total ? b : a, rows[0]);
+  const nodes = milestones(s), {ee, oi} = bandsOf(s), cec = recentLine('cec');
+  const eeAt = d => (iso(d)<NEW_RULES_DATE && cec) ? [cec[2], cec[2]] : ee; // 11/3 以前用实际最近一次 CEC 线
+  // 三个滑块：时间节点 / 英语（只出现还没达到的档）/ 收入（只出现比这个节点时间线更高、能多拿分的档）
+  let ti = nodes.findIndex(n => iso(n.d)===scn.date); if(ti<0) ti = 0;
+  const node = nodes[ti], minNow = minOf(node.p.en) ?? 0;
+  const enSteps = [{v:0, t:'现在'}].concat([9,10].filter(c => minNow<c).map(c => ({v:c, t:`CLB ${c}`})));
+  let ei = enSteps.findIndex(x => x.v===scn.clb); if(ei<0) ei = 0;
+  const curPts = OINP.earn(node.p.earn);
+  const inSteps = [{v:0, t:'按时间线'}].concat(EARN_BANDS.filter(b => b[1]>curPts).map(b => ({v:b[0], t:`$${b[0]/1000}k`})));
+  let ii = inSteps.findIndex(x => x.v===scn.inc); if(ii<0) ii = 0;
+  scnSteps = {nodes, en:enSteps, inc:inSteps};
+  const sc = {clb:enSteps[ei].v, inc:inSteps[ii].v};
+  setSlider('slTime', nodes.map(n => n.label), ti, ti ? `${iso(node.d)} ${node.label}` : '现在', false);
+  setSlider('slEn', enSteps.map(x => x.t), ei, sc.clb ? `四项都到 CLB ${sc.clb}` : '按你填的成绩', true);
+  setSlider('slIn', inSteps.map(x => x.t), ii, sc.inc ? `单年 $${money(sc.inc)}（OINP 收入分 ${OINP.earn(sc.inc)}）` : (node.p.earn ? `$${money(node.p.earn)}` : '还没有报税单'), true);
+
+  // 结果卡：和「现在、不加情景」比
+  const q = applyScenario(node.p, sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
+  $('#scnCrs').textContent = rc; $('#scnCrsD').innerHTML = deltaTag(rc - nodes[0].crs);
+  $('#scnOinp').textContent = ro; $('#scnOinpD').innerHTML = deltaTag(ro - nodes[0].oinp);
+  const eLine = eeAt(node.d), e1 = vsLine(rc, eLine), o1 = vsLine(ro, oi);
+  $('#scnLines').innerHTML = `<div class="${e1.c}">EE ${eLine[0]===eLine[1] ? `最近一次 CEC 线 ${eLine[0]}` : `预计线 ${ee[0]}–${ee[1]}`}：${e1.t}</div>`
+    + `<div class="${o1.c}">OINP 预计线 ${oi[0]}–${oi[1]}：${o1.t}</div>`;
+
+  // 节点列表：每个节点两条横条（CRS / OINP），虚线框是预计分数线
+  const rows = nodes.map(n => { const r = applyScenario(n.p, sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
+  const scale = (vals, pad, cap) => {
+    const lo = Math.max(0, Math.min(...vals) - pad), hi = Math.min(cap, Math.max(...vals) + pad/4);
+    return v => Math.max(0, Math.min(100, (v-lo)/(hi-lo || 1)*100));
+  };
+  const pc = scale(rows.map(r => r.c).concat(ee, cec ? [cec[2]] : []), 40, 1200), po = scale(rows.map(r => r.o).concat(oi), 15, OINP.max);
+  const band = (f, [lo, hi]) => `<em class="band" style="left:${f(lo).toFixed(1)}%;width:${Math.max(f(hi)-f(lo), 0.8).toFixed(1)}%"></em>`;
   let prev = null;
-  $('#projList').innerHTML = rows.map(r => {
-    const delta = prev==null ? 0 : r.total-prev; prev = r.total;
-    return `<li class="${r===best ? 'best' : ''}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
-      + `<span class="pj-s"><b>${r.total}</b>${delta ? ` <span class="${delta>0 ? 'up' : 'down'}">${signed(delta)}</span>` : ''}</span></div>`
-      + `<div class="pj-m">${iso(r.d)}${r.age!=null ? ' · '+r.age+' 岁' : ''} · 经验 ${r.cwe} 年 · ${r.rule==='new' ? '新规' : '旧规'} · OINP ${r.oinp}</div>`
-      + `<div class="pb"><i style="width:${pct(r.total)}%"></i>${cec ? `<span class="cut" style="left:${pct(cec[2])}%"></span>` : ''}</div></li>`;
+  $('#projList').innerHTML = rows.map((r,i) => {
+    const dc = prev ? r.c-prev.c : 0, dO = prev ? r.o-prev.o : 0; prev = r;
+    return `<li class="${i===ti ? 'sel' : ''}" data-node="${iso(r.d)}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
+      + `<span class="pj-s">CRS <b>${r.c}</b>${deltaTag(dc)} · OINP <b>${r.o}</b>${deltaTag(dO)}</span></div>`
+      + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年 · ${ruleFor(r.p)==='new' ? '新规' : '旧规'}</div>`
+      + `<div class="pb2"><span class="k">CRS</span><div class="pb"><i style="width:${pc(r.c).toFixed(1)}%"></i>${band(pc, eeAt(r.d))}</div></div>`
+      + `<div class="pb2"><span class="k">OINP</span><div class="pb o"><i style="width:${po(r.o).toFixed(1)}%"></i>${band(po, oi)}</div></div></li>`;
   }).join('');
-  $('#projNote').innerHTML = `<p>这段时间里最高：<b>${best.total}</b>（${iso(best.d)}，${esc(best.label)}）。${cec ? `红线是 CEC 最近一次分数线 ${cec[2]}，新规后大概率上涨。` : ''}</p>`
-    + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」这些节点。</p>');
+  const best = rows.reduce((a,b) => b.c>a.c ? b : a, rows[0]);
+  $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有。英语、收入两个滑块对整条时间线都生效；点哪一行就把时间滑到那里。</p>`
+    + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；Moving2Canada 估新规后头几轮 520 多、可能到 530–540 多，也有说法至少 540–550）；OINP ${oi[0]}–${oi[1]}（新类别还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
+    + `<p>这个情景下 CRS 最高：<b>${best.c}</b>（${iso(best.d)}，${esc(best.label)}）。</p>`
+    + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」「在岗满 N 个月」这些节点。</p>');
 }
 
 function renderTimeline(s){
@@ -1381,7 +1522,7 @@ function renderTimeline(s){
   push(p.wStart, '开始全职技术工作（开始累计加拿大经验）');
   if(p.wStart && p.skilled){
     const m = s.oRecentGrad ? 3 : 6;
-    push(addMonths(p.wStart, m), `在岗满 ${m} 个月：有安省 offer 的话，OINP 的经验条件就够了`);
+    push(p.posDate(m), `在岗满 ${m} 个月：有安省 offer 的话，OINP 的经验条件就够了`);
     for(let n=1; n<=3; n++){
       const d = p.yearDate(n);
       if(p.pEnd && d>p.pEnd){ ev.push({d:p.pEnd, text:`按现在的工时，工签到期前满不了 ${n} 年经验`, cls:'warn'}); break; }
@@ -1504,7 +1645,8 @@ function renderSummaries(p){
     p.eduSet ? EDU[p.edu][4] : '学历没选', {short:'加拿大 1–2 年制', long:'加拿大 3 年以上/硕博'}[s.caEdu], {new:'按新规', auto:'按日期选规则', old:'按旧规'}[s.rules]]);
   const tn = {ielts:'雅思 ', celpip:'CELPIP ', pte:'PTE '}[s.enTest] || '';
   set('lang', [p.en.some(c => c!=null) ? `${tn}${SK.map(k => SKN[k]+(s['en'+k] || '-')).join(' ')}（CLB ${p.en.map(c => c ?? '-').join('/')}）` : '英语没填',
-    s.frTest==='none' ? '没考法语' : `法语 NCLC ${p.fr.map(c => c ?? '-').join('/')}`]);
+    s.frTest==='none' ? '没考法语' : `法语 NCLC ${p.fr.map(c => c ?? '-').join('/')}`,
+    ieltsLog.length && `雅思记录 ${ieltsLog.length} 次（最近 ${ieltsLog.map(r => r.date || '').sort().pop()}）`]);
   set('work', [p.noc ? `NOC ${p.noc}${p.hwRow ? `（高薪 ×${p.hwLevel}）` : ''}` : 'NOC 没填', `加拿大经验 ${p.cwe} 年`, p.foreign && `海外 ${p.foreign>=3 ? '3+' : p.foreign} 年`, p.offer && '有 offer']);
   const other = [p.pnp && '已有省提名', p.sibling && '兄弟姐妹在加拿大', p.cert && '有技工证书'].filter(Boolean);
   set('other', other.length ? other : ['都没有']);
@@ -1568,6 +1710,78 @@ function render(){
   syncMinibar();
 }
 
+/* ================= 雅思记录 ================= */
+const IELTS_KEY = 'pr-calc:ielts';
+let ieltsLog = Array.isArray(store.get(IELTS_KEY)) ? store.get(IELTS_KEY) : [];
+const rawBand = (k, correct) => { for(const [min, b] of IELTS_RAW[k]) if(correct>=min) return b; return 0; };
+const minCorrect = (k, band) => (IELTS_RAW[k].find(x => x[1]===band) || [41])[0];
+const isMockLR = (r, k) => r.type==='mock' && (k==='L' || k==='R');
+const bandOf = (r, k) => r[k]==null ? null : isMockLR(r, k) ? rawBand(k, 40-r[k]) : r[k];
+const half = n => String(Math.round(n*10)/10);
+function ieltsLine(r, k){
+  if(r[k]==null) return '';
+  const t9 = TESTS.ielts[k][1], t10 = TESTS.ielts[k][0], b = bandOf(r, k), c = toClb('ielts', k, b);
+  const clb = c<4 ? 'CLB 4 以下' : `CLB ${c}`;
+  if(isMockLR(r, k)){
+    const w = r[k], w9 = 40-minCorrect(k, t9), w10 = 40-minCorrect(k, t10);
+    const gap = lim => w<=lim ? '<span class="ok">✓</span>' : `再少错 ${w-lim} 题`;
+    return `<b>${SKN[k]}</b><span>错 ${w} 题 ≈ ${b}（${clb}）→ CLB 9 最多错 ${w9}：${gap(w9)} · CLB 10 最多错 ${w10}：${gap(w10)}</span>`;
+  }
+  let est = '';
+  if(k==='L' || k==='R'){ // 正式成绩只有分数：倒推大概错了几题
+    const t = IELTS_RAW[k], i = t.findIndex(x => x[1]===b);
+    if(i>=0){ const lo = 40-(i ? t[i-1][0]-1 : 40), hi = 40-t[i][0]; est = `，≈ 错 ${lo===hi ? lo : lo+'–'+hi} 题`; }
+  }
+  const gap = t => b>=t ? '<span class="ok">✓</span>' : `+${half(t-b)}`;
+  return `<b>${SKN[k]}</b><span>${b}（${clb}${est}）→ CLB 9 要 ${t9}：${gap(t9)} · CLB 10 要 ${t10}：${gap(t10)}</span>`;
+}
+function renderIeltsLog(){
+  const list = [...ieltsLog].sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+  $('#ilList').innerHTML = list.length
+    ? list.map(r => `<li data-id="${esc(r.id)}"><div class="il-h"><b>${esc(r.date || '没填日期')}</b><span class="dim">${r.type==='mock' ? '模考' : '正式考试'}</span>`
+        + `<span class="act"><button type="button" class="link" data-iuse>用这次成绩算分</button><button type="button" class="link" data-idel>删除</button></span></div>`
+        + SK.map(k => ieltsLine(r, k)).filter(Boolean).map(x => `<div class="il-row">${x}</div>`).join('') + '</li>').join('')
+    : '<li class="empty">还没有记录。模考的听力、阅读填错了几题；正式考试填分数。</li>';
+  $('#ilogSum').textContent = list.length ? `共 ${list.length} 次 · 最近 ${list[0].date || '—'}` : '';
+}
+function syncIlType(){
+  const mock = $('#ilType').value==='mock';
+  $('#ilLk').textContent = mock ? '听 错几题' : '听 分数';
+  $('#ilRk').textContent = mock ? '读 错几题' : '读 分数';
+  ['ilL','ilR'].forEach(id => { const el = $('#'+id); el.min = 0; el.max = mock ? 40 : 9; el.step = mock ? 1 : 0.5; el.placeholder = mock ? '0–40' : '如 7.5'; });
+}
+function addIelts(){
+  const type = $('#ilType').value, g = id => num($('#'+id).value);
+  const r = {id:Date.now().toString(36), date:$('#ilDate').value || todayISO(), type, L:g('ilL'), R:g('ilR'), W:g('ilW'), S:g('ilS')};
+  if(SK.every(k => r[k]==null)){ alert('至少填一项成绩'); return; }
+  for(const k of SK){
+    const v = r[k];
+    if(v==null) continue;
+    const ok = isMockLR(r, k) ? Number.isInteger(v) && v>=0 && v<=40 : v>=0 && v<=9 && Number.isInteger(v*2);
+    if(!ok){ alert(`${SKN[k]}：${isMockLR(r, k) ? '错题数要是 0–40 的整数' : '分数要在 0–9 之间，以 0.5 为单位'}`); return; }
+  }
+  ieltsLog.push(r);
+  store.set(IELTS_KEY, ieltsLog);
+  ['ilL','ilR','ilW','ilS'].forEach(id => { $('#'+id).value = ''; });
+  renderIeltsLog();
+  renderSummaries(build(readState()));
+}
+function useIelts(id){
+  const r = ieltsLog.find(x => x.id===id);
+  if(!r) return;
+  const st = {enTest:'ielts'};
+  SK.forEach(k => { const b = bandOf(r, k); if(b!=null) st['en'+k] = String(b); });
+  writeState(st);
+  onChange();
+}
+function delIelts(id){
+  if(!confirm('删除这条雅思记录？')) return;
+  ieltsLog = ieltsLog.filter(x => x.id!==id);
+  store.set(IELTS_KEY, ieltsLog);
+  renderIeltsLog();
+  renderSummaries(build(readState()));
+}
+
 /* ================= 保存 / 备份 ================= */
 let saveTimer = null;
 function save(){
@@ -1595,12 +1809,29 @@ function init(){
   }
   document.addEventListener('input', e => { if(e.target.matches('[data-k]')) onChange(); });
   document.addEventListener('change', e => { if(e.target.matches('[data-k]')) onChange(); });
+  // 推算页的滑块：只重画推算页
+  $('#scn').addEventListener('input', e => {
+    const t = e.target;
+    if(t.type!=='range') return;
+    const i = +t.value;
+    if(t.id==='slTime' && scnSteps.nodes[i]) scn.date = iso(scnSteps.nodes[i].d);
+    if(t.id==='slEn' && scnSteps.en[i]) scn.clb = scnSteps.en[i].v;
+    if(t.id==='slIn' && scnSteps.inc[i]) scn.inc = scnSteps.inc[i].v;
+    store.set(SCN_KEY, scn);
+    renderProj(readState());
+  });
+  $('#ilType').onchange = syncIlType;
+  $('#ilAdd').onclick = addIelts;
   document.addEventListener('click', e => {
     const sm = e.target.closest('.sum');
     if(sm){ toggleFold(sm.closest('[data-fold]')); return; }
+    const row = e.target.closest('#projList li[data-node]');
+    if(row){ scn.date = row.dataset.node; store.set(SCN_KEY, scn); renderProj(readState()); return; }
     const b = e.target.closest('button');
     if(!b) return;
     if(b.hasAttribute('data-fold-btn')) toggleFold(b.closest('[data-fold]'));
+    if(b.hasAttribute('data-iuse')) useIelts(b.closest('li').dataset.id);
+    if(b.hasAttribute('data-idel')) delIelts(b.closest('li').dataset.id);
     if(b.dataset.tab){ showTab(b.dataset.tab); store.set(TAB_KEY, tab); }
     if(b.hasAttribute('data-more')) b.closest('ol').classList.toggle('open');
     if(b.hasAttribute('data-past')) $('#events').classList.toggle('show-past');
@@ -1608,7 +1839,7 @@ function init(){
     if(b.id==='btnDraws'){ $('#drawStatus').textContent = '正在从 IRCC 官网读取…'; loadDraws(true); }
   });
   $('#btnExport').onclick = () => {
-    const blob = new Blob([JSON.stringify({app:'canada-pr-calculator', v:1, exportedAt:new Date().toISOString(), data:readState()}, null, 2)], {type:'application/json'});
+    const blob = new Blob([JSON.stringify({app:'canada-pr-calculator', v:2, exportedAt:new Date().toISOString(), data:readState(), ielts:ieltsLog}, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `pr-calculator-${todayISO()}.json`;
@@ -1621,22 +1852,25 @@ function init(){
     try{
       const j = JSON.parse(await f.text());
       writeState(j.data || j);
+      if(Array.isArray(j.ielts)){ ieltsLog = j.ielts; store.set(IELTS_KEY, ieltsLog); renderIeltsLog(); }
       onChange();
       $('#saveState').textContent = `已从 ${f.name} 导入`;
     }catch{ alert('这个文件读不了：不是本页导出的备份？'); }
     e.target.value = '';
   };
   $('#btnReset').onclick = () => {
-    if(!confirm('清空所有填写的内容？建议先「导出备份」。')) return;
-    store.del(STORE_KEY);
+    if(!confirm('清空所有填写的内容和雅思记录？建议先「导出备份」。')) return;
+    [STORE_KEY, IELTS_KEY, SCN_KEY].forEach(k => store.del(k));
     location.reload();
   };
   showTab(tab);
   applyFold();
+  syncIlType();
+  renderIeltsLog();
   render();
   loadDraws(false);
 }
-window.PRCalc = {build, crs, oinp, ruleFor, suggestCRS, suggestOINP, readState};
+window.PRCalc = {build, crs, oinp, ruleFor, suggestCRS, suggestOINP, readState, milestones, applyScenario, rawBand, bandOf};
 init();
 </script>
 </body>
