@@ -6,12 +6,12 @@ A single-page calculator for Canada's **Express Entry Comprehensive Ranking Syst
 
 ## Features
 
-- **CRS** under the current rules and the rules effective **November 3, 2026** (the new Labour Market Integration factor: high-wage Canadian work experience and job-offer points, no LMIA required). IRCC's list of 186 high-wage occupations is built in.
+- **CRS** under the rules in force since **November 3, 2026** (the Labour Market Integration factor: high-wage Canadian work experience and job-offer points, no LMIA required). The pre-November rules have been removed. IRCC's list of 186 high-wage occupations is built in.
 - **OINP Ontario Workforce Priority** EOI score on the 132-point grid published in July 2026 (earnings factor updated October 5, 2026), with a check of the basic stream criteria.
 - **Timeline**: work permit countdown, the dates Canadian experience reaches 1, 2 and 3 years, birthdays that lower age points, language test expiry, and the OINP recent-graduate window.
 - **Improvement suggestions** ranked by points gained and tagged by how achievable each one is; the likely-and-worthwhile ones are starred.
 - **Latest Express Entry cutoffs**, read live from IRCC's public data feed, with a built-in snapshot as an offline fallback.
-- **Express Entry pool distribution** by CRS band from the same feed, with where your score sits and roughly how many candidates are above you. Distributions published before the November 3, 2026 recalculation are compared with your old-rules score.
+- **Express Entry pool distribution** by CRS band from the same feed, with where your current score sits and roughly how many candidates are above you. For distributions published before the November 3, 2026 recalculation, that count is a lower bound, since the recalculation only added points.
 - **Cutoff forecast** for the first draws after the November 2026 pause, used as the default projected range in the projection tab (editable).
 - **IELTS General Training ↔ CLB table**; CELPIP-G, PTE Core and TEF Canada scores are converted too.
 - **Private by design**: everything you enter stays in your browser's local storage. Use *export / import* to move a backup between browsers or devices.
