@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>加拿大 PR 分数计算器</title>
-<meta name="description" content="Express Entry CRS（含 2026-11-03 新规）与安省 OINP Workforce Priority EOI 分数计算：时间线、提分建议、雅思 CLB 对照表。填写内容只保存在本机浏览器。">
+<meta name="description" content="Express Entry CRS（2026-11-03 起的现行规则）与安省 OINP Workforce Priority EOI 分数计算：时间线、提分建议、雅思 CLB 对照表。填写内容只保存在本机浏览器。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%227%22 y=%2255%22 width=%2250%22 height=%225%22 rx=%222.5%22 fill=%22%236b4a34%22/%3E%3Crect x=%2212%22 y=%225%22 width=%2240%22 height=%2252%22 rx=%223%22 fill=%22%236b4a34%22/%3E%3Crect x=%2216.5%22 y=%229.5%22 width=%2231%22 height=%2246%22 fill=%22%23ffe2a0%22/%3E%3Cpath fill=%22%23d92d20%22 transform=%22translate(39 31.5) scale(.98)%22 d=%22M0-8 1.8-4.4 4-5.4 3.2-1 7-2.6 5.8.4 7.6 1.2 3.2 4 3.8 5.6.6 4.8.6 8.5-.6 8.5-.6 4.8-3.8 5.6-3.2 4-7.6 1.2-5.8.4-7-2.6-3.2-1-4-5.4-1.8-4.4Z%22/%3E%3Cpath d=%22M16.5 9.5 29.5 13.2v40.1l-13 2.2Z%22 fill=%22%23b5784d%22/%3E%3Cpath d=%22M29.5 13.2v40.1%22 stroke=%22%2386512f%22 stroke-width=%221.6%22/%3E%3Ccircle cx=%2226%22 cy=%2234%22 r=%221.8%22 fill=%22%23ffd36b%22/%3E%3C/svg%3E">
 <style>
 :root{
@@ -268,7 +268,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <button type="button" class="ghost" id="btnReset">清空</button>
       </div>
     </div>
-    <p class="sub">Express Entry 综合排名分 CRS（含 <b>2026-11-03 新规</b>）＋ 安省 OINP <b>Ontario Workforce Priority</b> EOI 分 · 规则核对于 <span id="checkedOn"></span><span class="sm-hide"> · 填的内容只存在这台电脑的浏览器里，自动保存</span></p>
+    <p class="sub">Express Entry 综合排名分 CRS（<b>2026-11-03 起的现行规则</b>）＋ 安省 OINP <b>Ontario Workforce Priority</b> EOI 分 · 规则核对于 <span id="checkedOn"></span><span class="sm-hide"> · 填的内容只存在这台电脑的浏览器里，自动保存</span></p>
   </div>
 </header>
 
@@ -324,12 +324,6 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
               <option value="none">没有</option>
               <option value="short">1–2 年制文凭/证书（+15）</option>
               <option value="long">3 年以上学位，或硕士/博士（+30）</option>
-            </select></label>
-          <label class="f"><span>CRS 规则</span>
-            <select data-k="rules">
-              <option value="new">按 11/3 新规（推荐）</option>
-              <option value="auto">按算分日期：11/2 以前用旧规</option>
-              <option value="old">一律按旧规</option>
             </select></label>
         </div>
       </section>
@@ -399,10 +393,10 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
           <label class="f"><span>海外技术工作经验 <em>近 10 年，TEER 0–3</em></span>
             <select data-k="foreign"><option value="0">没有 / 不满 1 年</option><option value="1">1 年</option><option value="2">2 年</option><option value="3">3 年及以上</option></select></label>
           <div class="f wide">
-            <label class="chk"><input type="checkbox" data-k="cweInNoc" checked><span>上面的加拿大工作经验都在这个 NOC 职业里<small>11/3 新规：在高薪职业里满 12 个月，额外 +20 / +40 / +70</small></span></label>
+            <label class="chk"><input type="checkbox" data-k="cweInNoc" checked><span>上面的加拿大工作经验都在这个 NOC 职业里<small>在高薪职业里满 12 个月，额外 +20 / +40 / +70</small></span></label>
           </div>
           <div class="f wide">
-            <label class="chk"><input type="checkbox" data-k="offer"><span>有这个职业的 job offer <span class="badge" data-badge="offer"></span><small>全职、非季节性、拿 PR 后至少 1 年。11/3 起不用 LMIA；职业在高薪名单里才有分（+50 / +70 / +100），而且和「加拿大经验」两条路只取高的</small></span></label>
+            <label class="chk"><input type="checkbox" data-k="offer"><span>有这个职业的 job offer <span class="badge" data-badge="offer"></span><small>全职、非季节性、拿 PR 后至少 1 年。不用 LMIA；职业在高薪名单里才有分（+50 / +70 / +100），而且和「加拿大经验」两条路只取高的</small></span></label>
           </div>
         </div>
       </section>
@@ -504,14 +498,14 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <h3>提分建议</h3>
         <div class="legend"><span class="badge star">⭐ 比较可能 + 分数比较大</span><span class="badge easy">✅ 可控</span><span class="badge time">⏳ 等时间</span><span class="badge mid">🟡 看机会</span><span class="badge hard">🔺 难</span></div>
         <ol class="sug" id="crsSug"></ol>
-        <p class="note">提分建议一律按 11/3 新规算，每条只改那一项、其他不变。</p>
+        <p class="note">提分建议每条只改那一项、其他不变。</p>
         <h3>分项</h3>
         <table id="crsTable"></table>
         <div class="note" id="crsNotes"></div>
         <details class="note diff">
           <summary>和别的计算器对不上？</summary>
-          <p>· 本页默认按 11/3 新规。还没更新的计算器按旧规算；有的还在给 job offer 加 50 或 200 分，这个 2025-03-25 就取消了。</p>
-          <p>· 新规里「加拿大经验（年限分＋高薪分）」和「job offer」只能二选一、取高的，不能相加；年限分也只算这一次，核心分里不再重复算。</p>
+          <p>· 本页只按 2026-11-03 起的现行规则算。还没更新的计算器还在用以前的打分（没有高薪职业分）；有的还在给 job offer 加 50 或 200 分，那套 2025-03-25 就取消了。</p>
+          <p>· 「加拿大经验（年限分＋高薪分）」和「job offer」只能二选一、取高的，不能相加；年限分也只算这一次，核心分里不再重复算。</p>
           <p>· 加拿大经验要满 1 年（1,560 小时）才有分，高薪分也要在名单里的职业上满 12 个月。本页按你填的开始日期自动算；别的计算器常让你自己选「1 年」，没满就选会多出 90 分左右。</p>
           <p>· job offer 分只给高薪名单里的职业，不在名单里就是 0。</p>
           <p>· 学历选「本科」还是「两个及以上学历」、加拿大学历算 1–2 年还是 3 年以上，会差 8–20 分；年龄按出生日期算到算分那天。</p>
@@ -539,7 +533,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <table id="drawTable" style="margin-top:8px"></table>
         <div class="note">
           <p>「差」= 你现在的 CRS − 那一类最近一次的分数线。只有符合那个类别的人才会被抽到：CEC 要满 1 年加拿大经验，类别抽签要职业在名单里（2026 年要求该职业近 3 年内 ≥1 年经验）。</p>
-          <p>上面都是旧规下的线。11/3 起 IRCC 暂停抽签、给池子里所有人按新规重算分；新规下不少人会多拿高薪职业分，恢复后的线大概率比这些高。</p>
+          <p>上面这些线都是 11/3 以前抽的，那时还没有高薪职业分。11/3 起 IRCC 暂停抽签、给池子里所有人按现行规则重算；不少人多了 20–70 分，恢复后的线大概率比这些高，旧线只能参考。</p>
         </div>
 
         <h3>池子分数分布 <small id="poolAsOf"></small></h3>
@@ -549,8 +543,8 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 
         <h3>分数线预测 <small>我的估计 · 2026-11-23</small></h3>
         <div class="note fc">
-          <p><b>现状</b>：最后一轮是 10/28（交通类 477，150 人）；前两天是 10/26 PNP 761、10/27 法语 407；CEC 最近一次还是 10/15 的 519。11/3 新规生效后 IRCC 暂停抽签重算分，官方说「可能要两周」，截至 11/23 还没恢复，也没公布日期。</p>
-          <p><b>CEC 恢复后头 2–3 轮：535–555，最可能 540 上下</b>（旧规下 7–10 月一直在 516–523）。10/25 的池子里光 481–500 就有 24,504 人，再加上 501–520 那一截，是排 CEC 的主力。新规给在高薪职业里满 12 个月的人 +20 / +40 / +70（软件、IT、工程、护士多是 ×1.5 → +40；会计、金融分析 ×1.3 → +20；金融经理、医生 ×2 → +70），这群人里做高薪职业的会整体上移，估计有好几千人新冒到 530 以上，而 CEC 一轮一般只发 2,000–3,000。</p>
+          <p><b>现状</b>：最后一轮是 10/28（交通类 477，150 人）；前两天是 10/26 PNP 761、10/27 法语 407；CEC 最近一次还是 10/15 的 519。11/3 现行规则生效后 IRCC 暂停抽签、给所有人重算分，官方说「可能要两周」，截至 11/23 还没恢复，也没公布日期。</p>
+          <p><b>CEC 恢复后头 2–3 轮：535–555，最可能 540 上下</b>（11/3 以前 7–10 月一直在 516–523）。10/25 的池子里光 481–500 就有 24,504 人，再加上 501–520 那一截，是排 CEC 的主力。新规给在高薪职业里满 12 个月的人 +20 / +40 / +70（软件、IT、工程、护士多是 ×1.5 → +40；会计、金融分析 ×1.3 → +20；金融经理、医生 ×2 → +70），这群人里做高薪职业的会整体上移，估计有好几千人新冒到 530 以上，而 CEC 一轮一般只发 2,000–3,000。</p>
           <p><b>之后（2027 年初）</b>：如果还是两周一轮、每轮 2,000–3,000，积压消化掉后会慢慢回到 525–540；IRCC 要是来一轮 5,000 以上的大抽签会回落得更快。高薪 job offer 分（+50 / +70 / +100，要自己更新档案）会陆续把人往上推，短期很难回到 520 以下。</p>
           <p><b>其他类别</b>：PNP 照旧 700+，不受影响。医疗类护士 ×1.5、医生 ×2，可能明显上涨；技工类大多数职业不在高薪名单、法语类看人群，涨得少一些。</p>
           <p><b>OINP</b>：Workforce Priority 新类别 8/4 开放 EOI，截至 11/18 还没抽过、也没公布时间表；预计线仍按 81–90（参考旧制度 GTA 雇主担保 81 分，新表满分 132，不完全可比）。</p>
@@ -612,7 +606,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
 'use strict';
 /* ================= 规则数据（官网改了就改这一段） ================= */
 const CHECKED_ON = '2026-10-23';      // 上次核对官网的日期
-const NEW_RULES_DATE = '2026-11-03';  // CRS 新规（劳动力市场融入 LMI 分项）生效日
+const NEW_RULES_DATE = '2026-11-03';  // 现行 CRS 规则（劳动力市场融入 LMI 分项）生效日；这天以前的抽签线、池子分布都是以前的打分
 const STORE_KEY = 'pr-calc:v1';
 const DRAWS_KEY = 'pr-calc:draws';
 const TAB_KEY = 'pr-calc:tab';
@@ -896,7 +890,7 @@ const DRAWS_SNAPSHOT = [
 ];
 const SNAPSHOT_DATE = '2026-11-23'; // 10/28 之后没有抽签：11/3 起暂停、给池子重算分
 // EE 池子分数分布（IRCC 每次抽签时公布）：[下限, 上限, 人数]。prev 是上一次公布的，只有合计的段照合计填
-// 10/25 这份是 11/3 重算之前的（旧规分数）
+// 10/25 这份是 11/3 重算之前的（以前的打分，没有高薪职业分）
 const POOL_SNAPSHOT = {
   asOf:'2026-10-25', total:228724,
   bands:[[601,1200,787],[501,600,20535],[491,500,12162],[481,490,12342],[471,480,16330],[461,470,15803],[451,460,14475],
@@ -930,10 +924,10 @@ const EDU = {
   ba:[120,112,8,1,'本科 / 3 年以上课程'], two:[128,119,9,2,'两个及以上学历'], ma:[135,126,10,2,'硕士 / 执业类学位'], phd:[150,140,10,2,'博士'],
 };
 const LANG1 = {4:[6,6],5:[6,6],6:[9,8],7:[17,16],8:[23,22],9:[31,29],10:[34,32]}; // 第一官方语言，每项
-const CWE = [[0,0],[40,35],[53,46],[64,56],[72,63],[80,70]];                    // 加拿大经验（新规叫「工作年限分」）
+const CWE = [[0,0],[40,35],[53,46],[64,56],[72,63],[80,70]];                    // 加拿大经验（工作年限分，算在劳动力市场融入里）
 const SP_CWE = [0,5,7,8,9,10];
-const HW_EXP = {2:70, 1.5:40, 1.3:20};     // 新规：在高薪职业里的加拿大经验满 12 个月
-const HW_OFFER = {2:100, 1.5:70, 1.3:50};  // 新规：高薪职业的 job offer（不用 LMIA）
+const HW_EXP = {2:70, 1.5:40, 1.3:20};     // 在高薪职业里的加拿大经验满 12 个月
+const HW_OFFER = {2:100, 1.5:70, 1.3:50};  // 高薪职业的 job offer（不用 LMIA）
 
 // 语言考试 → CLB/NCLC：每项从 CLB 10 到 CLB 4 的最低分
 const TESTS = {
@@ -1107,10 +1101,9 @@ function build(s, at){
     wage: num(s.oWage), earn: Math.max(earnBase, earnEst), earnBase, earnEst, noas, region: s.oRegion, oEdu: s.oEdu, creds: +s.oCreds||0, oOffer: !!s.oOffer,
   };
 }
-const ruleFor = p => p.s.rules==='old' ? 'old' : p.s.rules==='new' ? 'new' : (p.evalISO >= NEW_RULES_DATE ? 'new' : 'old');
 
 /* ================= CRS ================= */
-function crs(p, rule){
+function crs(p){
   const i = p.sp ? 1 : 0;
   const age = p.age==null ? 0 : (p.age>=20 && p.age<=29) ? (p.sp?100:110) : ((p.sp?AGE_SPOUSE:AGE_SINGLE)[p.age] ?? 0);
   const e = EDU[p.edu];
@@ -1139,17 +1132,14 @@ function crs(p, rule){
   const french = allGE(p.fr,7) ? (allGE(p.en,5) ? 50 : 25) : 0;
   const pnp = p.pnp ? 600 : 0, sibling = p.sibling ? 15 : 0;
   const add = Math.min(600, pnp + sibling + caEdu + french);
-  // 11/3 新规：劳动力市场融入（经验路线 vs job offer 路线，取高）
-  let lmi = null;
-  if(rule==='new'){
-    const hw = (p.hwLevel && p.hwYears>=1 && p.skilled) ? HW_EXP[p.hwLevel] : 0;
-    const offer = (p.offer && p.hwLevel) ? HW_OFFER[p.hwLevel] : 0;
-    lmi = {work:cwePts, hw, offer, exp:cwePts+hw, value:Math.max(cwePts+hw, offer)};
-    lmi.via = offer > lmi.exp ? 'offer' : 'exp';
-  }
-  const core = age + edu + l1 + l2 + (lmi ? 0 : cwePts);
-  const total = core + (lmi ? lmi.value : 0) + spEdu + spLang + spCwe + trans + add;
-  return {rule, age, edu, l1, l2, cwePts, spEdu, spLang, spCwe, eduL, eduW, forL, forW, cert, eduG, forG, trans, caEdu, french, pnp, sibling, add, lmi, total};
+  // 劳动力市场融入（经验路线 vs job offer 路线，取高）；加拿大经验的年限分只算在这里
+  const hw = (p.hwLevel && p.hwYears>=1 && p.skilled) ? HW_EXP[p.hwLevel] : 0;
+  const offer = (p.offer && p.hwLevel) ? HW_OFFER[p.hwLevel] : 0;
+  const lmi = {work:cwePts, hw, offer, exp:cwePts+hw, value:Math.max(cwePts+hw, offer)};
+  lmi.via = offer > lmi.exp ? 'offer' : 'exp';
+  const core = age + edu + l1 + l2;
+  const total = core + lmi.value + spEdu + spLang + spCwe + trans + add;
+  return {age, edu, l1, l2, cwePts, spEdu, spLang, spCwe, eduL, eduW, forL, forW, cert, eduG, forG, trans, caEdu, french, pnp, sibling, add, lmi, total};
 }
 
 function cecCheck(p){
@@ -1223,8 +1213,8 @@ function rank(list, big, starMid){
   return list.sort((a,b) => (b.star-a.star) || (b.gain-a.gain));
 }
 function suggestCRS(p){
-  const rule = 'new', base = crs(p, rule).total, out = [];
-  const add = o => { const g = crs(o.p, rule).total - base; if(g>0) out.push({...o, gain:g}); };
+  const base = crs(p).total, out = [];
+  const add = o => { const g = crs(o.p).total - base; if(g>0) out.push({...o, gain:g}); };
   const same = (a,b) => a.every((v,i) => v===b[i]);
   if(p.en.some(c => c!=null)){
     let t9 = null;
@@ -1239,7 +1229,7 @@ function suggestCRS(p){
       if(c==null || c>=10) return;
       const en = [...p.en]; en[j] = Math.max(c+1, 4);
       if(t9 && same(en, t9)) return;
-      singles.push({j, c, to:en[j], p:{...p, en}, g: crs({...p, en}, rule).total - base});
+      singles.push({j, c, to:en[j], p:{...p, en}, g: crs({...p, en}).total - base});
     });
     singles.sort((a,b) => b.g-a.g).slice(0,1).forEach(x => add({grp:'lang', feas:'easy', title:`只提一项：${SKN[SK[x.j]]} CLB ${x.c}→${x.to}`, detail:needText(p, [SK[x.j]], x.to), p:x.p}));
   } else {
@@ -1274,7 +1264,7 @@ function suggestCRS(p){
   if(!p.pnp) add({grp:'pnp', feas:'mid', special:true, title:'省提名（比如 OINP 选走 EE 提名）', detail:'+600，基本等于下一轮必拿 ITA；OINP 现在要有安省雇主 offer', p:{...p, pnp:true}});
   if(p.sp){
     if(!allGE(p.spLang,9)) add({grp:'spouse', feas:'mid', title:'配偶英语四项 CLB 9', detail:'配偶语言每项最多 5 分', p:{...p, spLang:p.spLang.map(c => Math.max(c ?? 0, 9))}});
-    const g = crs({...p, sp:false}, rule).total - base;
+    const g = crs({...p, sp:false}).total - base;
     if(g>0) out.push({grp:'spouse', feas:'mid', special:true, title:'配偶不随行（按单身算）', detail:'只是算分上的选择，要想清楚；配偶以后可以走团聚', gain:g});
   }
   return rank(out, 20, 50);
@@ -1397,17 +1387,16 @@ function row(name, pts, max, note, cls=''){
 }
 const sec = t => `<tr class="sec"><th colspan="3">${esc(t)}</th></tr>`;
 
-function renderCRS(p, r, other){
+function renderCRS(p, r){
   const sp = p.sp;
   $('#crsTotal').innerHTML = `${r.total}<small>分</small>`;
   const t = todayISO();
-  $('#crsMeta').innerHTML = `${r.rule==='new' ? '按 11/3 新规' : '按旧规（11/2 前）'} · ${p.evalISO===t ? '今天' : '按 '+p.evalISO+' 算'}`
-    + (p.evalISO!==t ? ` <button type="button" class="link" id="btnToday">改回今天</button>` : '')
-    + (other.total!==r.total && (r.rule==='old' || t<NEW_RULES_DATE) ? `<br>${other.rule==='new' ? '11/3 新规下' : '11/2 以前的抽签还按旧规'}：${other.total} 分` : '');
+  $('#crsMeta').innerHTML = `现行规则 · ${p.evalISO===t ? '今天' : '按 '+p.evalISO+' 算'}`
+    + (p.evalISO!==t ? ` <button type="button" class="link" id="btnToday">改回今天</button>` : '');
   const chips = [];
   const cec = recentLine('cec');
-  if(cec){ const diff = r.total - cec[2]; chips.push(`<span class="chip ${diff>=0 ? 'good' : 'bad'}">CEC 最近一次线 ${cec[2]}（${cec[0].slice(5)}）· 差 ${signed(diff)}</span>`); }
-  if(cec && cec[0]<NEW_RULES_DATE){ const {ee} = bandsOf(p.s); chips.push(`<span class="chip">11/3 后预计 ${ee[0]}–${ee[1]}</span>`); }
+  if(cec){ const diff = r.total - cec[2]; chips.push(`<span class="chip ${diff>=0 ? 'good' : 'bad'}">CEC 最近一次线 ${cec[2]}（${cec[0].slice(5)}${cec[0]<NEW_RULES_DATE ? '，重算前' : ''}）· 差 ${signed(diff)}</span>`); }
+  if(cec && cec[0]<NEW_RULES_DATE){ const {ee} = bandsOf(p.s); chips.push(`<span class="chip">恢复抽签后预计 ${ee[0]}–${ee[1]}</span>`); }
   const c = cecCheck(p);
   chips.push(`<span class="chip ${c.ok ? 'good' : ''}">${c.ok ? '✓ 符合 CEC 基本条件' : `CEC：${!c.expOk ? '加拿大经验还不满 1 年' : ''}${!c.expOk && !c.langOk ? '，' : ''}${!c.langOk ? `语言要四项 ≥ CLB ${c.need}` : ''}`}</span>`);
   if(testExpired(p.s, p.d)) chips.push(`<span class="chip bad">语言成绩已过期（${lastTestISO(p.s)} 考的）：建 EE 档案、递交 PR 都要 2 年内的成绩</span>`);
@@ -1418,12 +1407,9 @@ function renderCRS(p, r, other){
     + row('学历', r.edu, sp?140:150, p.eduSet ? EDU[p.edu][4] : '未选')
     + row('英语', r.l1, sp?128:136, p.en.some(c => c!=null) ? p.en.map((c,j) => SKN[SK[j]]+(c ?? '-')).join(' ') : '未填')
     + row('法语（第二语言）', r.l2, sp?22:24);
-  if(!r.lmi) h += row('加拿大工作经验', r.cwePts, sp?70:80, `${p.cwe} 年`);
-  if(r.lmi){
-    h += sec('劳动力市场融入（11/3 新规，两条路取高）')
-      + row('经验路线', r.lmi.exp, sp?140:150, `年限 ${r.lmi.work} ＋ 高薪职业 ${r.lmi.hw}`, r.lmi.via==='exp' ? 'sum' : '')
-      + row('job offer 路线', r.lmi.offer, 100, p.offer ? (p.hwLevel ? `高薪 ×${p.hwLevel}` : '职业不在高薪名单 → 0') : '没有 offer', r.lmi.via==='offer' ? 'sum' : '');
-  }
+  h += sec('劳动力市场融入（两条路取高）')
+    + row('经验路线', r.lmi.exp, sp?140:150, `年限 ${r.lmi.work} ＋ 高薪职业 ${r.lmi.hw}`, r.lmi.via==='exp' ? 'sum' : '')
+    + row('job offer 路线', r.lmi.offer, 100, p.offer ? (p.hwLevel ? `高薪 ×${p.hwLevel}` : '职业不在高薪名单 → 0') : '没有 offer', r.lmi.via==='offer' ? 'sum' : '');
   if(sp) h += sec('B 配偶') + row('配偶学历', r.spEdu, 10) + row('配偶语言', r.spLang, 20) + row('配偶加拿大经验', r.spCwe, 10);
   h += sec('C 可转换技能（每组最多 50，总共最多 100）')
     + row('学历 × 语言', r.eduL, null) + row('学历 × 加拿大经验', r.eduW, null)
@@ -1458,7 +1444,7 @@ function renderDraws(p, r){
   const src = draws.src==='live'
     ? `数据：IRCC 官网（${new Date(draws.at).toLocaleString('zh-CN', {hour12:false})} 读取）`
     : `数据：内置快照（截至 ${SNAPSHOT_DATE}）${drawErr ? ' —— 这次没连上官网' : ''}`;
-  $('#drawStatus').textContent = `${src} · 你的 CRS：${r.total}（${r.rule==='new' ? '新规' : '旧规'}）`;
+  $('#drawStatus').textContent = `${src} · 你的 CRS：${r.total}`;
   if(!groups.length){ $('#drawTable').innerHTML = '<tr><td class="empty">没有最近 12 个月的抽签数据。</td></tr>'; return; }
   $('#drawTable').innerHTML = `<tr><th>类别</th><th class="n">分数线</th><th class="n">差</th></tr>`
     + groups.map(g => {
@@ -1469,19 +1455,21 @@ function renderDraws(p, r){
     }).join('');
 }
 
-// 池子分布：重算（11/3）之前公布的用你的旧规分来比，之后的用新规分
+// 池子分布：拿你现在的 CRS 来比。11/3 重算以前公布的分布里大家还没有高薪职业分，
+// 重算只会加分不会减分，所以那时就比你高的人现在仍然比你高 →「比你高」是下限
 function renderPool(p){
   const live = draws.pool && draws.pool.asOf >= POOL_SNAPSHOT.asOf ? draws.pool : null;
   const pool = live || POOL_SNAPSHOT, prev = pool.prev, isNew = pool.asOf >= NEW_RULES_DATE;
-  const mine = crs(p, isNew ? 'new' : 'old').total;
+  const mine = crs(p).total;
   const md = s => `${+s.slice(5,7)}/${+s.slice(8,10)}`;
   const dfmt = d => (d>0 ? '+' : d<0 ? '−' : '±') + money(Math.abs(d));
   const per10 = ([lo, hi, n]) => n / ((hi - lo + 1) / 10);
   const top = Math.max(...pool.bands.map(per10));
-  let above = 0;
-  for(const [lo, hi, n] of pool.bands){ if(lo>mine) above += n; else if(hi>=mine) above += n * (hi - mine) / (hi - lo + 1); }
+  // 分数在 (a, b] 之间的人数，段内按均匀分布
+  const between = (a, b) => pool.bands.reduce((t, [lo, hi, n]) => t + n * Math.max(0, Math.min(hi, b) - Math.max(lo - 1, a)) / (hi - lo + 1), 0);
+  const above = between(mine, 1e4), near = between(mine - 70, mine), r100 = x => money(Math.round(x/100)*100);
   $('#poolAsOf').textContent = `${pool.asOf} 公布 · ${live ? 'IRCC 官网' : '内置快照'}`;
-  $('#poolMe').innerHTML = `共 <b>${money(pool.total)}</b> 人 · 按${isNew ? '新规' : '旧规'}你是 <b>${mine}</b> 分，比你高的约 <b>${money(Math.round(above/100)*100)}</b> 人（前 ${(above/pool.total*100).toFixed(1)}%）`;
+  $('#poolMe').innerHTML = `共 <b>${money(pool.total)}</b> 人 · 你现在 <b>${mine}</b> 分，比你高的${isNew ? '约' : '<b>至少</b>'} <b>${r100(above)}</b> 人（占池子 ${(above/pool.total*100).toFixed(1)}%${isNew ? '' : ' 以上'}）`;
   const prevOf = (lo, hi) => prev && prev.bands.find(b => b[0]===lo && b[1]===hi);
   $('#poolTable').innerHTML = `<tr><th>分数段</th><th><span class="dim">每 10 分人数</span></th><th class="n">人数</th>${prev ? `<th class="n">比 ${md(prev.asOf)}</th>` : ''}</tr>`
     + pool.bands.map(b => {
@@ -1497,7 +1485,7 @@ function renderPool(p){
     return `${lo}–${hi} 合计 ${money(n)} → ${money(cur)}（${dfmt(cur - n)}）`;
   }) : [];
   $('#poolNote').innerHTML = `<p>横条按「每 10 分有多少人」画，因为各段宽度不一样（501–600 是 100 分一段）；「比你高」在段内按均匀分布粗估。${agg.length ? ` ${md(prev.asOf)} 那份只有合计：${agg.join('；')}。` : ''}</p>`
-    + (isNew ? '' : `<p>这份是 11/3 重算<b>之前</b>的分布（旧规分数），所以拿你的旧规分 ${mine} 来比。重算后，在高薪职业里满 12 个月的人会 +20 / +40 / +70、有高薪 job offer 的 +50–100，451–520 这一大块会有一部分往上移，同样的分数排名会往后掉。IRCC 恢复抽签时会公布重算后的分布，到时这里会自动换成新的。</p>`);
+    + (isNew ? '' : `<p>IRCC 还没公布 11/3 重算后的分布，这份 ${pool.asOf} 的里面大家还没有高薪职业分。重算只加分不减分，所以「比你高」的 ${r100(above)} 人是下限；另外比你低 70 分以内的还有约 ${r100(near)} 人，其中在高薪职业满 12 个月（+20 / +40 / +70）或有高薪 job offer（+50–100）的一部分现在已经和你持平或超过你。IRCC 恢复抽签时会公布重算后的分布，到时这里会自动换成新的。</p>`);
 }
 
 // 最近一次正式语言考试：手填的和雅思记录里「正式考试」取最近的（成绩 2 年有效）
@@ -1513,7 +1501,6 @@ function milestones(s){
   const horizon = p0.pEnd && p0.pEnd>t0 ? addYears(p0.pEnd, 1) : addYears(t0, 5);
   const cand = [];
   const add = (d, label, key='') => { if(d && d>t0 && d<=horizon) cand.push({d, label, key}); };
-  add(D(NEW_RULES_DATE), 'CRS 新规生效');
   if(p0.wStart && p0.skilled && !p0.cweManual) for(let n=1; n<=5; n++){
     const d = p0.yearDate(n);
     if(!p0.pEnd || d<=p0.pEnd) add(d, `加拿大经验满 ${n} 年${n===1 ? '（可申请 CEC）' : ''}`, n===1 ? 'cec' : '');
@@ -1535,7 +1522,7 @@ function milestones(s){
     const k = iso(x.d), m = merged.get(k);
     if(m){ m.label += ' · '+x.label; m.key = m.key || x.key; } else merged.set(k, {...x});
   }
-  const at = d => { const p = build(s, iso(d)); return {p, crs:crs(p, ruleFor(p)).total, oinp:oinp(p).total}; };
+  const at = d => { const p = build(s, iso(d)); return {p, crs:crs(p).total, oinp:oinp(p).total}; };
   const out = [{d:t0, label:'现在', key:'now', ...at(t0)}];
   for(const x of merged.values()){
     const e = at(x.d), prev = out[out.length-1];
@@ -1584,8 +1571,7 @@ function earnSteps(p, s){
   return out;
 }
 function renderProj(s){
-  const nodes = milestones(s), {ee, oi} = bandsOf(s), cec = recentLine('cec');
-  const eeAt = d => (iso(d)<NEW_RULES_DATE && cec) ? [cec[2], cec[2]] : ee; // 11/3 以前用实际最近一次 CEC 线
+  const nodes = milestones(s), {ee, oi} = bandsOf(s);
   // 两个滑块：时间节点 / 英语（从现在最低那项的 CLB 往上，每一级一档）。收入按你填的年薪自动估，不另设滑块
   let ti = nodes.findIndex(n => iso(n.d)===scn.date); if(ti<0) ti = 0;
   const node = nodes[ti], minNow = minOf(node.p.en) ?? 0;
@@ -1598,20 +1584,20 @@ function renderProj(s){
   setSlider('slEn', enSteps.map(x => x.t), ei, sc.clb ? `四项都到 CLB ${sc.clb}` : '按你填的成绩', true);
 
   // 结果卡：和「现在、不加情景」比
-  const q = applyScenario(node.p, sc), rc = crs(q, ruleFor(q)).total, ro = oinp(q).total;
+  const q = applyScenario(node.p, sc), rc = crs(q).total, ro = oinp(q).total;
   $('#scnCrs').textContent = rc; $('#scnCrsD').innerHTML = deltaTag(rc - nodes[0].crs);
   $('#scnOinp').textContent = ro; $('#scnOinpD').innerHTML = deltaTag(ro - nodes[0].oinp);
-  const eLine = eeAt(node.d), e1 = vsLine(rc, eLine), o1 = vsLine(ro, oi);
-  $('#scnLines').innerHTML = `<div class="${e1.c}">EE ${eLine[0]===eLine[1] ? `最近一次 CEC 线 ${eLine[0]}` : `预计线 ${ee[0]}–${ee[1]}`}：${e1.t}</div>`
+  const e1 = vsLine(rc, ee), o1 = vsLine(ro, oi);
+  $('#scnLines').innerHTML = `<div class="${e1.c}">EE 预计线 ${ee[0]}–${ee[1]}：${e1.t}</div>`
     + `<div class="${o1.c}">OINP 预计线 ${oi[0]}–${oi[1]}：${o1.t}</div>`;
 
   // 节点列表：每个节点两条横条（CRS / OINP），虚线框是预计分数线
-  const rows = nodes.map(n => { const r = applyScenario(n.p, sc); return {...n, c:crs(r, ruleFor(r)).total, o:oinp(r).total}; });
+  const rows = nodes.map(n => { const r = applyScenario(n.p, sc); return {...n, c:crs(r).total, o:oinp(r).total}; });
   const scale = (vals, pad, cap) => {
     const lo = Math.max(0, Math.min(...vals) - pad), hi = Math.min(cap, Math.max(...vals) + pad/4);
     return v => Math.max(0, Math.min(100, (v-lo)/(hi-lo || 1)*100));
   };
-  const pc = scale(rows.map(r => r.c).concat(ee, cec ? [cec[2]] : []), 40, 1200), po = scale(rows.map(r => r.o).concat(oi), 15, OINP.max);
+  const pc = scale(rows.map(r => r.c).concat(ee), 40, 1270), po = scale(rows.map(r => r.o).concat(oi), 15, OINP.max);
   const band = (f, [lo, hi]) => `<em class="band" style="left:${f(lo).toFixed(1)}%;width:${Math.max(f(hi)-f(lo), 0.8).toFixed(1)}%"></em>`;
   // 工签到期之后的节点默认收起（选中了才自动展开）
   const isPost = r => !!r.p.pEnd && r.d>r.p.pEnd, post = rows.filter(isPost).length;
@@ -1621,14 +1607,14 @@ function renderProj(s){
     const dc = prev ? r.c-prev.c : 0, dO = prev ? r.o-prev.o : 0; prev = r;
     return `<li class="${i===ti ? 'sel' : ''}${isPost(r) ? ' post' : ''}" data-node="${iso(r.d)}"><div class="pj-h"><span class="pj-l">${esc(r.label)}</span>`
       + `<span class="pj-s">CRS <b>${r.c}</b>${deltaTag(dc)} · OINP <b>${r.o}</b>${deltaTag(dO)}</span></div>`
-      + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年 · ${ruleFor(r.p)==='new' ? '新规' : '旧规'}${r.p.pEnd && r.d>r.p.pEnd ? ' · <span class="down">工签已到期，经验和收入不再累积</span>' : ''}</div>`
-      + `<div class="pb2"><span class="k">CRS</span><div class="pb"><i style="width:${pc(r.c).toFixed(1)}%"></i>${band(pc, eeAt(r.d))}</div></div>`
+      + `<div class="pj-m">${iso(r.d)}${r.p.age!=null ? ' · '+r.p.age+' 岁' : ''} · 经验 ${r.p.cwe} 年${r.p.pEnd && r.d>r.p.pEnd ? ' · <span class="down">工签已到期，经验和收入不再累积</span>' : ''}</div>`
+      + `<div class="pb2"><span class="k">CRS</span><div class="pb"><i style="width:${pc(r.c).toFixed(1)}%"></i>${band(pc, ee)}</div></div>`
       + `<div class="pb2"><span class="k">OINP</span><div class="pb o"><i style="width:${po(r.o).toFixed(1)}%"></i>${band(po, oi)}</div></div></li>`;
   }).join('')
     + (post ? `<li class="pj-more"><button type="button" class="link" data-pjmore><span class="o">显示工签到期后的 ${post} 个节点</span><span class="c">收起工签到期后的节点</span></button></li>` : '');
   const best = rows.reduce((a,b) => b.c>a.c ? b : a, rows[0]);
   $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有；工签到期后经验、在岗月数、收入都不再累积。英语滑块对整条时间线生效；收入按「⑦ OINP」里填的手上报税单、年薪和入职日自动估，年薪变了改那里就行。点哪一行就把时间滑到那里。</p>`
-    + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；我 11/23 的估计：恢复后头几轮 CEC 535–555、最可能 540 上下，2027 年初回到 525–540；别家预测多在 530–560，详见「抽签线」页）；OINP ${oi[0]}–${oi[1]}（新类别截至 11/18 还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
+    + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（我 11/23 的估计：恢复后头几轮 CEC 535–555、最可能 540 上下，2027 年初回到 525–540；别家预测多在 530–560，详见「抽签线」页）；OINP ${oi[0]}–${oi[1]}（新类别截至 11/18 还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
     + `<p>这个情景下 CRS 最高：<b>${best.c}</b>（${iso(best.d)}，${esc(best.label)}）。</p>`
     + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」「在岗满 N 个月」这些节点。</p>');
 }
@@ -1645,11 +1631,10 @@ function renderTimeline(s){
     for(let n=1; n<=3; n++){
       const d = p.yearDate(n);
       if(p.pEnd && d>p.pEnd){ ev.push({d:p.pEnd, text:`按现在的工时，工签到期前满不了 ${n} 年经验`, cls:'warn'}); break; }
-      const pp = build(s, iso(d)), r = crs(pp, ruleFor(pp));
+      const pp = build(s, iso(d)), r = crs(pp);
       push(d, `加拿大经验满 ${n} 年${n===1 ? '：可以申请 CEC（语言也要够）' : ''} → CRS ${r.total}`);
     }
   }
-  if(iso(t0)<=NEW_RULES_DATE) push(D(NEW_RULES_DATE), 'CRS 新规生效：高薪职业经验 / offer 加分，抽签暂停约 2 周重算');
   if(p.grad && s.oRecentGrad) push(addYears(p.grad,3), 'OINP「安省应届生」优惠到期（在岗 3 个月、免语言考试）');
   const lt = lastTestISO(s), ltEnd = lt ? addYears(D(lt), 2) : null;
   if(lt) push(ltEnd, `语言成绩过期（${lt} 那次考试；建 EE 档案、递交 PR 都要 2 年内的成绩）`, 'warn');
@@ -1714,7 +1699,7 @@ function renderFields(p, crsSug, oinpSug){
   $('#posManual').hidden = !!p.s.oPosAuto;
 
   if(p.age!=null){
-    const r0 = crs(p,'new').age, r1 = crs({...p, age:p.age+1},'new').age;
+    const r0 = crs(p).age, r1 = crs({...p, age:p.age+1}).age;
     $('#ageInfo').innerHTML = `${p.age} 岁 · 年龄分 <b>${r0}</b>` + (r1<r0 ? ` · 下个生日后 ${r1}` : '');
   } else $('#ageInfo').textContent = '';
 
@@ -1767,7 +1752,7 @@ function renderSummaries(p){
     p.wStart && `工作 ${iso(p.wStart)} 起，每周 ${p.hpw} 小时`, lastTestISO(s) && '最近考试 '+lastTestISO(s) + (testExpired(s, D(todayISO())) ? '（已过期）' : ''),
     D(s.nextTest) && '下次考试 '+s.nextTest, s.evalDate && '按 '+s.evalDate+' 算分']);
   set('basic', [p.age!=null ? p.age+' 岁' : '没填生日', {single:'单身', spouse_na:'配偶不随行', spouse:'配偶随行'}[s.marital],
-    p.eduSet ? EDU[p.edu][4] : '学历没选', {short:'加拿大 1–2 年制', long:'加拿大 3 年以上/硕博'}[s.caEdu], {new:'按新规', auto:'按日期选规则', old:'按旧规'}[s.rules]]);
+    p.eduSet ? EDU[p.edu][4] : '学历没选', {short:'加拿大 1–2 年制', long:'加拿大 3 年以上/硕博'}[s.caEdu]]);
   const tn = {ielts:'雅思 ', celpip:'CELPIP ', pte:'PTE '}[s.enTest] || '';
   set('lang', [p.en.some(c => c!=null) ? `${tn}${SK.map(k => SKN[k]+(s['en'+k] || '-')).join(' ')}（CLB ${p.en.map(c => c ?? '-').join('/')}）` : '英语没填',
     s.frTest==='none' ? '没考法语' : `法语 NCLC ${p.fr.map(c => c ?? '-').join('/')}`,
@@ -1818,10 +1803,10 @@ function showTab(t){
 
 function render(){
   const s = readState(), p = build(s);
-  const rule = ruleFor(p), r = crs(p, rule), other = crs(p, rule==='new' ? 'old' : 'new');
+  const r = crs(p);
   const o = oinp(p), cs = suggestCRS(p), os = suggestOINP(p);
   renderFields(p, cs, os);
-  renderCRS(p, r, other);
+  renderCRS(p, r);
   $('#crsSug').innerHTML = sugHTML(cs);
   renderOINP(p, o);
   $('#oinpSug').innerHTML = sugHTML(os);
@@ -1923,7 +1908,7 @@ function onChange(){ render(); save(); }
 // 老存档里的默认值换成新的；用户自己改过的不动
 function migrate(d, v){
   d = {...d};
-  if(v<2 && d.rules==='auto') d.rules = 'new';                // v1 的默认值是 auto，v2 起默认按新规
+  delete d.rules;                                              // 以前可以选新旧规则，现在只有现行规则
   if(v<3 && +d.eeLo===EE_BAND_OLD[0] && +d.eeHi===EE_BAND_OLD[1]){ d.eeLo = String(EE_BAND[0]); d.eeHi = String(EE_BAND[1]); } // v3：EE 预计线 520–550 → 530–555
   return d;
 }
@@ -2001,7 +1986,7 @@ function init(){
   render();
   loadDraws(false);
 }
-window.PRCalc = {build, crs, oinp, ruleFor, suggestCRS, suggestOINP, readState, milestones, applyScenario, rawBand, bandOf};
+window.PRCalc = {build, crs, oinp, suggestCRS, suggestOINP, readState, milestones, applyScenario, rawBand, bandOf};
 init();
 </script>
 </body>
