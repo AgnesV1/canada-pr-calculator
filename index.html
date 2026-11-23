@@ -189,6 +189,14 @@ ol.ilist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .sug.open .sug-more .o,.sug:not(.open) .sug-more .c{display:none}
 .ielts .sm{display:none}
 .up{color:var(--good)}.down{color:var(--bad)}
+.pool tr+tr th{white-space:nowrap}
+.pool td.n,.pool th.n{padding-left:4px;padding-right:4px}
+.pool td.pbar{width:48%;vertical-align:middle}
+.pool td.pbar i{display:block;height:8px;min-width:2px;border-radius:0 4px 4px 0;background:var(--accent);opacity:.5}
+.pool tr.me th,.pool tr.me td{background:var(--accent-soft)}
+.pool tr.me td.pbar i{opacity:1}
+.pool .you{font-size:11px;font-weight:700;color:var(--accent);margin-left:4px}
+.fc p{margin:6px 0}
 .ielts td.me{background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:4px}
 .ielts th{font-size:12px;color:var(--muted)}
 .ielts td,.ielts th{white-space:nowrap}
@@ -531,8 +539,23 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
         <table id="drawTable" style="margin-top:8px"></table>
         <div class="note">
           <p>「差」= 你现在的 CRS − 那一类最近一次的分数线。只有符合那个类别的人才会被抽到：CEC 要满 1 年加拿大经验，类别抽签要职业在名单里（2026 年要求该职业近 3 年内 ≥1 年经验）。</p>
-          <p>11/3 新规生效时 IRCC 会暂停抽签约两周、给所有人重算分；新规下不少人会多拿高薪职业分，之后的分数线大概率比现在高，旧线只能参考。</p>
-          <p><button type="button" class="link" id="btnDraws">重新从官网读取</button></p>
+          <p>上面都是旧规下的线。11/3 起 IRCC 暂停抽签、给池子里所有人按新规重算分；新规下不少人会多拿高薪职业分，恢复后的线大概率比这些高。</p>
+        </div>
+
+        <h3>池子分数分布 <small id="poolAsOf"></small></h3>
+        <div class="meta" id="poolMe"></div>
+        <table class="pool" id="poolTable"></table>
+        <div class="note" id="poolNote"></div>
+
+        <h3>分数线预测 <small>我的估计 · 2026-11-23</small></h3>
+        <div class="note fc">
+          <p><b>现状</b>：最后一轮是 10/28（交通类 477，150 人）；前两天是 10/26 PNP 761、10/27 法语 407；CEC 最近一次还是 10/15 的 519。11/3 新规生效后 IRCC 暂停抽签重算分，官方说「可能要两周」，截至 11/23 还没恢复，也没公布日期。</p>
+          <p><b>CEC 恢复后头 2–3 轮：535–555，最可能 540 上下</b>（旧规下 7–10 月一直在 516–523）。10/25 的池子里光 481–500 就有 24,504 人，再加上 501–520 那一截，是排 CEC 的主力。新规给在高薪职业里满 12 个月的人 +20 / +40 / +70（软件、IT、工程、护士多是 ×1.5 → +40；会计、金融分析 ×1.3 → +20；金融经理、医生 ×2 → +70），这群人里做高薪职业的会整体上移，估计有好几千人新冒到 530 以上，而 CEC 一轮一般只发 2,000–3,000。</p>
+          <p><b>之后（2027 年初）</b>：如果还是两周一轮、每轮 2,000–3,000，积压消化掉后会慢慢回到 525–540；IRCC 要是来一轮 5,000 以上的大抽签会回落得更快。高薪 job offer 分（+50 / +70 / +100，要自己更新档案）会陆续把人往上推，短期很难回到 520 以下。</p>
+          <p><b>其他类别</b>：PNP 照旧 700+，不受影响。医疗类护士 ×1.5、医生 ×2，可能明显上涨；技工类大多数职业不在高薪名单、法语类看人群，涨得少一些。</p>
+          <p><b>OINP</b>：Workforce Priority 新类别 8/4 开放 EOI，截至 11/18 还没抽过、也没公布时间表；预计线仍按 81–90（参考旧制度 GTA 雇主担保 81 分，新表满分 132，不完全可比）。</p>
+          <p>推算页的 EE 默认预计线已从 520–550 改成 530–555；你自己改过的数字不会被覆盖。别家预测多在 530–560，都是估计，以 IRCC 实际抽签为准。</p>
+          <p><button type="button" class="link" id="btnDraws">重新从官网读取抽签和分布</button></p>
         </div>
       </div>
 
@@ -545,7 +568,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
           <div class="scn-lines" id="scnLines"></div>
           <label class="sl"><span>时间 · 往右滑到下一个节点 <b id="slTimeV"></b></span><input type="range" id="slTime" min="0" max="0" step="1" value="0"><span class="ticks dots" id="slTimeT"></span></label>
           <label class="sl"><span>英语 · 往右滑升级 <b id="slEnV"></b></span><input type="range" id="slEn" min="0" max="0" step="1" value="0"><span class="ticks" id="slEnT"></span></label>        </div>
-        <div class="bands">预计线（可改）EE <input type="number" data-k="eeLo" value="520" inputmode="numeric" aria-label="EE 预计线下限">–<input type="number" data-k="eeHi" value="550" inputmode="numeric" aria-label="EE 预计线上限"> · OINP <input type="number" data-k="oLo" value="81" inputmode="numeric" aria-label="OINP 预计线下限">–<input type="number" data-k="oHi" value="90" inputmode="numeric" aria-label="OINP 预计线上限"></div>
+        <div class="bands">预计线（可改）EE <input type="number" data-k="eeLo" value="530" inputmode="numeric" aria-label="EE 预计线下限">–<input type="number" data-k="eeHi" value="555" inputmode="numeric" aria-label="EE 预计线上限"> · OINP <input type="number" data-k="oLo" value="81" inputmode="numeric" aria-label="OINP 预计线下限">–<input type="number" data-k="oHi" value="90" inputmode="numeric" aria-label="OINP 预计线上限"></div>
         <ol class="pj" id="projList"></ol>
         <div class="note" id="projNote"></div>
       </div>
@@ -574,6 +597,7 @@ footer{color:var(--muted);font-size:12px;padding:8px 0 40px}
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/after-graduation/eligibility/language-results.html" target="_blank" rel="noopener">语言考试 ↔ CLB 换算（IRCC）</a></li>
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html" target="_blank" rel="noopener">EE 语言要求（CEC：TEER 0/1 要 CLB 7，2/3 要 CLB 5）</a></li>
       <li><a href="https://moving2canada.com/2026/10/express-entry-crs-530-after-october-16-changes/" target="_blank" rel="noopener">11/3 后 CRS 分数线预测（Moving2Canada，非官方）</a></li>
+      <li><a href="https://moving2canada.com/2026/11/how-long-will-express-entry-draws-be-paused/" target="_blank" rel="noopener">11/3 起暂停抽签要多久（Moving2Canada，非官方）</a></li>
       <li><a href="https://www.ontario.ca/page/ontario-workforce-priority-stream" target="_blank" rel="noopener">OINP Ontario Workforce Priority（打分表和条件）</a></li>
       <li><a href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">OINP 2026 更新公告（邀请记录也在这里）</a></li>
       <li><a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html" target="_blank" rel="noopener">IRCC 审理时间</a></li>
@@ -785,6 +809,9 @@ const HIGH_WAGE = [
 ];
 // 抽签快照，官网读不到时用：[日期, 类别, 分数线, 邀请人数]
 const DRAWS_SNAPSHOT = [
+  ["2026-10-28","Transport Occupations, 2026-Version 2",477,150],
+  ["2026-10-27","French-Language proficiency 2026-Version 2",407,5000],
+  ["2026-10-26","Provincial Nominee Program",761,792],
   ["2026-10-16","French-Language proficiency 2026-Version 2",435,5000],
   ["2026-10-15","Canadian Experience Class",519,2500],
   ["2026-10-13","Provincial Nominee Program",772,752],
@@ -867,11 +894,26 @@ const DRAWS_SNAPSHOT = [
   ["2025-10-06","French language proficiency (Version 1)",432,4500],
   ["2025-10-01","Canadian Experience Class",534,1000]
 ];
-const SNAPSHOT_DATE = '2026-10-16';
+const SNAPSHOT_DATE = '2026-11-23'; // 10/28 之后没有抽签：11/3 起暂停、给池子重算分
+// EE 池子分数分布（IRCC 每次抽签时公布）：[下限, 上限, 人数]。prev 是上一次公布的，只有合计的段照合计填
+// 10/25 这份是 11/3 重算之前的（旧规分数）
+const POOL_SNAPSHOT = {
+  asOf:'2026-10-25', total:228724,
+  bands:[[601,1200,787],[501,600,20535],[491,500,12162],[481,490,12342],[471,480,16330],[461,470,15803],[451,460,14475],
+    [441,450,13159],[431,440,13155],[421,430,12768],[411,420,12543],[401,410,11880],[351,400,47911],[301,350,17247],[0,300,7627]],
+  prev:{asOf:'2026-10-12', total:229456,
+    bands:[[601,1200,749],[501,600,21638],[491,500,12136],[481,490,12184],[471,480,16220],[461,470,16221],[451,460,14851],
+      [401,450,63528],[351,400,47167],[301,350,17123],[0,300,7639]]},
+};
+// IRCC 数据里分布字段 → 分数段（dd3、dd9 是 451–500、401–450 的合计，不用）
+const POOL_FIELDS = [[601,1200,'dd1'],[501,600,'dd2'],[491,500,'dd4'],[481,490,'dd5'],[471,480,'dd6'],[461,470,'dd7'],[451,460,'dd8'],
+  [441,450,'dd10'],[431,440,'dd11'],[421,430,'dd12'],[411,420,'dd13'],[401,410,'dd14'],[351,400,'dd15'],[301,350,'dd16'],[0,300,'dd17']];
 // 预计分数线（推算页的区间带，页面上也能改）
-// EE：11/3 新规后还没有抽签。Moving2Canada（2026-10）估头几轮 520 多、可能到 530–540 多；也有说法至少 540–550
-const EE_BAND = [520, 550];
-// OINP：Workforce Priority 新类别还没抽过；旧制度 2026-04-30 GTA 雇主担保（含国际学生类）81 分及以上，旧打分表只能参考
+// EE（2026-11-23 的估计）：CEC 恢复后头 2–3 轮 535–555、最可能 540 上下，2027 年初回到 525–540；
+// 别家（Moving2Canada、immigrationnewscanada 等）多在 530–560。默认取 530–555，盖住近期和之后
+const EE_BAND = [530, 555];
+const EE_BAND_OLD = [520, 550]; // 2026-11-23 以前的默认值：存档里还是这个就换成新的
+// OINP：Workforce Priority 新类别（8/4 开放 EOI）截至 11/18 还没抽过；旧制度 2026-04-30 GTA 雇主担保（含国际学生类）81 分及以上，旧打分表只能参考
 const OINP_BAND = [81, 90];
 // 雅思答对题数 → 分数（满分 40；不同卷子可能差 1 题）：[最少答对, 分数]
 const IELTS_RAW = {
@@ -1309,9 +1351,33 @@ async function loadDraws(force){
     const j = await res.json();
     const cut = iso(addMonths(D(todayISO()), -24));
     const rows = (j.rounds || []).map(x => [x.drawDate, x.drawName, +x.drawCRS, +String(x.drawSize).replace(/,/g,'')]).filter(r => D(r[0]) && r[2]>0 && r[0]>=cut);
-    if(rows.length){ draws = {src:'live', at:Date.now(), rows}; store.set(DRAWS_KEY, draws); }
+    if(rows.length){ draws = {src:'live', at:Date.now(), rows, pool:poolFrom(j.rounds || [])}; store.set(DRAWS_KEY, draws); }
   }catch(e){ drawErr = true; }
   render();
+}
+// 池子分布：每轮抽签都带一份（同一天公布的几轮相同）。取最新和上一份；各段加起来对不上总数就不用，退回内置快照
+const toInt = v => +String(v ?? '').replace(/[,\s]/g,'');
+function asOfISO(v){
+  const s = String(v || '').replace(/\s+at\s.*$/i, '').trim();
+  if(D(s)) return s;
+  const t = Date.parse(s);
+  if(isNaN(t)) return null;
+  const d = new Date(t);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function poolOf(x){
+  const asOf = asOfISO(x.drawDistributionAsOn), total = toInt(x.dd18);
+  if(!asOf || !(total>0)) return null;
+  const bands = POOL_FIELDS.map(([lo, hi, k]) => [lo, hi, toInt(x[k])]);
+  if(bands.some(b => !isFinite(b[2]) || b[2]<0)) return null;
+  const sum = bands.reduce((a, b) => a + b[2], 0);
+  return Math.abs(sum - total) <= total*0.005 ? {asOf, total, bands} : null;
+}
+function poolFrom(rounds){
+  const seen = new Map();
+  for(const x of rounds){ const p = poolOf(x); if(p && !seen.has(p.asOf)) seen.set(p.asOf, p); }
+  const list = [...seen.values()].sort((a, b) => b.asOf.localeCompare(a.asOf));
+  return list.length ? {...list[0], prev:list[1] || null} : null;
 }
 
 /* ================= 渲染 ================= */
@@ -1401,6 +1467,37 @@ function renderDraws(p, r){
       return `<tr><th>${esc(g.label)}<div class="dim">${esc(last[0])} · ${money(last[3])} 人 · 近 ${six.length} 次 ${Math.min(...six)}–${Math.max(...six)} · ${esc(elig[g.key] || '看职业')}</div></th>`
         + `<td class="n"><b>${last[2]}</b></td><td class="n ${known ? (diff>=0 ? 'up' : 'down') : 'dim'}">${signed(diff)}</td></tr>`;
     }).join('');
+}
+
+// 池子分布：重算（11/3）之前公布的用你的旧规分来比，之后的用新规分
+function renderPool(p){
+  const live = draws.pool && draws.pool.asOf >= POOL_SNAPSHOT.asOf ? draws.pool : null;
+  const pool = live || POOL_SNAPSHOT, prev = pool.prev, isNew = pool.asOf >= NEW_RULES_DATE;
+  const mine = crs(p, isNew ? 'new' : 'old').total;
+  const md = s => `${+s.slice(5,7)}/${+s.slice(8,10)}`;
+  const dfmt = d => (d>0 ? '+' : d<0 ? '−' : '±') + money(Math.abs(d));
+  const per10 = ([lo, hi, n]) => n / ((hi - lo + 1) / 10);
+  const top = Math.max(...pool.bands.map(per10));
+  let above = 0;
+  for(const [lo, hi, n] of pool.bands){ if(lo>mine) above += n; else if(hi>=mine) above += n * (hi - mine) / (hi - lo + 1); }
+  $('#poolAsOf').textContent = `${pool.asOf} 公布 · ${live ? 'IRCC 官网' : '内置快照'}`;
+  $('#poolMe').innerHTML = `共 <b>${money(pool.total)}</b> 人 · 按${isNew ? '新规' : '旧规'}你是 <b>${mine}</b> 分，比你高的约 <b>${money(Math.round(above/100)*100)}</b> 人（前 ${(above/pool.total*100).toFixed(1)}%）`;
+  const prevOf = (lo, hi) => prev && prev.bands.find(b => b[0]===lo && b[1]===hi);
+  $('#poolTable').innerHTML = `<tr><th>分数段</th><th><span class="dim">每 10 分人数</span></th><th class="n">人数</th>${prev ? `<th class="n">比 ${md(prev.asOf)}</th>` : ''}</tr>`
+    + pool.bands.map(b => {
+      const [lo, hi, n] = b, me = mine>=lo && mine<=hi, pb = prevOf(lo, hi);
+      return `<tr class="${me ? 'me' : ''}" title="${lo}–${hi}：${money(n)} 人，占 ${(n/pool.total*100).toFixed(1)}%，每 10 分约 ${money(per10(b))} 人">`
+        + `<th>${lo}–${hi}${me ? '<span class="you">← 你</span>' : ''}</th><td class="pbar"><i style="width:${(per10(b)/top*100).toFixed(1)}%"></i></td>`
+        + `<td class="n">${money(n)}</td>${prev ? `<td class="n dim">${pb ? dfmt(n - pb[2]) : ''}</td>` : ''}</tr>`;
+    }).join('')
+    + `<tr class="sum"><th>合计</th><td></td><td class="n">${money(pool.total)}</td>${prev ? `<td class="n dim">${dfmt(pool.total - prev.total)}</td>` : ''}</tr>`;
+  // 上一份只有合计的段（比如 401–450）：把这次的细分加起来比
+  const agg = prev ? prev.bands.filter(b => !pool.bands.some(c => c[0]===b[0] && c[1]===b[1])).map(([lo, hi, n]) => {
+    const cur = pool.bands.filter(c => c[0]>=lo && c[1]<=hi).reduce((a, c) => a + c[2], 0);
+    return `${lo}–${hi} 合计 ${money(n)} → ${money(cur)}（${dfmt(cur - n)}）`;
+  }) : [];
+  $('#poolNote').innerHTML = `<p>横条按「每 10 分有多少人」画，因为各段宽度不一样（501–600 是 100 分一段）；「比你高」在段内按均匀分布粗估。${agg.length ? ` ${md(prev.asOf)} 那份只有合计：${agg.join('；')}。` : ''}</p>`
+    + (isNew ? '' : `<p>这份是 11/3 重算<b>之前</b>的分布（旧规分数），所以拿你的旧规分 ${mine} 来比。重算后，在高薪职业里满 12 个月的人会 +20 / +40 / +70、有高薪 job offer 的 +50–100，451–520 这一大块会有一部分往上移，同样的分数排名会往后掉。IRCC 恢复抽签时会公布重算后的分布，到时这里会自动换成新的。</p>`);
 }
 
 // 最近一次正式语言考试：手填的和雅思记录里「正式考试」取最近的（成绩 2 年有效）
@@ -1531,7 +1628,7 @@ function renderProj(s){
     + (post ? `<li class="pj-more"><button type="button" class="link" data-pjmore><span class="o">显示工签到期后的 ${post} 个节点</span><span class="c">收起工签到期后的节点</span></button></li>` : '');
   const best = rows.reduce((a,b) => b.c>a.c ? b : a, rows[0]);
   $('#projNote').innerHTML = `<p>节点只在 EE 或 OINP 的分数、资格有变化时才有；工签到期后经验、在岗月数、收入都不再累积。英语滑块对整条时间线生效；收入按「⑦ OINP」里填的手上报税单、年薪和入职日自动估，年薪变了改那里就行。点哪一行就把时间滑到那里。</p>`
-    + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；Moving2Canada 估新规后头几轮 520 多、可能到 530–540 多，也有说法至少 540–550）；OINP ${oi[0]}–${oi[1]}（新类别还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
+    + `<p>虚线框是预计分数线：EE ${ee[0]}–${ee[1]}（11/3 以前的节点用实际最近一次 CEC 线${cec ? ' '+cec[2] : ''}；我 11/23 的估计：恢复后头几轮 CEC 535–555、最可能 540 上下，2027 年初回到 525–540；别家预测多在 530–560，详见「抽签线」页）；OINP ${oi[0]}–${oi[1]}（新类别截至 11/18 还没抽过，参考旧制度 2026-04-30 GTA 雇主担保 81 分）。都可以在上面改。</p>`
     + `<p>这个情景下 CRS 最高：<b>${best.c}</b>（${iso(best.d)}，${esc(best.label)}）。</p>`
     + (D(s.workStart) ? '' : '<p>在「① 时间线」填上工作开始日，才会出现「经验满 N 年」「在岗满 N 个月」这些节点。</p>');
 }
@@ -1729,6 +1826,7 @@ function render(){
   renderOINP(p, o);
   $('#oinpSug').innerHTML = sugHTML(os);
   renderDraws(p, r);
+  renderPool(p);
   renderTimeline(s);
   renderProj(s);
   renderIelts(p);
@@ -1815,13 +1913,20 @@ let saveTimer = null;
 function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    const ok = store.set(STORE_KEY, {v:2, savedAt:Date.now(), data:readState()});
+    const ok = store.set(STORE_KEY, {v:3, savedAt:Date.now(), data:readState()});
     const el = $('#saveState');
     el.className = 'save' + (ok ? '' : ' warn');
     el.textContent = ok ? `已自动保存 ${new Date().toLocaleTimeString('zh-CN', {hour12:false})}` : '⚠ 浏览器不让存，记得导出备份';
   }, 250);
 }
 function onChange(){ render(); save(); }
+// 老存档里的默认值换成新的；用户自己改过的不动
+function migrate(d, v){
+  d = {...d};
+  if(v<2 && d.rules==='auto') d.rules = 'new';                // v1 的默认值是 auto，v2 起默认按新规
+  if(v<3 && +d.eeLo===EE_BAND_OLD[0] && +d.eeHi===EE_BAND_OLD[1]){ d.eeLo = String(EE_BAND[0]); d.eeHi = String(EE_BAND[1]); } // v3：EE 预计线 520–550 → 530–555
+  return d;
+}
 
 function init(){
   $('#checkedOn').textContent = CHECKED_ON;
@@ -1831,8 +1936,7 @@ function init(){
 
   const saved = store.get(STORE_KEY);
   if(saved && saved.data){
-    if((saved.v || 1)<2 && saved.data.rules==='auto') saved.data.rules = 'new'; // v1 的默认值是 auto，v2 起默认按新规
-    writeState(saved.data);
+    writeState(migrate(saved.data, saved.v || 1));
     $('#saveState').textContent = `已读取上次填写（${new Date(saved.savedAt).toLocaleString('zh-CN', {hour12:false})}）`;
   }
   document.addEventListener('input', e => { if(e.target.matches('[data-k]')) onChange(); });
@@ -1866,7 +1970,7 @@ function init(){
     if(b.id==='btnDraws'){ $('#drawStatus').textContent = '正在从 IRCC 官网读取…'; loadDraws(true); }
   });
   $('#btnExport').onclick = () => {
-    const blob = new Blob([JSON.stringify({app:'canada-pr-calculator', v:2, exportedAt:new Date().toISOString(), data:readState(), ielts:ieltsLog}, null, 2)], {type:'application/json'});
+    const blob = new Blob([JSON.stringify({app:'canada-pr-calculator', v:3, exportedAt:new Date().toISOString(), data:readState(), ielts:ieltsLog}, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `pr-calculator-${todayISO()}.json`;
@@ -1878,7 +1982,7 @@ function init(){
     if(!f) return;
     try{
       const j = JSON.parse(await f.text());
-      writeState(j.data || j);
+      writeState(migrate(j.data || j, j.v || 1));
       if(Array.isArray(j.ielts)){ ieltsLog = j.ielts; store.set(IELTS_KEY, ieltsLog); renderIeltsLog(); }
       onChange();
       $('#saveState').textContent = `已从 ${f.name} 导入`;

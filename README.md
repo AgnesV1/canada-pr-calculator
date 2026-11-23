@@ -11,6 +11,8 @@ A single-page calculator for Canada's **Express Entry Comprehensive Ranking Syst
 - **Timeline**: work permit countdown, the dates Canadian experience reaches 1, 2 and 3 years, birthdays that lower age points, language test expiry, and the OINP recent-graduate window.
 - **Improvement suggestions** ranked by points gained and tagged by how achievable each one is; the likely-and-worthwhile ones are starred.
 - **Latest Express Entry cutoffs**, read live from IRCC's public data feed, with a built-in snapshot as an offline fallback.
+- **Express Entry pool distribution** by CRS band from the same feed, with where your score sits and roughly how many candidates are above you. Distributions published before the November 3, 2026 recalculation are compared with your old-rules score.
+- **Cutoff forecast** for the first draws after the November 2026 pause, used as the default projected range in the projection tab (editable).
 - **IELTS General Training ↔ CLB table**; CELPIP-G, PTE Core and TEF Canada scores are converted too.
 - **Private by design**: everything you enter stays in your browser's local storage. Use *export / import* to move a backup between browsers or devices.
 
@@ -20,7 +22,7 @@ Open the live page, or download `index.html` and open it in any modern browser. 
 
 ## Updating the rules
 
-All point tables, the high-wage occupation list and the draw snapshot sit at the top of the `<script>` block in `index.html`. The rules were last checked against the official sources on **2026-10-23**.
+All point tables, the high-wage occupation list, the draw and pool snapshots and the projected cutoff ranges sit at the top of the `<script>` block in `index.html`. The rules were last checked against the official sources on **2026-10-23**; the draw snapshot, pool distribution and forecast were updated on **2026-11-23**.
 
 ## Sources
 
